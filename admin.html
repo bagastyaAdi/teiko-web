@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Teiko Admin Panel</title>
+  <meta name="robots" content="noindex, nofollow" />
+
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <!-- Admin CSS -->
+  <link rel="stylesheet" href="admin.css">
+
+  <!-- Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="supabase-config.js"></script>
+</head>
+<body>
+
+  <!-- ===== LOGIN SCREEN ===== -->
+  <div id="login-screen">
+    <div class="login-card">
+      <div class="login-logo">
+        <div class="logo-badge">
+          <i class="bi bi-shield-lock"></i>
+          Admin Panel
+        </div>
+        <h1>Teiko CMS</h1>
+        <p>Masuk untuk mengelola konten website</p>
+      </div>
+
+      <form id="login-form">
+        <div class="form-group">
+          <label class="form-label" for="login-email">Email</label>
+          <input type="email" id="login-email" class="form-input" placeholder="admin@teiko.id" required autocomplete="email" />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="login-password">Password</label>
+          <input type="password" id="login-password" class="form-input" placeholder="••••••••" required autocomplete="current-password" />
+        </div>
+        <button type="submit" id="login-btn" class="btn-login">
+          <i class="bi bi-box-arrow-in-right me-2"></i>Masuk
+        </button>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===== DASHBOARD ===== -->
+  <div id="dashboard" style="display:none">
+
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-logo">
+        <div class="brand">
+          <div class="brand-icon">🍵</div>
+          <div>
+            <div class="brand-name">Teiko</div>
+            <div class="brand-sub">Admin Panel</div>
+          </div>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-label">Menu</div>
+        <a class="nav-item active" href="javascript:void(0)" id="nav-content">
+          <i class="bi bi-grid-1x2"></i> Kelola Konten
+        </a>
+        <a class="nav-item" href="javascript:void(0)" id="nav-drinks">
+          <i class="bi bi-cup-straw"></i> Kelola Menu
+        </a>
+        <a class="nav-item" href="/" target="_blank">
+          <i class="bi bi-globe"></i> Lihat Website
+        </a>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div style="font-size:0.75rem; color:var(--muted); margin-bottom:0.75rem;" id="admin-email-display"></div>
+        <button class="btn-logout" id="logout-btn">
+          <i class="bi bi-box-arrow-left"></i> Keluar
+        </button>
+      </div>
+    </aside>
+
+    <!-- Main Content -->
+    <main class="main-content">
+      <!-- ===== CONTENT MANAGEMENT VIEW ===== -->
+      <div id="content-view">
+        <div class="page-header d-flex justify-content-between align-items-center">
+          <div>
+            <h2>Kelola Konten Website</h2>
+            <p>Ubah foto dan teks setiap section, lalu klik <strong>Simpan Perubahan</strong>.</p>
+          </div>
+          <button class="btn btn-dark px-4 py-2" onclick="addNewHero()">
+            <i class="bi bi-plus-lg me-2"></i> Tambah Hero Baru
+          </button>
+        </div>
+
+        <div class="stats-bar">
+          <div class="stat-chip">
+            <div class="stat-icon"><i class="bi bi-image"></i></div>
+            <div>
+              <div class="stat-val">6</div>
+              <div class="stat-lbl">Total Section</div>
+            </div>
+          </div>
+          <div class="stat-chip">
+            <div class="stat-icon"><i class="bi bi-cloud-check"></i></div>
+            <div>
+              <div class="stat-val" id="stat-synced">—</div>
+              <div class="stat-lbl">Tersimpan di DB</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Section Cards Grid -->
+        <div class="sections-grid" id="sections-grid">
+          <div class="loading-state">
+            <div class="spinner"></div>
+            <p>Memuat konten...</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== DRINKS MANAGEMENT VIEW ===== -->
+      <div id="drinks-view" style="display:none">
+        <div class="page-header d-flex justify-content-between align-items-center">
+          <div>
+            <h2>Kelola Menu Minuman</h2>
+            <p>Tambah dan edit daftar minuman yang tampil di website.</p>
+          </div>
+          <button class="btn btn-dark px-4 py-2" id="add-drink-btn">
+            <i class="bi bi-plus-lg me-2"></i> Tambah Menu Baru
+          </button>
+        </div>
+
+        <div id="drinks-grid" class="drinks-grid mt-4">
+          <!-- Drinks items will be loaded here -->
+          <div class="loading-state">
+            <div class="spinner"></div>
+            <p>Memuat daftar minuman...</p>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Toast Notification -->
+  <div class="toast" id="toast"></div>
+
+  <!-- Admin JS -->
+  <script src="admin.js"></script>
+</body>
+</html>

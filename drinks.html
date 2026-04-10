@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Menu Drinks - Teiko</title>
+  
+  <!-- SEO & Icons -->
+  <link rel="icon" type="image/png" href="asset/logo.png" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="navbar.css">
+  
+  <style>
+    body { background-color: #fcfcfc; }
+    .page-title-section { padding: 100px 0 50px; text-align: center; }
+    .drink-card {
+      background: white;
+      border-radius: 20px;
+      overflow: hidden;
+      transition: all 0.3s ease;
+      height: 100%;
+      border: 1px solid #eee;
+    }
+    .drink-card:hover { 
+      transform: translateY(-10px);
+      box-shadow: 0 15px 30px rgba(0,0,0,0.05);
+    }
+    .drink-img-wrapper {
+      width: 100%;
+      aspect-ratio: 1/1;
+      overflow: hidden;
+      background: #f5f5f5;
+    }
+    .drink-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+    .drink-info { padding: 20px; }
+    .drink-name { font-weight: 700; font-size: 1.15rem; margin-bottom: 5px; color: #2A3B27; }
+    .drink-oz { color: #888; font-size: 0.9rem; }
+    .drink-price { font-weight: 600; color: #444; margin-top: 10px; }
+    
+    /* Skeleton Loading */
+    .skeleton { background: linear-gradient(90deg, #eee 25%, #f5f5f5 50%, #eee 75%); background-size: 200% 100%; animation: loading 1.5s infinite; }
+    @keyframes loading { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+  </style>
+
+  <!-- Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="supabase-config.js"></script>
+</head>
+<body>
+
+  <!-- Navbar Placeholder -->
+  <header id="navbar-placeholder"></header>
+
+  <main class="container mb-5">
+    <div class="page-title-section">
+      <h6 class="text-uppercase text-secondary fw-bold" style="letter-spacing: 2px;">Fresh & Tasty</h6>
+      <h1 class="fw-bold display-5">Our Menu</h1>
+    </div>
+
+    <!-- Grid Minuman -->
+    <div class="row g-4" id="drinks-container">
+      <!-- Loading State -->
+      <div class="col-6 col-md-4 col-lg-3">
+        <div class="drink-card p-2 border-0">
+          <div class="drink-img-wrapper rounded-4 skeleton"></div>
+        </div>
+      </div>
+      <div class="col-6 col-md-4 col-lg-3">
+        <div class="drink-card p-2 border-0">
+          <div class="drink-img-wrapper rounded-4 skeleton"></div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer Placeholder -->
+  <footer id="footer-placeholder"></footer>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="navbar.js" defer></script> 
+  <script src="footer.js" defer></script>
+  
+  <script>
+    async function loadDrinks() {
+      const container = document.getElementById('drinks-container');
+      try {
+        const { data, error } = await sb.from('drinks').select('*').eq('is_active', true).order('created_at', { ascending: false });
+        if (error) throw error;
+
+        if (data.length === 0) {
+          container.innerHTML = `<div class="col-12 text-center py-5"><p class="text-muted">Menu belum tersedia.</p></div>`;
+          return;
+        }
+
+        container.innerHTML = data.map(drink => `
+          <div class="col-6 col-md-4 col-lg-3">
+            <div class="drink-card">
+              <div class="drink-img-wrapper">
+                <img src="${drink.image_url || './asset/hero1.webp'}" alt="${drink.name}" class="drink-img" loading="lazy">
+              </div>
+              <div class="drink-info">
+                <div class="drink-name">${drink.name}</div>
+                <div class="drink-oz">${drink.oz_size || '-'}</div>
+                ${drink.price ? `<div class="drink-price">${drink.price}</div>` : ''}
+              </div>
+            </div>
+          </div>
+        `).join('');
+      } catch (err) {
+        console.error('Error loading drinks:', err);
+        container.innerHTML = `<div class="col-12 text-center text-danger">Gagal memuat menu. Silakan coba lagi nanti.</div>`;
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', loadDrinks);
+  </script>
+</body>
+</html>
