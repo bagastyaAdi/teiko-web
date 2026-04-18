@@ -4,19 +4,39 @@
   top: 0;
   left: 0;
   right: 0;
-  z-index: 1000;
-  background: #ffffff;
+  z-index: 9999;
+  background: #ffffff !important;
   border-bottom: 1px solid #e5e7eb;
   box-shadow: 0 1px 8px rgba(0, 0, 0, 0.06);
+  /* Force GPU compositing layer agar selalu di atas di iOS/Safari */
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+  will-change: transform;
+  isolation: isolate;
+}
+
+.navbar-selector {
+  /* Memaksa render di layer atas pada iOS */
+  -webkit-transform: translateZ(0);
+  transform: translateZ(0);
+}
+
+/* Sembunyikan navbar saat modal (detail) terbuka agar tidak menumpuk di background */
+body.modal-open .navbar-custom {
+  opacity: 0;
+  pointer-events: none;
 }
 
 .navbar-inner {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.8rem 1.5rem;
+  padding: 0 1.5rem;
+  height: 68.59px;
   max-width: 1280px;
   margin: 0 auto;
+  position: relative;
+  /* Tambahkan ini agar absolute hamburger relatif ke container */
 }
 
 .navbar-brand-logo {
@@ -71,7 +91,7 @@
 
 /* ===== HAMBURGER ===== */
 .hamburger {
-  display: none;
+  display: none !important;
   flex-direction: column;
   justify-content: center;
   gap: 5px;
@@ -104,9 +124,11 @@
 .hamburger.open span:nth-child(1) {
   transform: translateY(7px) rotate(45deg);
 }
+
 .hamburger.open span:nth-child(2) {
   opacity: 0;
 }
+
 .hamburger.open span:nth-child(3) {
   transform: translateY(-7px) rotate(-45deg);
 }
@@ -115,17 +137,29 @@
 .drawer-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.4);
-  z-index: 9998;
+  background: rgba(0, 0, 0, 0.35);
+  z-index: 10000;
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.3s ease;
-  backdrop-filter: blur(2px);
 }
 
 .drawer-overlay.open {
   opacity: 1;
   pointer-events: all;
+}
+
+/* Blur konten halaman saat drawer terbuka — tanpa artifact split */
+/* CATATAN: Tidak menggunakan filter: blur(0) secara global karena menyebabkan
+   stacking context baru yang mengangkat elemen di atas fixed navbar pada iOS/Safari */
+body.drawer-open>*:not(#navbar-placeholder):not(.nav-drawer):not(.drawer-overlay) {
+  filter: blur(5px);
+  transition: filter 0.3s ease;
+}
+
+body:not(.drawer-open)>*:not(#navbar-placeholder):not(.nav-drawer):not(.drawer-overlay) {
+  filter: none;
+  transition: filter 0.3s ease;
 }
 
 /* ===== SLIDE-IN DRAWER ===== */
@@ -136,10 +170,10 @@
   width: 280px;
   height: 100vh;
   background: #ffffff;
-  z-index: 9999;
+  z-index: 10001;
   transition: right 0.35s cubic-bezier(0.4, 0, 0.2, 1);
   box-shadow: -6px 0 24px rgba(0, 0, 0, 0.12);
-  display: flex;
+  display: none;
   flex-direction: column;
 }
 
@@ -219,16 +253,36 @@
 }
 
 /* ===== RESPONSIVE ===== */
-@media (max-width: 768px) {
+/* Hamburger aktif di tablet & mobile (< 1200px) */
+@media (max-width: 1199px) {
   .nav-desktop-links {
     display: none;
   }
 
   .hamburger {
+    display: flex !important;
+  }
+
+  .nav-drawer {
     display: flex;
   }
 }
 
+/* Pastikan hamburger TERSEMBUNYI di desktop (>= 1200px) */
+@media (min-width: 1200px) {
+  .hamburger {
+    display: none !important;
+  }
+
+  .nav-desktop-links {
+    display: flex !important;
+  }
+
+  .nav-drawer {
+    display: none !important;
+  }
+}
+
 #navbar-spacer {
-  height: 0;
+  height: 68.59px;
 }

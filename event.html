@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Event - Teiko</title>
+  
+  <!-- SEO & Icons -->
+  <link rel="icon" type="image/png" href="asset/logo.png" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="navbar.css">
+  
+  <style>
+    /* ===== PAGE TRANSITION ===== */
+    body {
+      background-color: #fcfcfc;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+    body.page-loaded {
+      opacity: 1;
+    }
+    .page-title-section { padding: 40px 0 30px; text-align: center; }
+
+    /* Stagger animation */
+    .anim-item {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.55s ease, transform 0.55s ease;
+    }
+    .anim-item.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .event-card {
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      transition: all 0.3s ease;
+      height: 100%;
+      border: 1px solid #eee;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.02);
+    }
+    
+    .event-card:hover { 
+      transform: translateY(-8px);
+      box-shadow: 0 15px 30px rgba(0,0,0,0.08);
+    }
+    
+    .event-img {
+      width: 100%;
+      height: auto;
+      object-fit: contain;
+      display: block;
+    }
+    
+    /* Skeleton Loading */
+    .skeleton { 
+      background: linear-gradient(90deg, #eee 25%, #f5f5f5 50%, #eee 75%); 
+      background-size: 200% 100%; 
+      animation: loading 1.5s infinite; 
+      aspect-ratio: 5 / 4;
+      width: 100%;
+    }
+    @keyframes loading { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+  </style>
+
+  <!-- Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <script src="supabase-config.js"></script>
+</head>
+<body>
+
+  <!-- Navbar Placeholder -->
+  <header id="navbar-placeholder"></header>
+  <div id="navbar-spacer"></div>
+
+  <main class="container mb-5">
+    <div class="page-title-section">
+      <h6 class="text-uppercase text-secondary fw-bold" style="letter-spacing: 2px; font-size: 0.8rem;">What's Happening</h6>
+      <h1 class="fw-bold h2">Teiko Events</h1>
+    </div>
+
+    <!-- Grid Events -->
+    <div class="row g-4 justify-content-center" id="events-container">
+      <!-- Loading State -->
+      <div class="col-12 col-md-8 col-lg-6">
+        <div class="event-card rounded-3 skeleton"></div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Modal Detail Event -->
+  <div class="modal fade" id="eventModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg">
+      <div class="modal-content">
+        <div class="modal-header border-0 pb-0">
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body pt-0 px-4 pb-4">
+          <h3 class="fw-bold mb-1" id="m-title">Loading...</h3>
+          <div class="mb-4">
+            <span class="d-inline-flex align-items-center px-3 py-2 rounded-pill border" style="background-color: #f8f9fa !important; color: #000000 !important; font-size: 0.9rem; font-weight: 600;">
+              <i class="bi bi-calendar-event me-2" style="color: #000000 !important;"></i>
+              <span id="m-date" style="color: #000000 !important;"></span>
+            </span>
+          </div>
+          
+          <div class="row g-4">
+            <div class="col-md-5 text-center">
+              <img id="m-img" src="" class="img-fluid rounded shadow-sm" alt="Event Banner" style="max-height: 400px; object-fit: contain;">
+            </div>
+            <div class="col-md-7">
+              <h6 class="fw-bold text-uppercase text-secondary" style="font-size: 0.85rem; letter-spacing: 1px;">Keuntungan</h6>
+              <p id="m-benefit" class="text-muted mb-4" style="white-space: pre-line; font-size: 0.95rem;"></p>
+              
+              <h6 class="fw-bold text-uppercase text-secondary" style="font-size: 0.85rem; letter-spacing: 1px;">Syarat & Ketentuan</h6>
+              <p id="m-tnc" class="text-muted small" style="white-space: pre-line;"></p>
+              
+              <div id="m-link-container" style="display:none;"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Footer Placeholder -->
+  <footer id="footer-placeholder"></footer>
+
+  <!-- Scripts -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="navbar.js" defer></script> 
+  <script src="footer.js" defer></script>
+  
+  <script>
+    async function loadEvents() {
+      const container = document.getElementById('events-container');
+      try {
+        const { data, error } = await sb.from('site_content')
+                                        .select('*')
+                                        .ilike('id', 'event_%')
+                                        .eq('is_active', true);
+        if (error) throw error;
+        
+        // Sorting
+        data.sort((a, b) => b.id.localeCompare(a.id));
+
+        if (data.length === 0) {
+          container.innerHTML = `<div class="col-12 text-center py-5"><p class="text-muted">Belum ada event saat ini.</p></div>`;
+          return;
+        }
+
+        window.eventsData = data;
+        let html = '';
+
+        // SEPARATE PRIMARY AND REGULAR
+        const primaryData = data.filter(ev => ev.button_text === 'PRIMARY');
+        const regularData = data.filter(ev => ev.button_text !== 'PRIMARY');
+
+        // FALLBACK: If no primary selected, use data[0] as primary for aesthetic consistency
+        let finalPrimary = primaryData;
+        let finalRegular = regularData;
+        
+        if (primaryData.length === 0 && data.length > 0) {
+           finalPrimary = [data[0]];
+           finalRegular = data.slice(1);
+        }
+
+        // 1. Render Primary (Landscape)
+        finalPrimary.forEach(ev => {
+          const originalIndex = data.indexOf(ev);
+          const isFilled = ev.title || ev.subtitle || ev.subtitle2;
+          let linkAction = isFilled ? `onclick="openEventModal(${originalIndex})" style="cursor: pointer;"` : '';
+          if (!isFilled && ev.button_url) {
+             linkAction = `onclick="window.open('${ev.button_url}', '_blank')" style="cursor: pointer;"`;
+          }
+
+          if (!isFilled) {
+            html += `
+              <div class="col-12 mb-4 anim-item">
+                <div class="card event-card border-0 shadow-sm overflow-hidden" ${linkAction}>
+                  <img src="${ev.image_url}" class="img-fluid w-100" style="object-fit: cover; aspect-ratio: 16/9;">
+                </div>
+              </div>
+            `;
+          } else {
+            html += `
+              <div class="col-12 mb-4 anim-item">
+                <div class="card event-card border-0 shadow-sm overflow-hidden" ${linkAction}>
+                  <div class="row g-0 align-items-center">
+                    <div class="col-12 col-md-7">
+                      <img src="${ev.image_url}" class="img-fluid w-100" style="object-fit: cover; aspect-ratio: 16/9;">
+                    </div>
+                    <div class="col-12 col-md-5 p-4 p-md-5">
+                      <span class="badge bg-danger mb-3 px-3 py-2">Event Unggulan</span>
+                      <h2 class="fw-bold mb-3">${ev.title || 'Special Event'}</h2>
+                      <p class="text-muted mb-4" style="font-size: 1.1rem;">📅 ${ev.subtitle || 'Promo terbatas'}</p>
+                      <p class="text-muted mb-4 d-none d-md-block line-clamp-3">${ev.subtitle2 || 'Yuk ikutan sekarang! Klik untuk melihat keuntungan dan ketentuannya.'}</p>
+                      <button class="btn btn-dark rounded-pill px-4">Lihat Detail <i class="bi bi-arrow-right ms-1"></i></button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            `;
+          }
+        });
+
+        // 2. Render Regular (Grid 3 columns)
+        if (finalRegular.length > 0) {
+          html += finalRegular.map((ev) => {
+            const originalIndex = data.indexOf(ev);
+            const isFilled = ev.title || ev.subtitle || ev.subtitle2;
+            let linkAction = isFilled ? `onclick="openEventModal(${originalIndex})"` : '';
+            if (!isFilled && ev.button_url) linkAction = `onclick="window.open('${ev.button_url}', '_blank')"`;
+
+            if (!isFilled) {
+               return `
+                 <div class="col-12 col-md-6 col-lg-4 mb-4">
+                   <div class="card event-card border-0 shadow-sm h-100 overflow-hidden" ${linkAction ? `style="cursor: pointer;" ${linkAction}` : ''}>
+                     <img src="${ev.image_url}" alt="Event Banner" class="card-img-top h-100" loading="lazy" style="object-fit: cover; aspect-ratio: 16/9;">
+                   </div>
+                 </div>
+               `;
+            }
+
+            return `
+              <div class="col-12 col-md-6 col-lg-4 mb-4">
+                <div class="card event-card border-0 shadow-sm h-100" ${linkAction ? `style="cursor: pointer;" ${linkAction}` : ''}>
+                  <img src="${ev.image_url}" alt="Event Banner" class="card-img-top" loading="lazy" style="object-fit: cover; aspect-ratio: 16/9;">
+                  <div class="card-body">
+                    <h5 class="card-title fw-bold mb-2">${ev.title || 'Event Menarik'}</h5>
+                    <p class="card-text text-muted small"><i class="bi bi-clock me-1"></i> ${ev.subtitle || 'Promo Terbatas'}</p>
+                  </div>
+                </div>
+              </div>
+            `;
+          }).join('');
+        }
+
+        container.innerHTML = html;
+
+        // Stagger animate event cards
+        staggerAnimate('#events-container .anim-item, #events-container [class*="col-"]', 80, 90);
+      } catch (err) {
+        console.error('Error loading events:', err);
+        container.innerHTML = `<div class="col-12 text-center text-danger">Gagal memuat event. Silakan coba lagi nanti.</div>`;
+      }
+    }
+
+    function openEventModal(index) {
+      if(!window.eventsData) return;
+      const ev = window.eventsData[index];
+      
+      document.getElementById('m-img').src = ev.image_url || '';
+      document.getElementById('m-title').textContent = ev.title || 'Event Teiko';
+      document.getElementById('m-date').textContent = ev.subtitle || 'Periode promo terbatas';
+      
+      const ben = ev.subtitle2 || '-';
+      document.getElementById('m-benefit').innerHTML = ben.replace(/\n/g, '<br>');
+      
+      const tnc = ev.tnc || '-';
+      document.getElementById('m-tnc').innerHTML = tnc.replace(/\n/g, '<br>');
+      
+      const linkContainer = document.getElementById('m-link-container');
+      if (ev.link) {
+        linkContainer.style.display = 'block';
+        linkContainer.innerHTML = `<a href="${ev.link}" target="_blank" class="btn btn-primary w-100 rounded-pill mt-3">Link Pendaftaran/Detail <i class="bi bi-box-arrow-up-right ms-1"></i></a>`;
+      } else {
+        linkContainer.style.display = 'none';
+      }
+
+      const modal = new bootstrap.Modal(document.getElementById('eventModal'));
+      modal.show();
+    }
+
+    function staggerAnimate(selector, baseDelay = 0, step = 90) {
+      document.querySelectorAll(selector).forEach((el, i) => {
+        setTimeout(() => el.classList.add('visible'), baseDelay + i * step);
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      requestAnimationFrame(() => document.body.classList.add('page-loaded'));
+      // Animate page title
+      setTimeout(() => {
+        const title = document.querySelector('.page-title-section');
+        if (title) {
+          title.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+          title.style.opacity = '0';
+          title.style.transform = 'translateY(20px)';
+          requestAnimationFrame(() => requestAnimationFrame(() => {
+            title.style.opacity = '1';
+            title.style.transform = 'translateY(0)';
+          }));
+        }
+      }, 50);
+      loadEvents();
+    });
+  </script>
+</body>
+</html>

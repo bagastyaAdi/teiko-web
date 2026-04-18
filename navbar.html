@@ -10,7 +10,9 @@
     <!-- Desktop Links -->
     <ul class="nav-desktop-links">
       <li><a href="drinks" class="nav-desktop-link">Drinks</a></li>
+      <li><a href="event" class="nav-desktop-link">Event</a></li>
       <li><a href="outlet" class="nav-desktop-link">Our Outlet</a></li>
+      <li><a href="feedback" class="nav-desktop-link">Feedback</a></li>
     </ul>
 
     <!-- Hamburger (Mobile) -->
@@ -23,13 +25,16 @@
   </div>
 </nav>
 
+<!-- Spacer agar konten tidak tertutup oleh navbar yang fixed -->
+<div id="navbar-spacer"></div>
+
 <!-- Drawer Overlay -->
 <div class="drawer-overlay" id="drawer-overlay"></div>
 
 <!-- Slide-in Drawer (dari kanan) -->
 <div class="nav-drawer" id="nav-drawer">
   <div class="drawer-header">
-    <span class="drawer-brand">🍵 Menu</span>
+    <span class="drawer-brand"></span>
     <button class="drawer-close-btn" id="drawer-close-btn" aria-label="Tutup menu">
       <i class="bi bi-x-lg"></i>
     </button>
@@ -42,9 +47,21 @@
       </a>
     </li>
     <li>
+      <a href="event">
+        <i class="bi bi-calendar-event"></i>
+        Event
+      </a>
+    </li>
+    <li>
       <a href="outlet">
         <i class="bi bi-shop"></i>
         Our Outlet
+      </a>
+    </li>
+    <li>
+      <a href="feedback">
+        <i class="bi bi-chat-dots"></i>
+        Feedback
       </a>
     </li>
   </ul>

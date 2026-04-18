@@ -70,6 +70,15 @@
         <a class="nav-item" href="javascript:void(0)" id="nav-drinks">
           <i class="bi bi-cup-straw"></i> Kelola Menu
         </a>
+        <a class="nav-item" href="javascript:void(0)" id="nav-events">
+          <i class="bi bi-images"></i> Kelola Event
+        </a>
+        <a class="nav-item" href="javascript:void(0)" id="nav-feedback">
+          <i class="bi bi-chat-dots"></i> Masukan
+        </a>
+        <a class="nav-item" href="javascript:void(0)" id="nav-faq">
+          <i class="bi bi-question-circle"></i> Kelola FAQ
+        </a>
         <a class="nav-item" href="/" target="_blank">
           <i class="bi bi-globe"></i> Lihat Website
         </a>
@@ -143,6 +152,66 @@
           </div>
         </div>
       </div>
+
+      <!-- ===== EVENTS MANAGEMENT VIEW ===== -->
+      <div id="events-view" style="display:none">
+        <div class="page-header d-flex justify-content-between align-items-center">
+          <div>
+            <h2>Kelola Event Banners</h2>
+            <p>Tambah dan hapus banner photo untuk halaman event (Rekomendasi ukuran: 1350x1080).</p>
+          </div>
+          <button class="btn btn-dark px-4 py-2" id="add-event-btn" onclick="showAddEventForm()">
+            <i class="bi bi-plus-lg me-2"></i> Tambah Event Banner
+          </button>
+        </div>
+
+        <div id="events-grid" class="drinks-grid mt-4">
+          <!-- Event items will be loaded here (reusing drinks-grid css for simplicity or similar) -->
+          <div class="loading-state">
+            <div class="spinner"></div>
+            <p>Memuat daftar event...</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== FEEDBACK VIEW ===== -->
+      <div id="feedback-view" style="display:none">
+        <div class="page-header d-flex justify-content-between align-items-center">
+          <div>
+            <h2>Masukan & Saran</h2>
+            <p>Daftar masukan yang dikirimkan oleh pengunjung website.</p>
+          </div>
+          <span class="badge bg-dark px-3 py-2" id="feedback-count" style="font-size:0.85rem;">0 masukan</span>
+        </div>
+
+        <div id="feedback-list" class="mt-4">
+          <div class="loading-state">
+            <div class="spinner"></div>
+            <p>Memuat masukan...</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== FAQ VIEW ===== -->
+      <div id="faq-view" style="display:none">
+        <div class="page-header d-flex justify-content-between align-items-center">
+          <div>
+            <h2>Manajemen Tanya Jawab (FAQ)</h2>
+            <p>Kelola pertanyaan pemogan yang sering ditanyakan pengunjung.</p>
+          </div>
+          <button class="btn btn-dark px-4 py-2" id="add-faq-btn" onclick="showAddFaqForm()">
+            <i class="bi bi-plus-lg me-2"></i> Tambah FAQ Baru
+          </button>
+        </div>
+
+        <div id="faq-grid" class="drinks-grid mt-4">
+          <div class="loading-state">
+            <div class="spinner"></div>
+            <p>Memuat daftar FAQ...</p>
+          </div>
+        </div>
+      </div>
+
     </main>
   </div>
 

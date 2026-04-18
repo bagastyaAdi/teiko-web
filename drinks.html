@@ -1,22 +1,41 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Menu Drinks - Teiko</title>
-  
+
   <!-- SEO & Icons -->
   <link rel="icon" type="image/png" href="asset/logo.png" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
-  
+
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="navbar.css">
-  
+
   <style>
-    body { background-color: #fcfcfc; }
-    .page-title-section { padding: 100px 0 50px; text-align: center; }
+    body {
+      background-color: #fcfcfc;
+      opacity: 0;
+      transition: opacity 0.4s ease;
+    }
+    body.page-loaded { opacity: 1; }
+
+    /* Stagger animation */
+    .anim-item {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity 0.5s ease, transform 0.5s ease;
+    }
+    .anim-item.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .page-title-section { padding: 40px 0 30px; text-align: center; }
+
     .drink-card {
       background: white;
       border-radius: 20px;
@@ -25,44 +44,136 @@
       height: 100%;
       border: 1px solid #eee;
     }
-    .drink-card:hover { 
+
+    .drink-card:hover {
       transform: translateY(-10px);
-      box-shadow: 0 15px 30px rgba(0,0,0,0.05);
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.05);
     }
+
     .drink-img-wrapper {
       width: 100%;
       aspect-ratio: 1/1;
       overflow: hidden;
       background: #f5f5f5;
     }
+
     .drink-img {
       width: 100%;
       height: 100%;
       object-fit: cover;
     }
-    .drink-info { padding: 20px; }
-    .drink-name { font-weight: 700; font-size: 1.15rem; margin-bottom: 5px; color: #2A3B27; }
-    .drink-oz { color: #888; font-size: 0.9rem; }
-    .drink-price { font-weight: 600; color: #444; margin-top: 10px; }
-    
+
+    .drink-info {
+      padding: 20px;
+    }
+
+    .drink-name {
+      font-weight: 700;
+      font-size: 1.15rem;
+      margin-bottom: 5px;
+      color: #2A3B27;
+    }
+
+    .drink-oz {
+      color: #888;
+      font-size: 0.9rem;
+    }
+
+    .drink-price {
+      font-weight: 600;
+      color: #444;
+      margin-top: 10px;
+    }
+
     /* Skeleton Loading */
-    .skeleton { background: linear-gradient(90deg, #eee 25%, #f5f5f5 50%, #eee 75%); background-size: 200% 100%; animation: loading 1.5s infinite; }
-    @keyframes loading { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+    .skeleton {
+      background: linear-gradient(90deg, #eee 25%, #f5f5f5 50%, #eee 75%);
+      background-size: 200% 100%;
+      animation: loading 1.5s infinite;
+    }
+
+    @keyframes loading {
+      0% {
+        background-position: 200% 0;
+      }
+
+      100% {
+        background-position: -200% 0;
+      }
+    }
+
+    /* Category Filter */
+    .category-filter-container {
+      background-color: #fbfbfb;
+      border-radius: 50px;
+      display: inline-flex;
+      padding: 6px;
+      overflow-x: auto;
+      max-width: 100%;
+      white-space: nowrap;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+    }
+
+    /* Sembunyikan scrollbar untuk filter */
+    .category-filter-container::-webkit-scrollbar {
+      display: none;
+    }
+
+    .category-filter-container {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    .category-btn {
+      border: none;
+      background: transparent;
+      padding: 10px 30px;
+      border-radius: 50px;
+      font-weight: 500;
+      color: #333;
+      transition: all 0.3s ease;
+      font-size: 0.95rem;
+    }
+
+    .category-btn.active {
+      background-color: #121212;
+      color: white;
+      font-weight: 600;
+      /* box-shadow: 0 4px 10px rgba(79, 79, 79, 0.3); */
+    }
+
+    .category-btn:hover:not(.active) {
+      background-color: #121212;
+      color: white;
+    }
   </style>
 
   <!-- Supabase -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
   <script src="supabase-config.js"></script>
 </head>
+
 <body>
 
-  <!-- Navbar Placeholder -->
+  <!-- Header/Navbar -->
   <header id="navbar-placeholder"></header>
+  <div id="navbar-spacer"></div>
 
   <main class="container mb-5">
     <div class="page-title-section">
-      <h6 class="text-uppercase text-secondary fw-bold" style="letter-spacing: 2px;">Fresh & Tasty</h6>
-      <h1 class="fw-bold display-5">Our Menu</h1>
+      <h6 class="text-uppercase text-secondary fw-bold" style="letter-spacing: 2px; font-size: 0.8rem;">Fresh & Tasty</h6>
+      <h1 class="fw-bold h2">Our Menu</h1>
+    </div>
+
+    <!-- Category Filter -->
+    <div class="d-flex justify-content-center mb-5 fade-up">
+      <div class="category-filter-container">
+        <button class="category-btn active" onclick="changeCategory(this, 'All')">All</button>
+        <button class="category-btn" onclick="changeCategory(this, 'Tea')">Tea</button>
+        <button class="category-btn" onclick="changeCategory(this, 'Chocolate')">Chocolate</button>
+        <button class="category-btn" onclick="changeCategory(this, 'Milk')">Milk</button>
+        <button class="category-btn" onclick="changeCategory(this, 'Coffee')">Coffee</button>
+      </div>
     </div>
 
     <!-- Grid Minuman -->
@@ -86,42 +197,87 @@
 
   <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="navbar.js" defer></script> 
+  <script src="navbar.js" defer></script>
   <script src="footer.js" defer></script>
-  
+
   <script>
+    let allDrinks = [];
+
     async function loadDrinks() {
       const container = document.getElementById('drinks-container');
       try {
         const { data, error } = await sb.from('drinks').select('*').eq('is_active', true).order('created_at', { ascending: false });
         if (error) throw error;
 
-        if (data.length === 0) {
-          container.innerHTML = `<div class="col-12 text-center py-5"><p class="text-muted">Menu belum tersedia.</p></div>`;
-          return;
-        }
-
-        container.innerHTML = data.map(drink => `
-          <div class="col-6 col-md-4 col-lg-3">
-            <div class="drink-card">
-              <div class="drink-img-wrapper">
-                <img src="${drink.image_url || './asset/hero1.webp'}" alt="${drink.name}" class="drink-img" loading="lazy">
-              </div>
-              <div class="drink-info">
-                <div class="drink-name">${drink.name}</div>
-                <div class="drink-oz">${drink.oz_size || '-'}</div>
-                ${drink.price ? `<div class="drink-price">${drink.price}</div>` : ''}
-              </div>
-            </div>
-          </div>
-        `).join('');
+        allDrinks = data;
+        renderDrinks('All');
       } catch (err) {
         console.error('Error loading drinks:', err);
         container.innerHTML = `<div class="col-12 text-center text-danger">Gagal memuat menu. Silakan coba lagi nanti.</div>`;
       }
     }
 
-    document.addEventListener('DOMContentLoaded', loadDrinks);
+    function staggerAnimate(selector, baseDelay = 0, step = 80) {
+      document.querySelectorAll(selector).forEach((el, i) => {
+        setTimeout(() => el.classList.add('visible'), baseDelay + i * step);
+      });
+    }
+
+    function renderDrinks(category) {
+      const container = document.getElementById('drinks-container');
+      let filtered = allDrinks;
+
+      if (category !== 'All') {
+        filtered = allDrinks.filter(drink => {
+          if (drink.category && drink.category.toLowerCase() === category.toLowerCase()) return true;
+          return drink.name.toLowerCase().includes(category.toLowerCase());
+        });
+      }
+
+      if (filtered.length === 0) {
+        container.innerHTML = `<div class="col-12 text-center py-5"><p class="text-muted">Menu untuk kategori ini belum tersedia.</p></div>`;
+        return;
+      }
+
+      container.innerHTML = filtered.map(drink => `
+        <div class="col-6 col-md-4 col-lg-3 anim-item">
+          <div class="drink-card">
+            <div class="drink-img-wrapper">
+              <img src="${drink.image_url || './asset/hero1.webp'}" alt="${drink.name}" class="drink-img" loading="lazy">
+            </div>
+            <div class="drink-info">
+              <div class="drink-name">${drink.name}</div>
+              <div class="drink-oz">${drink.oz_size || '-'}</div>
+              ${drink.price ? `<div class="drink-price">${drink.price}</div>` : ''}
+              ${drink.detail ? `<div class="drink-detail mt-2 text-muted" style="font-size: 0.85rem; line-height: 1.4;">${drink.detail.replace(/\n/g, '<br>')}</div>` : ''}
+            </div>
+          </div>
+        </div>
+      `).join('');
+
+      // Stagger animate cards
+      staggerAnimate('#drinks-container .anim-item', 60, 70);
+    }
+
+    function changeCategory(btn, category) {
+      document.querySelectorAll('.category-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderDrinks(category);
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      requestAnimationFrame(() => document.body.classList.add('page-loaded'));
+      // Animate page title
+      setTimeout(() => document.querySelectorAll('.page-title-section, .category-filter-container').forEach(el => {
+        el.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+        el.style.opacity = '0'; el.style.transform = 'translateY(20px)';
+        requestAnimationFrame(() => requestAnimationFrame(() => {
+          el.style.opacity = '1'; el.style.transform = 'translateY(0)';
+        }));
+      }), 50);
+      loadDrinks();
+    });
   </script>
 </body>
+
 </html>

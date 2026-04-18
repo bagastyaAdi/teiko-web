@@ -11,6 +11,7 @@ function initDrawer() {
     drawer.classList.add('open');
     overlay.classList.add('open');
     hamburger.classList.add('open');
+    document.body.classList.add('drawer-open');
     document.body.style.overflow = 'hidden';
   }
 
@@ -18,6 +19,7 @@ function initDrawer() {
     drawer.classList.remove('open');
     overlay.classList.remove('open');
     hamburger.classList.remove('open');
+    document.body.classList.remove('drawer-open');
     document.body.style.overflow = '';
   }
 

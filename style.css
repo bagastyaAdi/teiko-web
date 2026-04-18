@@ -1,35 +1,23 @@
-.body {
+/* ===== FONTS & BASE ===== */
+html {
+  overflow-x: hidden;
+  max-width: 100vw;
+}
+
+body {
   font-family: 'Inter', sans-serif;
-  /*margin: 0;*/
+  overflow-x: hidden;
+  max-width: 100vw;
 }
 
-.body {
-  transition: opacity 0.3s ease;
-}
-
-.body.fade-out {
-  opacity: 0;
-}
-
-
-.icontitl{
-    width: 120px;
-  height: 120px;
-}
-
-
-
-
-/* Hero Section */
-
-
+/* ===== HERO SECTION ===== */
 .hero {
+  margin-bottom: 2px;
   position: relative;
   display: flex;
   align-items: center;
-  min-height: 75vh;
-  padding: 4rem 1rem;
-  /*background: linear-gradient(to right, rgba(255, 255, 255, 0), #ffe1c5);*/
+  min-height: 42vw;
+  padding: 0;
   overflow: hidden;
 }
 
@@ -43,26 +31,46 @@
   object-position: top;
 }
 
-.hero .container,
-.hero .container2 {
+/* Hero 1: teks rata kanan */
+.hero-content-right {
+  width: 100%;
+  padding-left: 3vw;
+  padding-right: 3vw;
+  position: relative;
+  z-index: 1;
+  color: #242424;
+  text-align: right;
+}
+
+/* Hero 2, 3 (container2): teks rata kiri */
+.container2 {
+  width: 100%;
+  padding-left: 3vw;
+  padding-right: 1vw;
   position: relative;
   z-index: 1;
   color: #242424;
 }
 
-.hero .container {
-  text-align: right;
-}
-
+/* Font berbasis vw agar scale proporsional dengan gambar */
 .hero h1 {
-  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-size: 3.5vw;
   line-height: 1.2;
+  font-weight: 800;
 }
 
 .hero p {
-  font-size: clamp(1rem, 2.5vw, 1.2rem);
+  font-size: 1.4vw;
+  line-height: 1.5;
 }
 
+.hero .btn {
+  font-size: 1.2vw;
+  padding: 0.6vw 1.8vw;
+  border-radius: 6px;
+}
+
+/* Scroll-in animations */
 .hero-animated {
   opacity: 0;
   transform: translateY(20px);
@@ -75,24 +83,16 @@
   transform: translateY(0);
 }
 
-
-/* Minuman Section */
-
-
-
-.hot-box {
-  background-image: url('./asset/3.svg');
-}
-.greentea-box {
-  background-image: url('./asset/4.svg');
-}
-.belgian-box {
-  background-image: url('./asset/5.svg');
-}
-.coffee-cream-box {
-    background-image: url('./asset/6.svg');
+/* Gap antara hero1 dan dynamic heroes container */
+#dynamic-heroes-container {
+  margin-top: 4px;
 }
 
+/* ===== MINUMAN SECTION ===== */
+.hot-box      { background-image: url('./asset/3.svg'); }
+.greentea-box { background-image: url('./asset/4.svg'); }
+.belgian-box  { background-image: url('./asset/5.svg'); }
+.coffee-cream-box { background-image: url('./asset/6.svg'); }
 
 .minuman-animated {
   opacity: 0;
@@ -106,19 +106,10 @@
   transform: translateY(0);
 }
 
-.belgian-box h3,
-.hot-box h3 {
-  font-size: 1.8rem;
-}
-
-.belgian-box p,
-.hot-box p {
-  font-size: 1rem;
-  margin-bottom: 1rem;
-}
-
-/* Semua box minuman */
-.hot-box, .belgian-box, .greentea-box, .coffee-cream-box {
+.hot-box,
+.belgian-box,
+.greentea-box,
+.coffee-cream-box {
   min-height: 500px;
   padding: 2.3rem 1rem;
   background-size: cover;
@@ -128,180 +119,79 @@
   justify-content: flex-start;
   align-items: center;
   text-align: center;
-  margin: 5px; /* Margin atas-bawah & kanan-kiri default */
+  margin: 5px;
 }
 
-.belgian-box{
-  color: #fff;
-}
+.belgian-box h3, .hot-box h3 { font-size: 1.8rem; }
+.belgian-box p,  .hot-box p  { font-size: 1rem; margin-bottom: 1rem; }
 
-.belgian-box .btn {
-  color: white;
-  border-color: white;
-}
-
+.belgian-box { color: #fff; }
+.belgian-box .btn { color: white; border-color: white; }
 .belgian-box .btn:hover {
-  background-color: rgba(255, 255, 255, 0.4); /* putih transparan 40% */
+  background-color: rgba(255, 255, 255, 0.4);
   color: black;
-  backdrop-filter: blur(8px); /* efek blur latar belakang */
-  -webkit-backdrop-filter: blur(8px); /* untuk Safari */
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
   border-color: rgba(255, 255, 255, 0.4);
 }
-  /* Animasi muncul dari bawah */
-  .fade-up {
-    opacity: 0;
-    transform: translateY(30px);
-    animation: fadeUp 0.8s ease-out forwards;
-  }
 
-  @keyframes fadeUp {
-    to {
-      opacity: 1;
-      transform: translateY(0);
-    }
-  }
-
-/* Saat mobile dan tablet: hapus hanya margin kiri-kanan */
-@media (max-width: 991.98px) {
-    
-  .hot-box,
-  .belgian-box,
-  .greentea-box,
-  .coffee-cream-box {
-    margin-left: 0 !important;
-    margin-right: 0 !important;
-    /* Margin atas dan bawah tetap dipertahankan */
-  }
-.hero .container,
-  .hero .container2 {
-    max-width: 100%;
-    width: 100%;
-    padding: 2rem 1rem; /* Sama seperti .minuman-box */
-    margin: 0 auto;
-    text-align: center;
-  }
-
-  .hero {
-    padding: 2rem 0; /* Atas bawah tetap ada ruang */
-  }
-
-      .logo-img {
-        width: 40px;
-        height: 40px;
-      }
+/* ===== FADE-UP ANIMATION (untuk halaman lain) ===== */
+.fade-up {
+  opacity: 0;
+  transform: translateY(30px);
+  animation: fadeUp 0.8s ease-out forwards;
 }
 
-
-
-/* Saat mobile dan tablet: hapus hanya margin kiri-kanan */
-@media (max-width: 991.98px) {
-  .hot-box,
-  .belgian-box,
-  .greentea-box,
-  .coffee-cream-box {
-    margin-left: 0 !important;
-    margin-right: 0 !important;
-    /* Margin atas dan bawah tetap dipertahankan */
-  }
-  
-.container2{
-    max-width: 100%;
-    width: 100%;
-    padding: 2rem 1rem; /* Sama seperti .minuman-box */
-    margin: 0 auto;
-    text-align: left;
-     align-items: left;
-    justify-content: left;
-}
-.container {
-    max-width: 100%;
-    width: 100%;
-    padding: 2rem 1rem; /* Sama seperti .minuman-box */
-    margin: 0 auto;
-    text-align: center;
-     align-items: center;
-    justify-content: center;
-  }
-  
-    .hero {
-    padding: 2rem 0; /* Atas bawah tetap ada ruang */
-  }
-
-
-.logo-img {
-        width: 1000px;
-        height: 90px;
-      }
-}
-@media (max-width: 576px) {
-.container{
-    width: 100%;
-    max-width: 100%;
-    padding-left: 1rem;
-    padding-right: 1rem;
-    margin-left: 0;
-    margin-right: 0;
-    
-  }
-  
+@keyframes fadeUp {
+  to { opacity: 1; transform: translateY(0); }
 }
 
-
-.container2 {
-    width: 100%;
-    max-width: 100%;
-    padding-left: 1rem;
-    padding-right: 1rem;
-    margin-left: 0;
-    margin-right: 0;
-    
-  }
-  
+/* ===== NAVBAR SPACER ===== */
 #navbar-spacer {
-  height: 0; /* default, nanti diisi via JS */
+  height: 68.59px;
 }
 
-/* Footer Clean Styles */
+/* ===== FOOTER ===== */
 .footer-clean {
   background-color: #ffffff;
-  color: #242424;
-  border-top: 1px solid #eee;
+  color: #1a1a1a;
+  border-top: 1px solid #e5e7eb;
 }
 
 .footer-link {
-  color: #242424;
+  color: #1a1a1a;
   text-decoration: none;
   font-weight: 500;
   transition: opacity 0.2s;
-  font-size: 1rem;
+  font-size: 0.95rem;
 }
 
-.footer-link:hover {
-  opacity: 0.6;
-  color: #242424;
-}
+.footer-link:hover { opacity: 0.5; }
 
-.social-icons .bi {
-  font-size: 1.5rem;
-  color: #242424;
-}
+.social-icons .bi { font-size: 1.5rem; color: #1a1a1a; }
 
 .social-link {
-  color: #242424;
+  color: #1a1a1a;
   text-decoration: none;
-  transition: transform 0.2s;
+  transition: transform 0.2s, opacity 0.2s;
 }
 
 .social-link:hover {
   transform: translateY(-3px);
-  color: #242424;
+  opacity: 0.5;
 }
 
-.copyright-text {
-  color: #999;
-  font-size: 0.85rem;
-}
+.copyright-text { color: #6b7280; font-size: 0.85rem; }
 
-.footer-divider {
-  border-top: 1px solid #eee;
+.footer-divider { border-top: 1px solid #e5e7eb; }
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 991px) {
+  .hot-box,
+  .belgian-box,
+  .greentea-box,
+  .coffee-cream-box {
+    margin-left: 0 !important;
+    margin-right: 0 !important;
+  }
 }

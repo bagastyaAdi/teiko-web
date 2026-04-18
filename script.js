@@ -21,6 +21,13 @@ async function loadContent() {
             document.getElementById('hero1-subtitle').innerHTML = s.subtitle ? s.subtitle.replace(/\n/g, '<br>') : '';
             document.getElementById('hero1-btn').textContent = s.button_text || '';
             document.getElementById('hero1-btn').href = s.button_url || '#';
+            if (s.text_align) {
+              const cont = sectionEl.querySelector('.container');
+              if (cont) {
+                // Hapus class text-left/center/right lama jika ada, lalu tambahkan yang baru
+                cont.className = cont.className.replace(/\btext-(left|center|right)\b/g, '').trim() + ' ' + s.text_align;
+              }
+            }
           }
         }
         return;
@@ -31,12 +38,13 @@ async function loadContent() {
         if (s.is_active === false) return; // Skip if inactive
 
         const heroHtml = `
-          <section id="${s.id}-section" class="hero hero-animated d-flex text-left">
+          <section id="${s.id}-section" class="hero hero-animated d-flex">
             <img id="${s.id}-img" src="${s.image_url || './asset/hero1.webp'}" alt="Background ${s.id}" class="hero-bg" loading="lazy" />
-            <div class="container2 text-dark">
+            <div class="container2 text-dark ${s.text_align || 'text-left'}">
               <h1 id="${s.id}-title" class="fw-bold">${(s.title || '').replace(/\n/g, '<br>')}</h1>
               <p id="${s.id}-subtitle" class="mt-2">${s.subtitle || ''}</p>
               ${s.subtitle2 ? `<p id="${s.id}-subtitle2" class="mt-2">${s.subtitle2}</p>` : ''}
+              ${s.button_text ? `<div class="mt-4"><a href="${s.button_url || '#'}" class="btn btn-dark me-3">${s.button_text}</a></div>` : ''}
             </div>
           </section>`;
         if (dynamicContainer) {
@@ -77,16 +85,26 @@ async function loadContent() {
 // ===== INTERSECTION OBSERVER (animasi scroll) =====
 const observer = new IntersectionObserver((entries) => {
   entries.forEach(entry => {
-    if (entry.isIntersecting) entry.target.classList.add('is-visible');
+    if (entry.isIntersecting) {
+      // Animasi hanya ditambahkan jika elemen belum visible
+      if (!entry.target.classList.contains('is-visible')) {
+        entry.target.classList.add('is-visible');
+      }
+    }
   });
-}, { threshold: 0.1 });
+}, {
+  threshold: 0.08,
+  rootMargin: '0px 0px -40px 0px' // Tunggu sampai 40px masuk viewport sebelum trigger
+});
 
 document.addEventListener('DOMContentLoaded', () => {
   // Load konten dari Supabase
   loadContent();
 
-  // Observe semua elemen animasi
-  document.querySelectorAll('.hero-animated, .minuman-animated').forEach(el => {
-    observer.observe(el);
-  });
+  // Delay singkat agar browser sempat render opacity:0 dulu sebelum observer aktif
+  setTimeout(() => {
+    document.querySelectorAll('.hero-animated, .minuman-animated').forEach(el => {
+      observer.observe(el);
+    });
+  }, 100);
 });
