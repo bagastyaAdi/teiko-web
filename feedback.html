@@ -238,7 +238,15 @@
       <p class="text-muted mb-4" style="font-size:0.88rem;">Isi form di bawah dan kami akan membacanya.</p>
 
       <div class="success-msg" id="success-msg">
-        <i class="bi bi-check-circle-fill me-2"></i>Terima kasih! Masukan kamu sudah kami terima. 🙏
+        <div class="mb-2"><i class="bi bi-check-circle-fill me-2"></i>Terima kasih! Mengalihkan ke Gmail untuk mengirimkan langsung ke <strong>support@teiko.co.id</strong>...</div>
+        <div class="mt-3 d-flex flex-wrap gap-2 justify-content-center">
+          <a id="btn-open-gmail" href="#" target="_blank" class="btn btn-sm btn-dark px-3 py-2 rounded-pill text-decoration-none" style="background:#054E34; border-color:#054E34;">
+            <i class="bi bi-google me-1"></i> Buka di Gmail Web
+          </a>
+          <a id="btn-open-mailto" href="#" class="btn btn-sm btn-outline-dark px-3 py-2 rounded-pill text-decoration-none">
+            <i class="bi bi-envelope-fill me-1"></i> Buka Aplikasi Email
+          </a>
+        </div>
       </div>
 
       <form id="feedback-form">
@@ -375,24 +383,35 @@
     document.getElementById('feedback-form').addEventListener('submit', async (e) => {
       e.preventDefault();
       const btn = document.getElementById('submit-btn');
-      btn.textContent = 'Mengirim...';
+      btn.textContent = 'Mengirim ke Gmail...';
       btn.disabled = true;
 
       const email = document.getElementById('fb-email').value.trim();
       const message = document.getElementById('fb-message').value.trim();
 
-      try {
-        const { error } = await sb.from('feedback').insert({ email, message });
-        if (error) throw error;
+      const subject = encodeURIComponent('Masukan & Saran Teiko');
+      const body = encodeURIComponent('Dari: ' + email + '\n\nPesan & Saran untuk Teiko:\n' + message);
+      const gmailUrl = `https://mail.google.com/mail/?view=cm&fs=1&to=support@teiko.co.id&su=${subject}&body=${body}`;
+      const mailtoUrl = `mailto:support@teiko.co.id?subject=${subject}&body=${body}`;
 
-        document.getElementById('feedback-form').reset();
-        document.getElementById('success-msg').style.display = 'block';
-        document.getElementById('feedback-form').style.display = 'none';
+      try {
+        await sb.from('feedback').insert({ email, message });
       } catch (err) {
-        alert('Gagal mengirim masukan. Silakan coba lagi.\n' + err.message);
-        btn.innerHTML = '<i class="bi bi-send me-2"></i>Kirim Masukan';
-        btn.disabled = false;
+        console.warn('Gagal mencatat ke database:', err.message);
       }
+
+      document.getElementById('btn-open-gmail').href = gmailUrl;
+      document.getElementById('btn-open-mailto').href = mailtoUrl;
+
+      document.getElementById('feedback-form').reset();
+      document.getElementById('success-msg').style.display = 'block';
+      document.getElementById('feedback-form').style.display = 'none';
+
+      // Langsung buka Gmail ke support@teiko.co.id
+      window.open(gmailUrl, '_blank');
+      setTimeout(() => {
+        window.location.href = mailtoUrl;
+      }, 350);
     });
 
     document.addEventListener('DOMContentLoaded', () => {
