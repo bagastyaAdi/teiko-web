@@ -1,197 +1,437 @@
-/* ===== FONTS & BASE ===== */
+/* ==========================================================================
+   TEIKO - DESIGN SYSTEM (Human-Crafted, Editorial & Spacious)
+   Fonts: Outfit (Headings) + Plus Jakarta Sans (Body & UI)
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+
+:root {
+  /* Color Palette - User Custom (#054E34 Emerald Green & #F3FFF1 Mint Cream) */
+  --bg-primary: #ffffff;
+  --bg-surface: #FFFFFF;
+  --bg-subtle: #F3FFF1;
+  --bg-dark: #054E34;
+
+  --text-main: #1C1E1C;
+  --text-muted: #5E635E;
+  --text-light: #8E938E;
+
+  --accent-green: #054E34;
+  --accent-green-hover: #033B27;
+  --accent-mint: #F3FFF1;
+  --accent-gold: #EAF5EF;
+
+  --border-color: rgba(5, 78, 52, 0.1);
+  --border-strong: rgba(5, 78, 52, 0.22);
+
+  --shadow-sm: 0 4px 12px rgba(0, 0, 0, 0.03);
+  --shadow-md: 0 14px 36px -6px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 24px 48px -12px rgba(0, 0, 0, 0.10);
+
+  --radius-sm: 12px;
+  --radius-md: 18px;
+  --radius-lg: 26px;
+  --radius-full: 9999px;
+
+  --transition-smooth: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ===== BASE RESET & LENIS SMOOTH SCROLL ===== */
 html {
   overflow-x: hidden;
   max-width: 100vw;
+  scroll-behavior: auto !important;
+}
+
+html.lenis, html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
 }
 
 body {
-  font-family: 'Inter', sans-serif;
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: var(--bg-primary);
+  color: var(--text-main);
   overflow-x: hidden;
   max-width: 100vw;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* ===== HERO SECTION ===== */
+h1, h2, h3, h4, h5, h6,
+.hero h1, .minuman-box h3, .drink-name, .card-title, .navbar-brand-logo, .page-title-section h1 {
+  font-family: 'Outfit', sans-serif;
+  letter-spacing: -0.025em;
+}
+
+/* ===== EDITORIAL HERO SECTION ===== */
 .hero {
-  margin-bottom: 2px;
   position: relative;
   display: flex;
   align-items: center;
-  min-height: 42vw;
-  padding: 0;
+  min-height: 62vh;
+  padding: 4.5rem 0;
+  overflow: hidden;
+  background-color: #ffffff;
+  border-bottom: 1px solid var(--border-color);
+}
+
+/* Mencegah icon gambar rusak (broken image icon) saat gambar baru dimuat di browser */
+img {
+  color: transparent;
+  text-indent: 100%;
+  white-space: nowrap;
   overflow: hidden;
 }
 
 .hero-bg {
   position: absolute;
-  top: 0;
-  left: 0;
+  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: cover;
-  object-position: top;
+  object-position: center;
+  background-color: #ffffff;
 }
 
-/* Hero 1: teks rata kanan */
+.hero::after {
+  display: none;
+}
+
 .hero-content-right {
   width: 100%;
-  padding-left: 3vw;
-  padding-right: 3vw;
+  max-width: 620px;
+  margin-left: auto;
+  margin-right: 5%;
+  padding: 0 2.5rem;
   position: relative;
-  z-index: 1;
-  color: #242424;
-  text-align: right;
+  z-index: 2;
+  color: var(--text-main);
+  text-align: left;
 }
 
-/* Hero 2, 3 (container2): teks rata kiri */
 .container2 {
   width: 100%;
-  padding-left: 3vw;
-  padding-right: 1vw;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 2.5rem;
   position: relative;
-  z-index: 1;
-  color: #242424;
+  z-index: 2;
+  color: var(--text-main);
 }
 
-/* Font berbasis vw agar scale proporsional dengan gambar */
 .hero h1 {
-  font-size: 3.5vw;
-  line-height: 1.2;
+  font-size: clamp(2.5rem, 4.2vw + 1rem, 4.6rem);
+  line-height: 1.15;
   font-weight: 800;
+  letter-spacing: -0.035em;
+  color: var(--text-main);
+  margin-bottom: 1.4rem;
 }
 
 .hero p {
-  font-size: 1.4vw;
-  line-height: 1.5;
+  font-size: clamp(1.08rem, 1.2vw + 0.4rem, 1.3rem);
+  line-height: 1.7;
+  color: var(--text-muted);
+  max-width: 640px;
+  margin-left: 0;
+  font-weight: 400;
 }
 
-.hero .btn {
-  font-size: 1.2vw;
-  padding: 0.6vw 1.8vw;
-  border-radius: 6px;
+.container2.text-left p,
+.container2.text-start p {
+  margin-left: 0;
+  margin-right: auto;
 }
 
-/* Scroll-in animations */
-.hero-animated {
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 1.2s ease-out, transform 1.2s ease-out;
-  background-color: white;
+.container2.text-center p {
+  margin-left: auto;
+  margin-right: auto;
 }
 
-.hero-animated.is-visible {
-  opacity: 1;
+/* Editorial Premium Button */
+.hero .btn,
+.btn-editorial {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 1.05rem 2.4rem;
+  font-size: 1rem;
+  font-weight: 600;
+  letter-spacing: 0.015em;
+  border-radius: var(--radius-full);
+  background-color: var(--accent-green);
+  color: #FFFFFF;
+  border: 1px solid var(--accent-green);
+  transition: all var(--transition-smooth);
+  box-shadow: 0 10px 24px rgba(5, 78, 52, 0.24);
+  text-decoration: none;
+}
+
+.hero .btn:hover,
+.btn-editorial:hover {
+  background-color: var(--accent-green-hover);
+  border-color: var(--accent-green-hover);
+  color: #FFFFFF;
+  transform: translateY(-2px);
+  box-shadow: 0 14px 32px rgba(5, 78, 52, 0.35);
+}
+
+.hero .btn:active,
+.btn-editorial:active {
   transform: translateY(0);
 }
 
-/* Gap antara hero1 dan dynamic heroes container */
+/* Spacing between heroes */
 #dynamic-heroes-container {
-  margin-top: 4px;
+  margin-top: 1.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
 }
 
-/* ===== MINUMAN SECTION ===== */
-.hot-box      { background-image: url('./asset/3.svg'); }
-.greentea-box { background-image: url('./asset/4.svg'); }
-.belgian-box  { background-image: url('./asset/5.svg'); }
-.coffee-cream-box { background-image: url('./asset/6.svg'); }
-
-.minuman-animated {
-  opacity: 0;
-  transform: translateY(20px);
-  transition: opacity 1.2s ease-out, transform 1.2s ease-out;
-  background-color: white;
+/* ===== BEVERAGES & EDITORIAL BOX SECTION ===== */
+.section-minuman {
+  max-width: 1320px;
+  margin: 3.5rem auto 0;
+  padding: 0 1.5rem;
 }
 
-.minuman-animated.is-visible {
-  opacity: 1;
-  transform: translateY(0);
-}
-
-.hot-box,
-.belgian-box,
-.greentea-box,
-.coffee-cream-box {
-  min-height: 500px;
-  padding: 2.3rem 1rem;
+.minuman-box {
+  position: relative;
+  min-height: 520px;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
   background-size: cover;
   background-position: center;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
-  align-items: center;
+  justify-content: flex-end;
+  padding: 2.8rem;
+  margin: 0.75rem;
+  box-shadow: var(--shadow-md);
+  transition: transform var(--transition-smooth), box-shadow var(--transition-smooth);
+  isolation: isolate;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+}
+
+.minuman-box::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(5, 78, 52, 0.02) 0%,
+    rgba(5, 78, 52, 0.35) 50%,
+    rgba(5, 78, 52, 0.85) 100%
+  );
+  z-index: 1;
+  transition: opacity var(--transition-smooth);
+}
+
+.minuman-box:hover {
+  transform: translateY(-6px);
+  box-shadow: var(--shadow-lg);
+}
+
+.hot-box          { background-image: url('./asset/3.svg'); }
+.greentea-box     { background-image: url('./asset/4.svg'); }
+.belgian-box      { background-image: url('./asset/5.svg'); }
+.coffee-cream-box { background-image: url('./asset/6.svg'); }
+
+.minuman-box h3 {
+  position: relative;
+  z-index: 2;
+  font-size: clamp(1.8rem, 2.4vw, 2.4rem);
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  color: #FFFFFF;
+  margin-bottom: 0.6rem;
+}
+
+.minuman-box p {
+  position: relative;
+  z-index: 2;
+  font-size: 1.05rem;
+  line-height: 1.65;
+  color: rgba(255, 255, 255, 0.9);
+  max-width: 480px;
+  margin-bottom: 0;
+}
+
+/* ===== PAGE HEADER & SECTION SPACING (Memberi Ruang Lega / Tidak Mepet) ===== */
+.page-title-section {
+  padding: 70px 0 35px;
   text-align: center;
-  margin: 5px;
 }
 
-.belgian-box h3, .hot-box h3 { font-size: 1.8rem; }
-.belgian-box p,  .hot-box p  { font-size: 1rem; margin-bottom: 1rem; }
-
-.belgian-box { color: #fff; }
-.belgian-box .btn { color: white; border-color: white; }
-.belgian-box .btn:hover {
-  background-color: rgba(255, 255, 255, 0.4);
-  color: black;
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border-color: rgba(255, 255, 255, 0.4);
+.page-title-section h6 {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  font-size: 0.85rem;
+  font-weight: 700;
+  letter-spacing: 2.5px;
+  color: var(--text-light);
+  margin-bottom: 12px;
+  text-transform: uppercase;
 }
 
-/* ===== FADE-UP ANIMATION (untuk halaman lain) ===== */
-.fade-up {
+.page-title-section h1 {
+  font-size: clamp(2.4rem, 4vw, 3.4rem);
+  font-weight: 800;
+  color: var(--text-main);
+  margin-bottom: 0;
+}
+
+/* ===== GSAP REVEAL UTILITIES ===== */
+.gsap-reveal {
   opacity: 0;
-  transform: translateY(30px);
-  animation: fadeUp 0.8s ease-out forwards;
+  transform: translateY(32px);
+  will-change: transform, opacity;
 }
 
-@keyframes fadeUp {
-  to { opacity: 1; transform: translateY(0); }
+.gsap-scale {
+  opacity: 0;
+  transform: scale(0.96);
+  will-change: transform, opacity;
 }
 
-/* ===== NAVBAR SPACER ===== */
+.no-js .gsap-reveal,
+.no-js .gsap-scale {
+  opacity: 1;
+  transform: none;
+}
+
+/* ===== CLEAN NAVBAR SPACER ===== */
 #navbar-spacer {
-  height: 68.59px;
+  height: 80px;
 }
 
-/* ===== FOOTER ===== */
+/* ===== EDITORIAL FOOTER ===== */
 .footer-clean {
-  background-color: #ffffff;
-  color: #1a1a1a;
-  border-top: 1px solid #e5e7eb;
+  background-color: var(--bg-surface);
+  color: var(--text-main);
+  border-top: 1px solid var(--border-color);
+  padding: 5rem 0 3rem;
+  margin-top: 6rem;
 }
 
 .footer-link {
-  color: #1a1a1a;
+  color: var(--text-muted);
   text-decoration: none;
   font-weight: 500;
-  transition: opacity 0.2s;
-  font-size: 0.95rem;
+  font-size: 0.98rem;
+  transition: color 0.2s ease, transform 0.2s ease;
+  display: inline-block;
 }
 
-.footer-link:hover { opacity: 0.5; }
+.footer-link:hover {
+  color: var(--accent-green);
+  transform: translateX(4px);
+}
 
-.social-icons .bi { font-size: 1.5rem; color: #1a1a1a; }
+.social-icons {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.25rem;
+}
 
 .social-link {
-  color: #1a1a1a;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background-color: var(--bg-subtle);
+  color: var(--text-main);
   text-decoration: none;
-  transition: transform 0.2s, opacity 0.2s;
+  transition: all var(--transition-smooth);
+  border: 1px solid var(--border-color);
+}
+
+.social-link .bi {
+  font-size: 1.25rem;
+  transition: transform 0.3s ease;
 }
 
 .social-link:hover {
+  background-color: var(--accent-green);
+  color: #FFFFFF;
+  border-color: var(--accent-green);
   transform: translateY(-3px);
-  opacity: 0.5;
+  box-shadow: 0 8px 18px rgba(5, 78, 52, 0.2);
 }
 
-.copyright-text { color: #6b7280; font-size: 0.85rem; }
+.social-link:hover .bi {
+  transform: scale(1.1);
+}
 
-.footer-divider { border-top: 1px solid #e5e7eb; }
+.copyright-text {
+  color: var(--text-light);
+  font-size: 0.9rem;
+  letter-spacing: 0.01em;
+}
 
-/* ===== RESPONSIVE ===== */
+.footer-divider {
+  border-top: 1px solid var(--border-color);
+  margin-top: 4rem;
+  padding-top: 2.5rem;
+}
+
+/* ===== RESPONSIVE TWEAKS ===== */
 @media (max-width: 991px) {
-  .hot-box,
-  .belgian-box,
-  .greentea-box,
-  .coffee-cream-box {
-    margin-left: 0 !important;
-    margin-right: 0 !important;
+  .hero {
+    min-height: 65vh;
+    padding: 5rem 0;
+  }
+
+  .hero-content-right {
+    text-align: center;
+    padding: 0 1.5rem;
+  }
+
+  .hero::after {
+    display: none;
+  }
+
+  .hero p {
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .minuman-box {
+    min-height: 420px;
+    margin: 0.5rem 0;
+    padding: 2.2rem;
+  }
+
+  .page-title-section {
+    padding: 50px 0 25px;
+  }
+}
+
+@media (max-width: 575px) {
+  .hero {
+    min-height: auto;
+    padding: 4.5rem 0 3.5rem;
+  }
+
+  .minuman-box {
+    min-height: 380px;
+    padding: 1.75rem;
   }
 }

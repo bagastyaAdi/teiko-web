@@ -309,6 +309,18 @@ async function optimizeImage(file, maxWidth = 1280) {
   });
 }
 
+// Helper: Kompres ke WebP & Upload ke Supabase Storage
+async function uploadAndOptimizeImage(file, prefix, maxWidth = 1280) {
+  const optimizedFile = await optimizeImage(file, maxWidth);
+  const filename = `${prefix}_${Date.now()}.webp`;
+  const { error: uploadError } = await sb.storage
+    .from('site-images')
+    .upload(filename, optimizedFile, { upsert: true, contentType: 'image/webp' });
+  if (uploadError) throw new Error('Upload gagal: ' + uploadError.message);
+  const { data: urlData } = sb.storage.from('site-images').getPublicUrl(filename);
+  return urlData.publicUrl + '?t=' + Date.now();
+}
+
 // Edit Content Form Logic (Hero Sections)
 window.editContent = (id) => {
   const section = SECTIONS.find(s => s.id === id) || {
@@ -403,11 +415,8 @@ window.saveEditContent = async (id) => {
     let imageUrl = contentData[id]?.image_url || null;
 
     if (pendingUploads[id]) {
-      const file = pendingUploads[id];
-      const filename = `${id}_${Date.now()}.${file.name.split('.').pop()}`;
-      await sb.storage.from('site-images').upload(filename, file);
-      const { data: urlData } = sb.storage.from('site-images').getPublicUrl(filename);
-      imageUrl = urlData.publicUrl;
+      imageUrl = await uploadAndOptimizeImage(pendingUploads[id], id, 1400);
+      delete pendingUploads[id];
     }
 
     const updateData = { id: id, image_url: imageUrl, updated_at: new Date().toISOString() };
@@ -460,22 +469,10 @@ async function saveSection(sectionId) {
 
     // Upload foto jika ada file baru
     if (pendingUploads[sectionId]) {
-      const file = pendingUploads[sectionId];
-      const ext = file.name.split('.').pop().toLowerCase();
-      const filename = `${sectionId}.${ext}`;
-
-      const { error: uploadError } = await sb.storage
-        .from('site-images')
-        .upload(filename, file, { upsert: true, contentType: file.type });
-
-      if (uploadError) throw new Error('Upload gagal: ' + uploadError.message);
-
-      const { data: urlData } = sb.storage.from('site-images').getPublicUrl(filename);
-      // Tambah cache-buster agar browser refresh gambar
-      imageUrl = urlData.publicUrl + '?t=' + Date.now();
-
+      imageUrl = await uploadAndOptimizeImage(pendingUploads[sectionId], sectionId, 1400);
       delete pendingUploads[sectionId];
-      document.getElementById(`hint-${sectionId}`).textContent = '✅ Foto berhasil diupload';
+      const hintEl = document.getElementById(`hint-${sectionId}`);
+      if (hintEl) hintEl.textContent = '✅ Foto WebP berhasil diupload';
     }
 
     // Kumpulkan nilai dari form
@@ -793,11 +790,8 @@ async function saveNewDrink() {
   try {
     let imageUrl = null;
     if (pendingUploads['new_drink']) {
-      const file = pendingUploads['new_drink'];
-      const filename = `drink_${Date.now()}.${file.name.split('.').pop()}`;
-      await sb.storage.from('site-images').upload(filename, file);
-      const { data: urlData } = sb.storage.from('site-images').getPublicUrl(filename);
-      imageUrl = urlData.publicUrl;
+      imageUrl = await uploadAndOptimizeImage(pendingUploads['new_drink'], 'drink', 900);
+      delete pendingUploads['new_drink'];
     }
 
     const { error } = await sb.from('drinks').insert({
@@ -945,11 +939,8 @@ window.saveEditDrink = async (id) => {
     let imageUrl = drink.image_url;
 
     if (pendingUploads['edit_drink']) {
-      const file = pendingUploads['edit_drink'];
-      const filename = `drink_${Date.now()}.${file.name.split('.').pop()}`;
-      await sb.storage.from('site-images').upload(filename, file);
-      const { data: urlData } = sb.storage.from('site-images').getPublicUrl(filename);
-      imageUrl = urlData.publicUrl;
+      imageUrl = await uploadAndOptimizeImage(pendingUploads['edit_drink'], 'drink', 900);
+      delete pendingUploads['edit_drink'];
     }
 
     const { error } = await sb.from('drinks').update({
@@ -1039,10 +1030,8 @@ async function saveNewHero() {
   btn.innerHTML = '<i class="bi bi-arrow-repeat spin"></i> Menyimpan...';
 
   try {
-    const file = pendingUploads['new_hero'];
-    const filename = `hero_${Date.now()}.${file.name.split('.').pop()}`;
-    await sb.storage.from('site-images').upload(filename, file);
-    const { data: urlData } = sb.storage.from('site-images').getPublicUrl(filename);
+    const imageUrl = await uploadAndOptimizeImage(pendingUploads['new_hero'], 'hero', 1400);
+    delete pendingUploads['new_hero'];
     
     const { error } = await sb.from('site_content').insert({
       id: `hero_${Date.now()}`,
@@ -1051,7 +1040,7 @@ async function saveNewHero() {
       subtitle2: document.getElementById('new-hero-sub2').value,
       button_text: document.getElementById('new-hero-btn-text').value,
       button_url: document.getElementById('new-hero-btn-url').value,
-      image_url: urlData.publicUrl,
+      image_url: imageUrl,
       is_active: true
     });
 
@@ -1221,11 +1210,8 @@ window.saveNewEventBanner = async () => {
   btn.innerHTML = '<i class="bi bi-arrow-repeat spin"></i> Menyimpan...';
 
   try {
-    const file = pendingUploads['new_event'];
-    const filename = `event_${Date.now()}.${file.name.split('.').pop()}`;
-    const { error: uploadError } = await sb.storage.from('site-images').upload(filename, file);
-    if (uploadError) throw new Error('Upload gagal: ' + uploadError.message);
-    const { data: urlData } = sb.storage.from('site-images').getPublicUrl(filename);
+    const imageUrl = await uploadAndOptimizeImage(pendingUploads['new_event'], 'event', 1400);
+    delete pendingUploads['new_event'];
     
     // Save to site_content table with event_ prefix
     const eventId = `event_${Date.now()}`;
@@ -1233,7 +1219,7 @@ window.saveNewEventBanner = async () => {
     // Cara: Table Editor → site_content → Add Column → name: tnc, type: text
     const insertPayload = {
       id: eventId,
-      image_url: urlData.publicUrl,
+      image_url: imageUrl,
       is_active: true,
       title:     titleVal    || null,
       subtitle:  dateVal     || null,
@@ -1364,12 +1350,8 @@ window.saveEditEventBanner = async (id) => {
     let imageUrl = ev.image_url;
 
     if (pendingUploads['edit_event']) {
-      const file = pendingUploads['edit_event'];
-      const filename = `event_${Date.now()}.${file.name.split('.').pop()}`;
-      const { error: uploadError } = await sb.storage.from('site-images').upload(filename, file);
-      if (uploadError) throw new Error('Upload foto gagal: ' + uploadError.message);
-      const { data: urlData } = sb.storage.from('site-images').getPublicUrl(filename);
-      imageUrl = urlData.publicUrl;
+      imageUrl = await uploadAndOptimizeImage(pendingUploads['edit_event'], 'event', 1400);
+      delete pendingUploads['edit_event'];
     }
 
     // NOTE: Kolom 'tnc' harus ditambahkan dulu di Supabase Dashboard sebelum bisa digunakan.

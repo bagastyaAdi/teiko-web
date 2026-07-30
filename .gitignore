@@ -1,0 +1,76 @@
+# ==========================================
+# Credentials, Secrets & Environment Variables
+# ==========================================
+.env
+.env.*
+*.env
+*.env.local
+*.env.development
+*.env.test
+*.env.production
+credentials.json
+service-account.json
+*-secret.json
+*.pem
+*.key
+*.cert
+secrets.yaml
+secrets.yml
+auth.json
+
+# ==========================================
+# Database Files & Backups
+# ==========================================
+*.db
+*.sqlite
+*.sqlite3
+*.db-journal
+*.mdb
+*.accdb
+*.sql
+*.sql.gz
+*.dump
+/database/
+/db/
+/backups/
+*.bak
+
+# ==========================================
+# Logs & Temp Files
+# ==========================================
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.tmp/
+temp/
+*.tmp
+
+# ==========================================
+# OS & Editor Generated Files
+# ==========================================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.swp
+*.swo
+*~
+
+# ==========================================
+# Dependencies & Build Output
+# ==========================================
+node_modules/
+dist/
+build/
+.cache/

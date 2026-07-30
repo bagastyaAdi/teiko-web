@@ -1,3 +1,7 @@
+/* ==========================================================================
+   TEIKO - NAVBAR STYLES (Editorial Cafe, Sleek Pill Hover & Glassmorphism)
+   ========================================================================== */
+
 /* ===== NAVBAR CUSTOM ===== */
 .navbar-custom {
   position: fixed;
@@ -5,23 +9,24 @@
   left: 0;
   right: 0;
   z-index: 9999;
-  background: #ffffff !important;
-  border-bottom: 1px solid #e5e7eb;
-  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.06);
-  /* Force GPU compositing layer agar selalu di atas di iOS/Safari */
+  background: rgba(252, 251, 248, 0.88) !important;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid rgba(28, 30, 28, 0.08);
+  box-shadow: 0 4px 24px rgba(0, 0, 0, 0.04);
   -webkit-transform: translateZ(0);
   transform: translateZ(0);
   will-change: transform;
   isolation: isolate;
+  transition: all 0.35s ease;
 }
 
 .navbar-selector {
-  /* Memaksa render di layer atas pada iOS */
   -webkit-transform: translateZ(0);
   transform: translateZ(0);
 }
 
-/* Sembunyikan navbar saat modal (detail) terbuka agar tidak menumpuk di background */
+/* Sembunyikan navbar saat modal (detail) terbuka */
 body.modal-open .navbar-custom {
   opacity: 0;
   pointer-events: none;
@@ -31,12 +36,11 @@ body.modal-open .navbar-custom {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 1.5rem;
-  height: 68.59px;
+  padding: 0 2rem;
+  height: 80px;
   max-width: 1280px;
   margin: 0 auto;
   position: relative;
-  /* Tambahkan ini agar absolute hamburger relatif ke container */
 }
 
 .navbar-brand-logo {
@@ -46,47 +50,58 @@ body.modal-open .navbar-custom {
 }
 
 .logo-nav {
-  height: 42px;
+  height: 44px;
   width: auto;
   object-fit: contain;
+  transition: transform 0.3s ease;
 }
 
-/* Desktop Links */
+.navbar-brand-logo:hover .logo-nav {
+  transform: scale(1.04);
+}
+
+/* ===== DESKTOP LINKS (Editorial Pill Hover & Active) ===== */
 .nav-desktop-links {
   list-style: none;
   display: flex;
-  gap: 2.5rem;
+  align-items: center;
+  gap: 0.75rem;
   margin: 0;
   padding: 0;
 }
 
 .nav-desktop-link {
   text-decoration: none;
-  color: #374151;
+  color: #5E635E;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   font-weight: 500;
-  font-size: 0.95rem;
+  font-size: 0.96rem;
+  padding: 0.55rem 1.25rem;
+  border-radius: 9999px;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  display: inline-flex;
+  align-items: center;
   position: relative;
-  transition: color 0.2s;
 }
 
-.nav-desktop-link::after {
-  content: '';
-  position: absolute;
-  bottom: -4px;
-  left: 0;
-  width: 0;
-  height: 2px;
-  background: #16a34a;
-  border-radius: 2px;
-  transition: width 0.25s ease;
-}
-
+/* Hover: editorial black badge */
 .nav-desktop-link:hover {
-  color: #16a34a;
+  background-color: #111111;
+  color: #FFFFFF;
+  transform: translateY(-1px);
 }
 
-.nav-desktop-link:hover::after {
-  width: 100%;
+/* Active Page: editorial black pill badge */
+.nav-desktop-link.active {
+  background-color: #111111;
+  color: #FFFFFF;
+  font-weight: 600;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+}
+
+.nav-desktop-link.active:hover {
+  background-color: #000000;
+  color: #FFFFFF;
 }
 
 /* ===== HAMBURGER ===== */
@@ -98,9 +113,9 @@ body.modal-open .navbar-custom {
   background: none;
   border: none;
   cursor: pointer;
-  padding: 6px;
-  border-radius: 6px;
-  transition: background 0.15s;
+  padding: 8px;
+  border-radius: 10px;
+  transition: background 0.2s;
   position: absolute;
   right: 1.5rem;
   top: 50%;
@@ -108,19 +123,18 @@ body.modal-open .navbar-custom {
 }
 
 .hamburger:hover {
-  background: #f3f4f6;
+  background: #F3FFF1;
 }
 
 .hamburger span {
   display: block;
   width: 24px;
   height: 2px;
-  background: #374151;
+  background: #054E34;
   border-radius: 2px;
   transition: transform 0.3s ease, opacity 0.3s ease;
 }
 
-/* Hamburger animasi X saat terbuka */
 .hamburger.open span:nth-child(1) {
   transform: translateY(7px) rotate(45deg);
 }
@@ -149,15 +163,12 @@ body.modal-open .navbar-custom {
   pointer-events: all;
 }
 
-/* Blur konten halaman saat drawer terbuka — tanpa artifact split */
-/* CATATAN: Tidak menggunakan filter: blur(0) secara global karena menyebabkan
-   stacking context baru yang mengangkat elemen di atas fixed navbar pada iOS/Safari */
-body.drawer-open>*:not(#navbar-placeholder):not(.nav-drawer):not(.drawer-overlay) {
-  filter: blur(5px);
+body.drawer-open > *:not(#navbar-placeholder):not(.nav-drawer):not(.drawer-overlay) {
+  filter: blur(6px);
   transition: filter 0.3s ease;
 }
 
-body:not(.drawer-open)>*:not(#navbar-placeholder):not(.nav-drawer):not(.drawer-overlay) {
+body:not(.drawer-open) > *:not(#navbar-placeholder):not(.nav-drawer):not(.drawer-overlay) {
   filter: none;
   transition: filter 0.3s ease;
 }
@@ -167,12 +178,12 @@ body:not(.drawer-open)>*:not(#navbar-placeholder):not(.nav-drawer):not(.drawer-o
   position: fixed;
   top: 0;
   right: -320px;
-  width: 280px;
+  width: 290px;
   height: 100vh;
-  background: #ffffff;
+  background: #FFFFFF;
   z-index: 10001;
-  transition: right 0.35s cubic-bezier(0.4, 0, 0.2, 1);
-  box-shadow: -6px 0 24px rgba(0, 0, 0, 0.12);
+  transition: right 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: -10px 0 32px rgba(0, 0, 0, 0.12);
   display: none;
   flex-direction: column;
 }
@@ -185,75 +196,86 @@ body:not(.drawer-open)>*:not(#navbar-placeholder):not(.nav-drawer):not(.drawer-o
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 1.2rem 1.5rem;
-  border-bottom: 1px solid #e5e7eb;
+  padding: 1.4rem 1.5rem;
+  border-bottom: 1px solid rgba(28, 30, 28, 0.08);
 }
 
 .drawer-brand {
+  font-family: 'Outfit', sans-serif;
   font-weight: 700;
-  font-size: 1rem;
-  color: #111827;
+  font-size: 1.1rem;
+  color: #054E34;
 }
 
 .drawer-close-btn {
   background: none;
   border: none;
-  font-size: 1.1rem;
+  font-size: 1.2rem;
   cursor: pointer;
-  color: #6b7280;
-  padding: 6px 8px;
-  border-radius: 8px;
-  transition: background 0.15s, color 0.15s;
+  color: #5E635E;
+  padding: 8px 10px;
+  border-radius: 10px;
+  transition: background 0.2s, color 0.2s;
   display: flex;
   align-items: center;
 }
 
 .drawer-close-btn:hover {
-  background: #f3f4f6;
-  color: #111827;
+  background: #F3FFF1;
+  color: #054E34;
 }
 
 .drawer-nav-links {
   list-style: none;
-  padding: 1.2rem 1rem;
+  padding: 1.5rem 1.2rem;
   margin: 0;
   flex: 1;
 }
 
 .drawer-nav-links li {
-  margin-bottom: 4px;
+  margin-bottom: 8px;
 }
 
 .drawer-nav-links a {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 13px 16px;
-  border-radius: 10px;
+  gap: 14px;
+  padding: 14px 18px;
+  border-radius: 9999px;
   text-decoration: none;
-  color: #374151;
+  color: #5E635E;
+  font-family: 'Plus Jakarta Sans', sans-serif;
   font-weight: 500;
-  font-size: 0.95rem;
-  transition: background 0.15s, color 0.15s;
+  font-size: 0.98rem;
+  transition: all 0.25s ease;
 }
 
 .drawer-nav-links a:hover {
-  background: #f0fdf4;
-  color: #16a34a;
+  background: #111111;
+  color: #FFFFFF;
+}
+
+.drawer-nav-links a.active {
+  background: #111111;
+  color: #FFFFFF;
+  font-weight: 600;
 }
 
 .drawer-nav-links a i {
-  font-size: 1.1rem;
-  color: #9ca3af;
-  transition: color 0.15s;
+  font-size: 1.15rem;
+  color: #8E938E;
+  transition: color 0.25s ease;
 }
 
 .drawer-nav-links a:hover i {
-  color: #16a34a;
+  color: #FFFFFF;
+}
+
+.drawer-nav-links a.active i {
+  color: #FFFFFF;
 }
 
 /* ===== RESPONSIVE ===== */
-/* Hamburger aktif di tablet & mobile (< 1200px) */
 @media (max-width: 1199px) {
   .nav-desktop-links {
     display: none;
@@ -268,7 +290,6 @@ body:not(.drawer-open)>*:not(#navbar-placeholder):not(.nav-drawer):not(.drawer-o
   }
 }
 
-/* Pastikan hamburger TERSEMBUNYI di desktop (>= 1200px) */
 @media (min-width: 1200px) {
   .hamburger {
     display: none !important;
@@ -284,5 +305,5 @@ body:not(.drawer-open)>*:not(#navbar-placeholder):not(.nav-drawer):not(.drawer-o
 }
 
 #navbar-spacer {
-  height: 68.59px;
+  height: 80px;
 }

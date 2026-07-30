@@ -1,14 +1,97 @@
-// ===== SUPABASE CONTENT LOADER =====
+// ==========================================================================
+// TEIKO - MAIN SCRIPT (GSAP ScrollTrigger & Lenis Smooth Scroll Integration)
+// ==========================================================================
+
+// 1. Initialize Lenis Smooth Scroll
+let lenis;
+if (typeof Lenis !== 'undefined') {
+  lenis = new Lenis({
+    duration: 1.15,
+    easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+    orientation: 'vertical',
+    gestureOrientation: 'vertical',
+    smoothWheel: true,
+    wheelMultiplier: 1,
+    touchMultiplier: 2,
+    infinite: false,
+  });
+
+  function raf(time) {
+    lenis.raf(time);
+    requestAnimationFrame(raf);
+  }
+
+  requestAnimationFrame(raf);
+
+  // Sync Lenis with GSAP ScrollTrigger
+  if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
+    gsap.registerPlugin(ScrollTrigger);
+    lenis.on('scroll', ScrollTrigger.update);
+    gsap.ticker.add((time) => {
+      lenis.raf(time * 1000);
+    });
+    gsap.ticker.lagSmoothing(0, 0);
+  }
+}
+
+// 2. GSAP Animations for Hero & Editorial Grid
+function initGsapAnimations() {
+  if (typeof gsap === 'undefined') return;
+
+  // Hero Content Entrance Animation
+  const heroContent = document.querySelector('.gsap-hero-content');
+  if (heroContent) {
+    gsap.fromTo(
+      heroContent.children,
+      { opacity: 0, y: 32 },
+      {
+        opacity: 1,
+        y: 0,
+        duration: 1.1,
+        stagger: 0.18,
+        ease: 'power3.out',
+        delay: 0.15
+      }
+    );
+  }
+
+  // ScrollTrigger Stagger Reveal for Beverage Boxes
+  const revealItems = gsap.utils.toArray('.gsap-reveal');
+  if (revealItems.length > 0 && typeof ScrollTrigger !== 'undefined') {
+    revealItems.forEach((box, index) => {
+      gsap.fromTo(
+        box,
+        { opacity: 0, y: 40, scale: 0.98 },
+        {
+          opacity: 1,
+          y: 0,
+          scale: 1,
+          duration: 0.9,
+          ease: 'power2.out',
+          scrollTrigger: {
+            trigger: box,
+            start: 'top 85%',
+            toggleActions: 'play none none none',
+            once: true
+          }
+        }
+      );
+    });
+  }
+}
+
+// 3. Supabase Content Loader
 async function loadContent() {
   try {
+    if (typeof sb === 'undefined') return;
     const { data, error } = await sb.from('site_content').select('*');
     if (error) throw error;
 
     const dynamicContainer = document.getElementById('dynamic-heroes-container');
-    if (dynamicContainer) dynamicContainer.innerHTML = ''; // Clear previous if any
+    if (dynamicContainer) dynamicContainer.innerHTML = '';
 
     data.forEach(s => {
-      // 1. Handle HERO NON-DYNAMICS (Special/Static IDs like hero1)
+      // 1. Handle HERO NON-DYNAMICS (hero1)
       if (s.id === 'hero1') {
         const sectionEl = document.getElementById('hero1-section');
         if (sectionEl) {
@@ -16,46 +99,35 @@ async function loadContent() {
             sectionEl.style.setProperty('display', 'none', 'important');
           } else {
             sectionEl.style.display = '';
-            if (s.image_url) document.getElementById('hero1-img').src = s.image_url;
-            document.getElementById('hero1-title').innerHTML = s.title ? s.title.replace(/\n/g, '<br>') : '';
-            document.getElementById('hero1-subtitle').innerHTML = s.subtitle ? s.subtitle.replace(/\n/g, '<br>') : '';
-            document.getElementById('hero1-btn').textContent = s.button_text || '';
-            document.getElementById('hero1-btn').href = s.button_url || '#';
+            if (s.image_url) {
+              const imgEl = document.getElementById('hero1-img');
+              if (imgEl) imgEl.src = s.image_url;
+            }
+            const titleEl = document.getElementById('hero1-title');
+            const subtitleEl = document.getElementById('hero1-subtitle');
+            const btnEl = document.getElementById('hero1-btn');
+
+            if (titleEl) titleEl.innerHTML = s.title ? s.title.replace(/\n/g, '<br>') : '';
+            if (subtitleEl) subtitleEl.innerHTML = s.subtitle ? s.subtitle.replace(/\n/g, '<br>') : '';
+            if (btnEl) {
+              btnEl.innerHTML = `${s.button_text || 'Lihat Menu'} <i class="bi bi-arrow-right"></i>`;
+              btnEl.href = s.button_url || 'drinks';
+            }
             if (s.text_align) {
-              const cont = sectionEl.querySelector('.container');
+              const cont = sectionEl.querySelector('.hero-content-right');
               if (cont) {
-                // Hapus class text-left/center/right lama jika ada, lalu tambahkan yang baru
-                cont.className = cont.className.replace(/\btext-(left|center|right)\b/g, '').trim() + ' ' + s.text_align;
+                cont.className = cont.className.replace(/\btext-(left|center|right|start|end)\b/g, '').trim() + ' ' + s.text_align;
               }
             }
           }
         }
         return;
-      }
-
-      // 2. Handle DYNAMIC HEROES (hero2, hero3, hero_xxx)
-      if (s.id.startsWith('hero')) {
-        if (s.is_active === false) return; // Skip if inactive
-
-        const heroHtml = `
-          <section id="${s.id}-section" class="hero hero-animated d-flex">
-            <img id="${s.id}-img" src="${s.image_url || './asset/hero1.webp'}" alt="Background ${s.id}" class="hero-bg" loading="lazy" />
-            <div class="container2 text-dark ${s.text_align || 'text-left'}">
-              <h1 id="${s.id}-title" class="fw-bold">${(s.title || '').replace(/\n/g, '<br>')}</h1>
-              <p id="${s.id}-subtitle" class="mt-2">${s.subtitle || ''}</p>
-              ${s.subtitle2 ? `<p id="${s.id}-subtitle2" class="mt-2">${s.subtitle2}</p>` : ''}
-              ${s.button_text ? `<div class="mt-4"><a href="${s.button_url || '#'}" class="btn btn-dark me-3">${s.button_text}</a></div>` : ''}
-            </div>
-          </section>`;
-        if (dynamicContainer) {
-          dynamicContainer.insertAdjacentHTML('beforeend', heroHtml);
-          const newSection = document.getElementById(`${s.id}-section`);
-          if (newSection) observer.observe(newSection);
-        }
+      // 2. Ignore extra dynamic heroes (hero2, hero3, etc.) so unwanted banners like Matcha Oat Latte do not appear on reload
+      if (s.id.startsWith('hero') && s.id !== 'hero1') {
         return;
       }
 
-      // 3. Handle OTHER SECTIONS (Beverages/Hot Series etc)
+      // 3. Handle OTHER SECTIONS (Beverages / Editorial Boxes)
       let boxEl = null;
       switch (s.id) {
         case 'hot_series': boxEl = document.getElementById('hot-series-box'); break;
@@ -72,39 +144,23 @@ async function loadContent() {
           if (s.image_url) boxEl.style.backgroundImage = `url('${s.image_url}')`;
           const titleEl = boxEl.querySelector('h3');
           const descEl = boxEl.querySelector('p');
-          if (titleEl) titleEl.textContent = s.title || '';
-          if (descEl) descEl.textContent = s.subtitle || '';
+          if (titleEl && s.title) titleEl.textContent = s.title;
+          if (descEl && s.subtitle) descEl.textContent = s.subtitle;
         }
       }
     });
+
+    // Refresh ScrollTrigger after content is loaded
+    if (typeof ScrollTrigger !== 'undefined') {
+      setTimeout(() => ScrollTrigger.refresh(), 300);
+    }
   } catch (err) {
-    console.warn('Konten tidak dapat dimuat dari database:', err.message);
+    console.warn('Konten tidak dapat dimuat dari database Supabase:', err.message);
   }
 }
 
-// ===== INTERSECTION OBSERVER (animasi scroll) =====
-const observer = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      // Animasi hanya ditambahkan jika elemen belum visible
-      if (!entry.target.classList.contains('is-visible')) {
-        entry.target.classList.add('is-visible');
-      }
-    }
-  });
-}, {
-  threshold: 0.08,
-  rootMargin: '0px 0px -40px 0px' // Tunggu sampai 40px masuk viewport sebelum trigger
-});
-
+// 4. Initialize on DOMContentLoaded
 document.addEventListener('DOMContentLoaded', () => {
-  // Load konten dari Supabase
+  initGsapAnimations();
   loadContent();
-
-  // Delay singkat agar browser sempat render opacity:0 dulu sebelum observer aktif
-  setTimeout(() => {
-    document.querySelectorAll('.hero-animated, .minuman-animated').forEach(el => {
-      observer.observe(el);
-    });
-  }, 100);
 });

@@ -15,9 +15,14 @@
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="navbar.css">
 
+  <!-- GSAP & Lenis Smooth Scrolling -->
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
+  <script src="https://unpkg.com/lenis@1.1.9/dist/lenis.min.js"></script>
+
   <style>
     body {
-      background-color: #fcfcfc;
+      background-color: #ffffff;
       opacity: 0;
       transition: opacity 0.4s ease;
     }
@@ -37,24 +42,26 @@
     .page-title-section { padding: 40px 0 30px; text-align: center; }
 
     .drink-card {
-      background: white;
+      background: transparent;
       border-radius: 20px;
       overflow: hidden;
       transition: all 0.3s ease;
       height: 100%;
-      border: 1px solid #eee;
+      border: none;
+      box-shadow: none;
+      text-align: center;
     }
 
     .drink-card:hover {
-      transform: translateY(-10px);
-      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.05);
+      transform: translateY(-8px);
+      box-shadow: none;
     }
 
     .drink-img-wrapper {
       width: 100%;
       aspect-ratio: 1/1;
       overflow: hidden;
-      background: #f5f5f5;
+      background: transparent;
     }
 
     .drink-img {
@@ -64,25 +71,29 @@
     }
 
     .drink-info {
-      padding: 20px;
+      padding: 15px 10px;
+      text-align: center;
     }
 
     .drink-name {
       font-weight: 700;
       font-size: 1.15rem;
       margin-bottom: 5px;
-      color: #2A3B27;
+      color: #111111;
+      text-align: center;
     }
 
     .drink-oz {
       color: #888;
       font-size: 0.9rem;
+      text-align: center;
     }
 
     .drink-price {
       font-weight: 600;
       color: #444;
       margin-top: 10px;
+      text-align: center;
     }
 
     /* Skeleton Loading */
@@ -104,14 +115,16 @@
 
     /* Category Filter */
     .category-filter-container {
-      background-color: #fbfbfb;
+      background-color: #ffffff;
+      border: none;
       border-radius: 50px;
       display: inline-flex;
+      gap: 12px;
       padding: 6px;
       overflow-x: auto;
       max-width: 100%;
       white-space: nowrap;
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+      box-shadow: none;
     }
 
     /* Sembunyikan scrollbar untuk filter */
@@ -126,6 +139,7 @@
 
     .category-btn {
       border: none;
+      outline: none;
       background: transparent;
       padding: 10px 30px;
       border-radius: 50px;
@@ -136,15 +150,17 @@
     }
 
     .category-btn.active {
-      background-color: #121212;
+      background-color: #111111;
       color: white;
       font-weight: 600;
-      /* box-shadow: 0 4px 10px rgba(79, 79, 79, 0.3); */
+      box-shadow: none;
+      outline: none;
     }
 
     .category-btn:hover:not(.active) {
-      background-color: #121212;
+      background-color: #111111;
       color: white;
+      font-weight: 600;
     }
   </style>
 
@@ -195,8 +211,9 @@
   <!-- Footer Placeholder -->
   <footer id="footer-placeholder"></footer>
 
-  <!-- Scripts -->
+  <!-- Scripts (Termasuk Lenis Smooth Scroll dari script.js) -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="script.js" defer></script>
   <script src="navbar.js" defer></script>
   <script src="footer.js" defer></script>
 
@@ -245,7 +262,7 @@
             <div class="drink-img-wrapper">
               <img src="${drink.image_url || './asset/hero1.webp'}" alt="${drink.name}" class="drink-img" loading="lazy">
             </div>
-            <div class="drink-info">
+            <div class="drink-info text-center">
               <div class="drink-name">${drink.name}</div>
               <div class="drink-oz">${drink.oz_size || '-'}</div>
               ${drink.price ? `<div class="drink-price">${drink.price}</div>` : ''}

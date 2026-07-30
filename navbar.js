@@ -45,12 +45,25 @@ function updateNavbarSpacer() {
 window.addEventListener('load', updateNavbarSpacer);
 window.addEventListener('resize', updateNavbarSpacer);
 
+// ===== HIGHLIGHT ACTIVE NAV =====
+function highlightActiveNav() {
+  const currentPath = window.location.pathname.replace(/^\/|\.html$/g, '').toLowerCase() || 'index';
+  document.querySelectorAll('.nav-desktop-link, .drawer-nav-links a').forEach(link => {
+    link.classList.remove('active');
+    const href = (link.getAttribute('href') || '').replace(/^\/|\.html$/g, '').toLowerCase();
+    if (href && href === currentPath) {
+      link.classList.add('active');
+    }
+  });
+}
+
 // ===== LOAD NAVBAR =====
 const navbarPlaceholder = document.getElementById('navbar-placeholder');
 
 if (localStorage.getItem('navbarHTML')) {
   navbarPlaceholder.innerHTML = localStorage.getItem('navbarHTML');
   initDrawer();
+  highlightActiveNav();
 }
 
 fetch('/navbar.html')
@@ -60,5 +73,6 @@ fetch('/navbar.html')
     localStorage.setItem('navbarHTML', data);
     initDrawer();
     updateNavbarSpacer();
+    highlightActiveNav();
   })
   .catch(err => console.error('Gagal memuat navbar:', err));

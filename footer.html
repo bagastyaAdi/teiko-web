@@ -1,36 +1,147 @@
-<footer class="footer-clean py-5 mt-0">
-  <div class="container-fluid px-5">
-    <div class="row text-center text-md-start align-items-center">
-      <!-- Left Column -->
-      <div class="col-12 col-md-4 mb-4 mb-md-0">
-        <ul class="list-unstyled mb-0 d-flex flex-column gap-2">
-          <li><a href="drinks" class="footer-link">Drinks</a></li>
-          <li><a href="event" class="footer-link">Event</a></li>
-        </ul>
-      </div>
+<footer class="footer-chobani" style="background: #111111; color: #FFFFFF; padding: 4rem 0 2.5rem; margin-top: 2rem; font-family: 'Plus Jakarta Sans', sans-serif; border-top: 1px solid rgba(255, 255, 255, 0.12);">
+  <div class="container-fluid" style="max-width: 1380px; padding: 0 3.5rem;">
+    <div class="row g-5 justify-content-between align-items-start">
 
-      <!-- Center Column -->
-      <div class="col-12 col-md-4 mb-4 mb-md-0 text-center">
-        <h6 class="fw-bold text-uppercase mb-3" style="letter-spacing: 1px;">Get in Touch</h6>
-        <div class="d-flex justify-content-center gap-4 social-icons">
-          <a href="#" class="social-link"><i class="bi bi-instagram"></i></a>
-          <a href="#" class="social-link"><i class="bi bi-whatsapp"></i></a>
-          <a href="#" class="social-link"><i class="bi bi-facebook"></i></a>
+      <!-- LEFT SIDE: Brand Logo, Multi-Column Links & Social Icons -->
+      <div class="col-12 col-lg-7">
+        <!-- Brand Title -->
+        <h2 style="font-family: 'Outfit', sans-serif; font-size: 2.5rem; font-weight: 800; letter-spacing: -0.04em; color: #FFFFFF; margin-bottom: 1.75rem;">
+          Teiko<span>.</span>
+        </h2>
+
+        <!-- 2-Row / 3-Column Grid Links (Tanpa Kemitraan/Partnership) -->
+        <div class="row g-4 mb-4" style="max-width: 580px;">
+          <div class="col-6 col-md-4">
+            <a href="drinks" class="footer-link-chobani">Menu Minuman</a>
+            <a href="outlet" class="footer-link-chobani mt-2">Lokasi Outlet</a>
+          </div>
+          <div class="col-6 col-md-4">
+            <a href="event" class="footer-link-chobani">Event Teiko</a>
+            <a href="feedback" class="footer-link-chobani mt-2">Customer Care</a>
+          </div>
+          <div class="col-6 col-md-4">
+            <a href="faq" class="footer-link-chobani">FAQ &amp; Bantuan</a>
+            <a href="https://wa.me/6281234567890?text=Halo%20Teiko,%20saya%20tertarik%20bergabung%20dengan%20komunitas%20Grup%20WA%20Teiko%20News" target="_blank" class="footer-link-chobani mt-2">Teiko News</a>
+          </div>
+        </div>
+
+        <!-- Clean Social Media Icons -->
+        <div class="d-flex gap-4 mt-4 pt-2 align-items-center">
+          <a href="https://instagram.com" target="_blank" class="footer-icon-chobani" title="Instagram" aria-label="Instagram"><i class="bi bi-instagram"></i></a>
+          <a href="https://whatsapp.com" target="_blank" class="footer-icon-chobani" title="WhatsApp" aria-label="WhatsApp"><i class="bi bi-whatsapp"></i></a>
+          <a href="https://youtube.com" target="_blank" class="footer-icon-chobani" title="YouTube" aria-label="YouTube"><i class="bi bi-youtube"></i></a>
+          <a href="mailto:info@teiko.co.id" class="footer-icon-chobani" title="Email Info" aria-label="Email"><i class="bi bi-envelope"></i></a>
         </div>
       </div>
 
-      <!-- Right Column -->
-      <div class="col-12 col-md-4 text-center text-md-end">
-        <ul class="list-unstyled mb-0 d-flex flex-column gap-2">
-          <li><a href="outlet" class="footer-link">Our Outlet</a></li>
-          <li><a href="feedback" class="footer-link">Feedback</a></li>
-        </ul>
+      <!-- RIGHT SIDE: Newsletter Subscription Box & Checkbox -->
+      <div class="col-12 col-lg-5 d-flex flex-column align-items-lg-end">
+        <div style="width: 100%; max-width: 440px;">
+          <p style="font-family: 'Outfit', sans-serif; font-weight: 600; font-size: 0.94rem; color: #FFFFFF; margin-bottom: 0.85rem; text-align: left; letter-spacing: 0.01em;">
+            Dapatkan berita &amp; promo spesial terbaru Teiko
+          </p>
+
+          <!-- Rectangular Black & White Editorial Newsletter Form -->
+          <form id="newsletter-form" onsubmit="handleNewsletterSubmit(event)" class="mb-3">
+            <div class="d-flex" style="border: 1px solid rgba(255, 255, 255, 0.35); border-radius: 4px; background: #111111; overflow: hidden;">
+              <input type="email" id="newsletter-email" placeholder="Alamat Gmail / Email kamu" required
+                style="flex-grow: 1; border: none; padding: 0.8rem 1.15rem; font-size: 0.88rem; outline: none; background: transparent; color: #FFFFFF; font-family: 'Plus Jakarta Sans', sans-serif;">
+              <button type="submit" id="newsletter-btn" class="btn-chobani-subscribe">
+                Subscribe
+              </button>
+            </div>
+
+            <!-- Checkbox agreement -->
+            <div class="d-flex align-items-start mt-3 gap-2">
+              <input type="checkbox" id="newsletter-agree" required style="margin-top: 3px; accent-color: #FFFFFF; cursor: pointer;">
+              <label for="newsletter-agree" style="font-size: 0.78rem; line-height: 1.45; color: rgba(255, 255, 255, 0.75); cursor: pointer;">
+                Saya setuju menerima informasi promo, berita, dan broadcast dari <strong>info@teiko.co.id</strong> (minimal usia 13 tahun).
+              </label>
+            </div>
+          </form>
+        </div>
       </div>
+
     </div>
 
-    <!-- Divider & Copyright -->
-    <div class="footer-divider mt-5 pt-4">
-      <p class="text-center copyright-text mb-0">&copy; 2025 Teiko, All Rights Reserved.</p>
+    <!-- BOTTOM ROW: Clean Thin Divider & Inline Footer Legal Links -->
+    <div class="d-flex flex-wrap justify-content-between align-items-center pt-4 mt-5"
+      style="border-top: 1px solid rgba(255, 255, 255, 0.15); font-size: 0.78rem; color: rgba(255, 255, 255, 0.65);">
+      <div class="d-flex flex-wrap gap-3 align-items-center mb-2 mb-md-0">
+        <a href="drinks" class="footer-legal-link">Website Terms</a>
+        <span style="opacity: 0.3;">|</span>
+        <a href="feedback" class="footer-legal-link">Privacy Policy</a>
+        <span style="opacity: 0.3;">|</span>
+        <a href="outlet" class="footer-legal-link">Accessibility Statement</a>
+        <span style="opacity: 0.3;">|</span>
+        <a href="mailto:info@teiko.co.id" class="footer-legal-link">Contact info@teiko.co.id</a>
+      </div>
+      <p class="mb-0">&copy; 2026 Teiko Indonesia. All Rights Reserved.</p>
     </div>
+
   </div>
+
+  <!-- Embedded Black & White Editorial Footer CSS -->
+  <style>
+    .footer-link-chobani {
+      color: rgba(255, 255, 255, 0.82);
+      text-decoration: none;
+      font-size: 0.92rem;
+      font-weight: 500;
+      display: block;
+      transition: color 0.2s ease, transform 0.2s ease;
+    }
+
+    .footer-link-chobani:hover {
+      color: #FFFFFF;
+      transform: translateX(3px);
+    }
+
+    .footer-icon-chobani {
+      color: #FFFFFF;
+      font-size: 1.35rem;
+      text-decoration: none;
+      opacity: 0.8;
+      transition: all 0.25s ease;
+      display: inline-block;
+    }
+
+    .footer-icon-chobani:hover {
+      opacity: 1;
+      color: #FFFFFF;
+      transform: translateY(-3px);
+    }
+
+    .btn-chobani-subscribe {
+      border: none;
+      background: #FFFFFF;
+      color: #111111;
+      font-weight: 700;
+      font-size: 0.88rem;
+      padding: 0.8rem 1.6rem;
+      cursor: pointer;
+      transition: all 0.25s ease;
+      white-space: nowrap;
+    }
+
+    .btn-chobani-subscribe:hover {
+      background: #E5E5E5;
+      color: #000000;
+    }
+
+    .footer-legal-link {
+      color: rgba(255, 255, 255, 0.65);
+      text-decoration: none;
+      transition: color 0.2s ease;
+    }
+
+    .footer-legal-link:hover {
+      color: #FFFFFF;
+    }
+
+    /* Support placeholder styling */
+    #newsletter-email::placeholder {
+      color: rgba(255, 255, 255, 0.5);
+    }
+  </style>
 </footer>
