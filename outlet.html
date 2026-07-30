@@ -69,17 +69,17 @@
 
     /* INFORMASI JAM OPERASIONAL SECARA UMUM (1 KALI SAJA) */
     .general-hours-banner {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
+      display: inline-block;
+      text-align: center;
       background: #F3FFF1;
       border: 1px solid rgba(5, 78, 52, 0.18);
       color: #054E34;
-      font-weight: 600;
-      font-size: 0.9rem;
+      font-weight: 500;
+      font-size: 0.88rem;
       padding: 8px 20px;
       border-radius: 9999px;
       margin: 1rem auto 0.5rem;
+      max-width: 92%;
     }
 
     /* INTERACTIVE MAP AT THE VERY TOP */
@@ -230,20 +230,18 @@
       border-radius: 24px;
       padding: 2.5rem 2.5rem;
       color: #FFFFFF;
-      box-shadow: 0 18px 40px -10px rgba(5, 78, 52, 0.28);
       display: flex;
       flex-wrap: wrap;
       align-items: center;
       justify-content: space-between;
       gap: 1.8rem;
       border: 1px solid rgba(255, 255, 255, 0.14);
-      transition: transform 0.35s ease, box-shadow 0.35s ease;
+      transition: transform 0.35s ease;
       text-decoration: none;
     }
 
     .flagship-card:hover {
       transform: translateY(-4px);
-      box-shadow: 0 24px 50px -10px rgba(5, 78, 52, 0.38);
       color: #FFFFFF;
     }
 
@@ -389,7 +387,7 @@
       <!-- INFORMASI JAM OPERASIONAL HANYA 1 KALI DISINI -->
       <div class="d-flex justify-content-center">
         <div class="general-hours-banner">
-          <i class="bi bi-clock-fill"></i> Jam Operasional Seluruh Outlet: <strong>Buka Setiap Hari • 09.00 - 22.00 WITA</strong>
+          <i class="bi bi-clock-fill me-1"></i> Jam Operasional: <strong>Setiap Hari • 09.00 - 22.00 WITA</strong>
         </div>
       </div>
     </div>
