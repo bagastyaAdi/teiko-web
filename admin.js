@@ -24,37 +24,40 @@ console.log('DEBUG: admin.js initialization started');
 
 const SECTIONS = [
   {
+    id: 'hero_drink_display',
+    label: 'Display Minuman Kubah Hijau (Atas)',
+    emoji: '🥤',
+    defaultImg: './asset/hero3.png',
+    fields: [
+      { key: 'title',       label: 'Judul Menu Atas',            type: 'textarea', placeholder: 'NEW MENU ES COKLAT' },
+      { key: 'subtitle',    label: 'Teks Kutipan (Quote)',       type: 'textarea', placeholder: 'Rasanya Enak Banget, Bikin Nagih! Teiko Emang Paling Pas Buat Setiap Momen.' },
+    ]
+  },
+  {
     id: 'hero1',
-    label: 'Hero Section 1',
+    label: 'Banner Promo Lebar 1 (Bawah Marquee)',
     emoji: '🖼️',
     defaultImg: './asset/hero1.webp',
     fields: [
-      { key: 'title',       label: 'Judul Utama',     type: 'textarea', placeholder: 'ENGGA PERLU MIKIR 2 KALI\nRASANYA BIKIN NAGIH' },
-      { key: 'subtitle',    label: 'Deskripsi',        type: 'textarea', placeholder: 'Minum puas, bayar hemat bareng Teiko.' },
-      { key: 'button_text', label: 'Teks Tombol',      type: 'text',     placeholder: 'Lihat Menu Kami' },
-      { key: 'button_url',  label: 'Link Tombol',      type: 'text',     placeholder: 'drinks' },
+      { key: 'button_url',  label: 'Link Tujuan Klik',           type: 'text',     placeholder: 'drinks' },
     ]
   },
   {
     id: 'hero2',
-    label: 'Hero Section 2',
+    label: 'Banner Promo Lebar 2 (Bawah Marquee)',
     emoji: '🖼️',
     defaultImg: './asset/hero2.webp',
     fields: [
-      { key: 'title',     label: 'Judul',       type: 'textarea', placeholder: 'NEW MENU\nES COKLAT' },
-      { key: 'subtitle',  label: 'Paragraf 1',  type: 'textarea', placeholder: '"Pendatang baru, langsung nomor satu...' },
-      { key: 'subtitle2', label: 'Paragraf 2',  type: 'textarea', placeholder: 'yang creamy menciptakan rasa mewah...' },
+      { key: 'button_url',  label: 'Link Tujuan Klik',           type: 'text',     placeholder: 'drinks' },
     ]
   },
   {
     id: 'hero3',
-    label: 'Hero Section 3',
+    label: 'Banner Promo Lebar 3 (Bawah Marquee)',
     emoji: '🖼️',
     defaultImg: './asset/hero1.webp',
     fields: [
-      { key: 'title',     label: 'Judul',       type: 'textarea', placeholder: 'PROMO SPESIAL\nAKHIR PEKAN' },
-      { key: 'subtitle',  label: 'Paragraf 1',  type: 'textarea', placeholder: 'Nikmati kesegaran Teiko dengan...' },
-      { key: 'subtitle2', label: 'Paragraf 2',  type: 'textarea', placeholder: 'Jangan sampai kehabisan...' },
+      { key: 'button_url',  label: 'Link Tujuan Klik',           type: 'text',     placeholder: 'drinks' },
     ]
   },
   {
@@ -96,6 +99,43 @@ const SECTIONS = [
       { key: 'title',    label: 'Judul',      type: 'text',     placeholder: 'COFFEE CREAM' },
       { key: 'subtitle', label: 'Deskripsi',  type: 'textarea', placeholder: 'Rasa kopi lembut berpadu krim spesial Teiko.' },
     ]
+  },
+  // ===== KONTROL SECTION PROMO BAWAH =====
+  {
+    id: 'promo_section',
+    label: '📸 Tampilkan/Sembunyikan Seluruh Kotak Foto Promo',
+    emoji: '🔀',
+    defaultImg: './asset/dummy_choco.png',
+    fields: [] // Hanya toggle aktif/nonaktif
+  },
+  // ===== 4 KOTAK FOTO PROMO BAWAH =====
+  {
+    id: 'promo_box_1',
+    label: 'Kotak Foto Promo 1 (Kiri Atas)',
+    emoji: '🖼️',
+    defaultImg: './asset/dummy_choco.png',
+    fields: [{ key: 'button_url', label: 'Link Tujuan Klik', type: 'text', placeholder: 'drinks' }]
+  },
+  {
+    id: 'promo_box_2',
+    label: 'Kotak Foto Promo 2 (Kanan Atas)',
+    emoji: '🖼️',
+    defaultImg: './asset/dummy_matcha.png',
+    fields: [{ key: 'button_url', label: 'Link Tujuan Klik', type: 'text', placeholder: 'drinks' }]
+  },
+  {
+    id: 'promo_box_3',
+    label: 'Kotak Foto Promo 3 (Kiri Bawah)',
+    emoji: '🖼️',
+    defaultImg: './asset/dummy_coffee.png',
+    fields: [{ key: 'button_url', label: 'Link Tujuan Klik', type: 'text', placeholder: 'drinks' }]
+  },
+  {
+    id: 'promo_box_4',
+    label: 'Kotak Foto Promo 4 (Kanan Bawah)',
+    emoji: '🖼️',
+    defaultImg: './asset/dummy_taro.png',
+    fields: [{ key: 'button_url', label: 'Link Tujuan Klik', type: 'text', placeholder: 'drinks' }]
   }
 ];
 
@@ -245,13 +285,43 @@ function createSectionCard(section) {
   const imgSrc = data.image_url || section.defaultImg;
   const isActive = data.is_active !== false;
 
+  // Determine card type for visual differentiation
+  const isDrinkDisplay = section.id === 'hero_drink_display';
+  const isBanner      = section.id.startsWith('hero') && section.id !== 'hero_drink_display';
+  const isCategory    = ['hot_series','green_tea','belgian','coffee_cream'].includes(section.id);
+
+  // Type badge label + color
+  const typeBadge = isDrinkDisplay
+    ? { label: '🥤 Display Minuman', color: '#0d6efd', text: '#fff' }
+    : isBanner
+      ? { label: '🖼️ Banner Promo',   color: '#6f42c1', text: '#fff' }
+      : { label: '☕ Kategori Menu',   color: '#fd7e14', text: '#fff' };
+
+  // Card accent border color
+  const borderColor = isDrinkDisplay ? '#0d6efd'
+    : isBanner ? '#6f42c1'
+    : '#fd7e14';
+
+  // Image aspect ratio
+  const aspectRatio = isDrinkDisplay ? '3/4' : (isBanner ? '16/6' : '1/1');
+
   return `
-    <div class="drink-admin-card" id="card-${section.id}">
-      <img src="${imgSrc}" class="drink-admin-img" alt="Preview" style="object-fit: cover; aspect-ratio: 16/9;">
+    <div class="drink-admin-card" id="card-${section.id}" style="border-top: 4px solid ${borderColor}; position:relative;">
+      <!-- Type badge top-right -->
+      <div style="position:absolute;top:10px;right:10px;z-index:2;background:${typeBadge.color};color:${typeBadge.text};font-size:0.68rem;font-weight:700;padding:3px 9px;border-radius:20px;letter-spacing:0.02em;box-shadow:0 2px 6px rgba(0,0,0,0.18);">
+        ${typeBadge.label}
+      </div>
+      <div style="overflow:hidden;border-radius:var(--radius,8px) var(--radius,8px) 0 0;background:#f5f5f5;cursor:pointer;" onclick="editContent('${section.id}')" title="Klik untuk edit">
+        <img src="${imgSrc}" class="drink-admin-img" alt="Preview"
+          style="object-fit:cover;aspect-ratio:${aspectRatio};width:100%;display:block;transition:transform .25s;"
+          onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='scale(1)'">
+      </div>
       <div class="drink-admin-body">
-        <div class="drink-admin-name">${section.label} <small class="text-muted" style="font-size:0.7rem">(${section.id})</small></div>
+        <div class="drink-admin-name">${section.emoji || ''} ${section.label}
+          <small class="text-muted" style="font-size:0.68rem;display:block;margin-top:2px;">${section.id}</small>
+        </div>
         <div class="drink-admin-meta">
-           <span class="drink-admin-badge ${isActive ? 'bg-success text-white' : 'bg-danger text-white'}" id="badge-${section.id}">${isActive ? 'Aktif' : 'Off'}</span>
+           <span class="drink-admin-badge ${isActive ? 'bg-success text-white' : 'bg-danger text-white'}" id="badge-${section.id}">${isActive ? '✅ Aktif' : '⛔ Off'}</span>
         </div>
         <div class="drink-admin-actions">
           <button class="btn-icon" onclick="editContent('${section.id}')" title="Edit"><i class="bi bi-pencil"></i></button>
@@ -260,6 +330,12 @@ function createSectionCard(section) {
           </button>
           <button class="btn-icon btn-icon-danger" onclick="deleteSection('${section.id}')" title="Hapus"><i class="bi bi-trash"></i></button>
         </div>
+        ${isDrinkDisplay ? `
+        <div style="padding: 10px 12px; background: #e8f4fd; border-top: 1px solid #c5e0f5; text-align: center;">
+          <button class="btn btn-primary w-100 fw-bold" onclick="document.getElementById('nav-slides').click();" style="font-size: 0.82rem; padding: 7px 10px; border-radius: 6px;">
+            <i class="bi bi-images me-1"></i> Kelola / Tambah Slide Minuman
+          </button>
+        </div>` : ''}
       </div>
     </div>`;
 }
@@ -539,11 +615,18 @@ async function toggleSection(sectionId) {
 
 // ===== DELETE SECTION =====
 async function deleteSection(sectionId) {
-  if (!confirm('Hapus section ini secara permanen? Jika ini adalah section bawaan (default), menghapusnya dari database akan membuat kontennya kembali kosong / default di website.')) return;
+  if (!confirm('Hapus dan sembunyikan section ini secara permanen dari website? (Tidak akan kembali ke gambar default dari folder asset)')) return;
   try {
-    const { error } = await sb.from('site_content').delete().eq('id', sectionId);
+    const { error } = await sb.from('site_content').upsert({
+      id: sectionId,
+      is_active: false,
+      image_url: '',
+      title: '',
+      subtitle: '',
+      updated_at: new Date().toISOString()
+    });
     if (error) throw error;
-    showToast('Section berhasil dihapus!', 'success');
+    showToast('Section berhasil dihapus & disembunyikan dari website!', 'success');
     loadContent();
   } catch (err) {
     showToast('Gagal menghapus: ' + err.message, 'error');
@@ -563,21 +646,23 @@ function showToast(message, type = 'success') {
 
 // ===== VIEW TOGGLE =====
 const contentNav   = document.getElementById('nav-content');
+const slidesNav    = document.getElementById('nav-slides');
 const drinksNav    = document.getElementById('nav-drinks');
 const eventsNav    = document.getElementById('nav-events');
 const feedbackNav  = document.getElementById('nav-feedback');
 const faqNav       = document.getElementById('nav-faq');
 const contentView  = document.getElementById('content-view');
+const slidesView   = document.getElementById('slides-view');
 const drinksView   = document.getElementById('drinks-view');
 const eventsView   = document.getElementById('events-view');
 const feedbackView = document.getElementById('feedback-view');
 const faqView      = document.getElementById('faq-view');
 
-const allNavs  = [contentNav, drinksNav, eventsNav, feedbackNav, faqNav];
-const allViews = [contentView, drinksView, eventsView, feedbackView, faqView];
+const allNavs  = [contentNav, slidesNav, drinksNav, eventsNav, feedbackNav, faqNav];
+const allViews = [contentView, slidesView, drinksView, eventsView, feedbackView, faqView];
 
 function activateView(navId, viewId, loaderCallback) {
-  allNavs.forEach(nav => { if (nav) nav.classList.remove('active'); });
+  allNavs.forEach(nav  => { if (nav)  nav.classList.remove('active'); });
   const activeNav = document.getElementById(navId);
   if (activeNav) activeNav.classList.add('active');
 
@@ -589,10 +674,242 @@ function activateView(navId, viewId, loaderCallback) {
 }
 
 if (contentNav)  contentNav.addEventListener('click',  () => activateView('nav-content',  'content-view'));
-if (drinksNav)   drinksNav.addEventListener('click',   () => activateView('nav-drinks',   'drinks-view'));
-if (eventsNav)   eventsNav.addEventListener('click',   () => activateView('nav-events',   'events-view'));
+if (slidesNav)   slidesNav.addEventListener('click',   () => { activateView('nav-slides',  'slides-view');  loadSlidesAdmin(); });
+if (drinksNav)   drinksNav.addEventListener('click',   () => { activateView('nav-drinks',  'drinks-view');  loadDrinks(); });
+if (eventsNav)   eventsNav.addEventListener('click',   () => { activateView('nav-events',  'events-view');  loadEventsAdmin(); });
 if (feedbackNav) feedbackNav.addEventListener('click', () => activateView('nav-feedback', 'feedback-view', loadFeedback));
-if (faqNav)      faqNav.addEventListener('click',      () => activateView('nav-faq',      'faq-view'));
+if (faqNav)      faqNav.addEventListener('click',      () => { activateView('nav-faq',     'faq-view');     loadFaqAdmin(); });
+
+// ===== SLIDE MINUMAN HERO MANAGEMENT =====
+let slidesAdminData = [];
+
+async function loadSlidesAdmin() {
+  const grid = document.getElementById('slides-grid');
+  if (!grid) return;
+  grid.innerHTML = `<div class="loading-state"><div class="spinner"></div><p>Memuat slide...</p></div>`;
+  try {
+    const { data, error } = await sb.from('hero_drink_slides').select('*').order('sort_order', { ascending: true });
+    if (error) throw error;
+    slidesAdminData = data;
+    renderSlidesAdmin();
+  } catch (err) {
+    grid.innerHTML = `<div class="loading-state" style="color:#e74c3c;"><p>Gagal memuat: ${err.message}</p></div>`;
+  }
+}
+
+function renderSlidesAdmin() {
+  const grid = document.getElementById('slides-grid');
+  if (!grid) return;
+  if (slidesAdminData.length === 0) {
+    grid.innerHTML = `<div class="col-12 text-center py-5 text-muted"><p>Belum ada slide. Klik "+ Tambah Slide Baru".</p></div>`;
+    return;
+  }
+  grid.innerHTML = slidesAdminData.map(slide => {
+    const imgSrc = (slide.image_url && slide.image_url.trim()) ? slide.image_url : './asset/hero3.png';
+    return `
+    <div class="drink-admin-card" id="slide-card-${slide.id}" style="border-top:4px solid #0d6efd;position:relative;">
+      <div style="position:absolute;top:8px;right:8px;z-index:2;background:#0d6efd;color:#fff;font-size:0.65rem;font-weight:700;padding:2px 8px;border-radius:20px;">🥤 Slide ${slide.sort_order ?? ''}</div>
+      <div style="overflow:hidden;border-radius:8px 8px 0 0;cursor:pointer;" onclick="editSlide('${slide.id}')" title="Edit slide">
+        <img src="${imgSrc}" style="width:100%;aspect-ratio:3/4;object-fit:cover;display:block;transition:transform .25s;"
+          onmouseover="this.style.transform='scale(1.04)'" onmouseout="this.style.transform='scale(1)'">
+      </div>
+      <div class="drink-admin-body">
+        <div class="drink-admin-name">${slide.name || '(Tanpa Nama)'}</div>
+        <div class="drink-admin-meta" style="font-size:0.75rem;color:#888;margin-top:4px;">${slide.subtitle ? slide.subtitle.substring(0,60) + (slide.subtitle.length > 60 ? '…' : '') : '-'}</div>
+        <div class="drink-admin-meta mt-2">
+          <span class="drink-admin-badge ${slide.is_active ? 'bg-success text-white' : 'bg-danger text-white'}">${slide.is_active ? '✅ Aktif' : '⛔ Off'}</span>
+        </div>
+        <div class="drink-admin-actions">
+          <button class="btn-icon" onclick="editSlide('${slide.id}')" title="Edit"><i class="bi bi-pencil"></i></button>
+          <button class="btn-icon ${slide.is_active ? '' : 'text-success'}" onclick="toggleSlide('${slide.id}', ${!slide.is_active})" title="${slide.is_active ? 'Matikan' : 'Aktifkan'}">
+            <i class="bi ${slide.is_active ? 'bi-eye-slash' : 'bi-eye'}"></i>
+          </button>
+          <button class="btn-icon btn-icon-danger" onclick="deleteSlide('${slide.id}')" title="Hapus"><i class="bi bi-trash"></i></button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const addSlideBtn = document.getElementById('add-slide-btn');
+  if (addSlideBtn) addSlideBtn.addEventListener('click', showAddSlideForm);
+});
+
+function showAddSlideForm() {
+  const existing = document.getElementById('slide-form-area');
+  if (existing) { existing.remove(); return; }
+  const formHtml = `
+    <div id="slide-form-area" class="drink-form-container fade-up">
+      <h4 class="mb-3">Tambah Slide Minuman Baru</h4>
+      <div class="row g-3">
+        <div class="col-md-4">
+          <div class="upload-area" id="slide-upload-area">
+            <img id="slide-preview" src="./asset/hero3.png" class="img-preview" style="display:none;aspect-ratio:3/4;object-fit:cover;">
+            <div class="upload-placeholder" id="slide-placeholder"><i class="bi bi-plus-circle"></i><p>Foto Minuman</p></div>
+          </div>
+          <input type="file" id="slide-file-input" accept="image/*" style="display:none">
+        </div>
+        <div class="col-md-8">
+          <div class="row g-2">
+            <div class="col-12"><input type="text" id="slide-name" class="form-input" placeholder="Nama Menu (contoh: NEW MENU GREEN TEA)"></div>
+            <div class="col-12"><textarea id="slide-subtitle" class="form-input" placeholder="Tagline / Kutipan" rows="2"></textarea></div>
+            <div class="col-md-6"><input type="number" id="slide-order" class="form-input" placeholder="Urutan (0, 1, 2…)" min="0" value="0"></div>
+            <div class="col-12 text-end mt-2">
+               <button class="btn btn-light me-2" onclick="document.getElementById('slide-form-area').remove()">Batal</button>
+               <button class="btn btn-dark px-4" id="submit-slide-btn" onclick="saveNewSlide()">Simpan Slide</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  const slidesView = document.getElementById('slides-view');
+  const slidesGrid = document.getElementById('slides-grid');
+  slidesView.insertBefore(createDiv(formHtml), slidesGrid);
+  const upload = document.getElementById('slide-upload-area');
+  const input  = document.getElementById('slide-file-input');
+  upload.onclick = () => input.click();
+  input.onchange = async (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const opt = await optimizeImage(file, 900);
+      pendingUploads['new_slide'] = opt;
+      const reader = new FileReader();
+      reader.onload = re => {
+        const prev = document.getElementById('slide-preview');
+        prev.src = re.target.result;
+        prev.style.display = 'block';
+        document.getElementById('slide-placeholder').style.display = 'none';
+      };
+      reader.readAsDataURL(opt);
+    }
+  };
+}
+
+window.saveNewSlide = async () => {
+  const name     = document.getElementById('slide-name').value.trim();
+  const subtitle = document.getElementById('slide-subtitle').value.trim();
+  const order    = parseInt(document.getElementById('slide-order').value) || 0;
+  const btn      = document.getElementById('submit-slide-btn');
+  if (!name) { showToast('Nama slide wajib diisi', 'error'); return; }
+  btn.disabled = true;
+  btn.innerHTML = '<i class="bi bi-arrow-repeat spin"></i> Menyimpan...';
+  try {
+    let imageUrl = null;
+    if (pendingUploads['new_slide']) {
+      imageUrl = await uploadAndOptimizeImage(pendingUploads['new_slide'], 'slide', 900);
+      delete pendingUploads['new_slide'];
+    }
+    const { error } = await sb.from('hero_drink_slides').insert({ name, subtitle, image_url: imageUrl, sort_order: order, is_active: true });
+    if (error) throw error;
+    showToast('Slide berhasil ditambahkan!');
+    document.getElementById('slide-form-area').remove();
+    loadSlidesAdmin();
+  } catch (err) {
+    showToast('Gagal: ' + err.message, 'error');
+  } finally {
+    if (btn) { btn.disabled = false; btn.innerHTML = 'Simpan Slide'; }
+  }
+};
+
+window.editSlide = (id) => {
+  const slide = slidesAdminData.find(s => s.id === id);
+  if (!slide) return;
+  const existing = document.getElementById('edit-slide-form-area');
+  if (existing) existing.remove();
+  const formHtml = `
+    <div id="edit-slide-form-area" class="drink-form-container fade-up mt-4" style="border:2px solid #0d6efd;">
+      <h4 class="mb-3">Edit Slide: <span class="text-dark fw-bold">${slide.name}</span></h4>
+      <div class="row g-3">
+        <div class="col-md-4">
+          <div class="upload-area" id="edit-slide-upload-area">
+            <img id="edit-slide-preview" src="${slide.image_url || './asset/hero3.png'}" class="img-preview" style="display:block;aspect-ratio:3/4;object-fit:cover;">
+            <div class="upload-overlay"><i class="bi bi-camera"></i><span>Ganti Foto</span></div>
+          </div>
+          <input type="file" id="edit-slide-file-input" accept="image/*" style="display:none">
+        </div>
+        <div class="col-md-8">
+          <div class="row g-2">
+            <div class="col-12"><input type="text" id="edit-slide-name" class="form-input" value="${slide.name || ''}" placeholder="Nama Menu"></div>
+            <div class="col-12"><textarea id="edit-slide-subtitle" class="form-input" placeholder="Tagline / Kutipan" rows="2">${slide.subtitle || ''}</textarea></div>
+            <div class="col-md-6"><input type="number" id="edit-slide-order" class="form-input" value="${slide.sort_order ?? 0}" placeholder="Urutan" min="0"></div>
+            <div class="col-12 text-end mt-3">
+               <button class="btn btn-light me-2" onclick="document.getElementById('edit-slide-form-area').remove()">Batal</button>
+               <button class="btn btn-dark px-4" id="submit-edit-slide-btn" onclick="saveEditSlide('${slide.id}')">Simpan Perubahan</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>`;
+  const slidesView = document.getElementById('slides-view');
+  const slidesGrid = document.getElementById('slides-grid');
+  slidesView.insertBefore(createDiv(formHtml), slidesGrid);
+  const upload = document.getElementById('edit-slide-upload-area');
+  const input  = document.getElementById('edit-slide-file-input');
+  upload.onclick = () => input.click();
+  input.onchange = async (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      const opt = await optimizeImage(file, 900);
+      pendingUploads['edit_slide'] = opt;
+      const reader = new FileReader();
+      reader.onload = re => { document.getElementById('edit-slide-preview').src = re.target.result; };
+      reader.readAsDataURL(opt);
+    }
+  };
+  document.getElementById('edit-slide-form-area').scrollIntoView({ behavior: 'smooth' });
+};
+
+window.saveEditSlide = async (id) => {
+  const name     = document.getElementById('edit-slide-name').value.trim();
+  const subtitle = document.getElementById('edit-slide-subtitle').value.trim();
+  const order    = parseInt(document.getElementById('edit-slide-order').value) || 0;
+  const btn      = document.getElementById('submit-edit-slide-btn');
+  if (!name) { showToast('Nama wajib diisi', 'error'); return; }
+  btn.disabled = true;
+  btn.innerHTML = '<i class="bi bi-arrow-repeat spin"></i> Menyimpan...';
+  try {
+    const slide = slidesAdminData.find(s => s.id === id);
+    let imageUrl = slide.image_url;
+    if (pendingUploads['edit_slide']) {
+      imageUrl = await uploadAndOptimizeImage(pendingUploads['edit_slide'], 'slide', 900);
+      delete pendingUploads['edit_slide'];
+    }
+    const { error } = await sb.from('hero_drink_slides').update({ name, subtitle, image_url: imageUrl, sort_order: order }).eq('id', id);
+    if (error) throw error;
+    showToast('Slide berhasil diperbarui!');
+    document.getElementById('edit-slide-form-area').remove();
+    loadSlidesAdmin();
+  } catch (err) {
+    showToast('Gagal: ' + err.message, 'error');
+  } finally {
+    if (btn) { btn.disabled = false; btn.innerHTML = 'Simpan Perubahan'; }
+  }
+};
+
+window.toggleSlide = async (id, state) => {
+  try {
+    const { error } = await sb.from('hero_drink_slides').update({ is_active: state }).eq('id', id);
+    if (error) throw error;
+    showToast('Status slide diperbarui.');
+    loadSlidesAdmin();
+  } catch (err) { showToast('Gagal: ' + err.message, 'error'); }
+};
+
+window.deleteSlide = async (id) => {
+  if (!confirm('Hapus slide ini secara permanen?')) return;
+  try {
+    const { data, error } = await sb.from('hero_drink_slides').delete().eq('id', id).select();
+    if (error) throw error;
+    if (!data || data.length === 0) {
+      throw new Error('0 baris terhapus. Periksa kebijakan RLS (Row Level Security) untuk izin DELETE di tabel hero_drink_slides Supabase Anda.');
+    }
+    showToast('Slide dihapus.');
+    loadSlidesAdmin();
+  } catch (err) {
+    showToast('Gagal: ' + err.message, 'error');
+  }
+};
 
 // ===== FEEDBACK MANAGEMENT =====
 async function loadFeedback() {
@@ -640,15 +957,18 @@ async function loadFeedback() {
 
 async function deleteFeedback(id, btn) {
   if (!confirm('Hapus masukan ini?')) return;
-  btn.disabled = true;
+  if (btn) btn.disabled = true;
   try {
-    const { error } = await sb.from('feedback').delete().eq('id', id);
+    const { data, error } = await sb.from('feedback').delete().eq('id', id).select();
     if (error) throw error;
+    if (!data || data.length === 0) {
+      throw new Error('0 baris terhapus. Periksa kebijakan RLS (Row Level Security) untuk izin DELETE di tabel feedback Supabase Anda.');
+    }
     loadFeedback();
     showToast('Masukan berhasil dihapus.', 'success');
   } catch (err) {
     showToast('Gagal menghapus: ' + err.message, 'error');
-    btn.disabled = false;
+    if (btn) btn.disabled = false;
   }
 }
 window.deleteFeedback = deleteFeedback;
@@ -676,20 +996,38 @@ async function loadDrinks(isInitial = false) {
 
 function renderDrinks() {
   const grid = document.getElementById('drinks-grid');
+  if (!grid) return;
   if (drinksData.length === 0) {
-    grid.innerHTML = `<div class="col-12 text-center py-5 text-muted"><p>Belum ada produk. Klik tombol "+ Tambah Menu Baru".</p></div>`;
+    grid.innerHTML = `
+      <div class="col-12 text-center py-5">
+        <div class="p-4 rounded-4" style="background:#e8f4fd; border:2px dashed #0d6efd; max-width:640px; margin:0 auto;">
+          <h5 class="fw-bold mb-2 text-primary"><i class="bi bi-cup-hot-fill me-2"></i>Belum Ada Menu Minuman di Database Supabase</h5>
+          <p class="text-muted small mb-4">Database menu Anda masih kosong. Klik tombol di bawah ini untuk menyalin 8 Menu Minuman Resmi Teiko (Es Coklat, Matcha, Brown Sugar Boba, Coffee Cream, dsb.) ke Supabase Anda!</p>
+          <button class="btn btn-primary px-4 py-2 fw-bold shadow-sm" id="btn-seed-drinks" onclick="seedDefaultDrinks()">
+            <i class="bi bi-cloud-download me-2"></i>Import 8 Menu Minuman Teiko ke Supabase
+          </button>
+        </div>
+      </div>`;
     return;
   }
 
-  grid.innerHTML = drinksData.map(drink => `
+  grid.innerHTML = drinksData.map(drink => {
+    const imgSrc = (drink.image_url && drink.image_url.trim() !== '') ? drink.image_url : './asset/hero1.webp';
+    return `
     <div class="drink-admin-card" id="drink-card-${drink.id}">
-      <img src="${drink.image_url || './asset/hero1.webp'}" class="drink-admin-img" alt="Preview">
+      <div class="drink-admin-img-wrapper" style="position:relative;cursor:pointer;" onclick="editDrink('${drink.id}')" title="Klik untuk edit">
+        <img src="${imgSrc}" class="drink-admin-img" alt="${drink.name}" style="width:100%;display:block;">
+        <div style="position:absolute;inset:0;background:rgba(0,0,0,0.35);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;border-radius:var(--radius) var(--radius) 0 0;" class="drink-img-hover-overlay">
+          <i class="bi bi-pencil" style="color:#fff;font-size:1.5rem;"></i>
+        </div>
+      </div>
       <div class="drink-admin-body">
         <div class="drink-admin-name">${drink.name}</div>
         <div class="drink-admin-meta">
-          <span class="drink-admin-badge">${drink.oz_size || 'No Size'}</span>
-          <span class="drink-admin-badge">${drink.price || 'No Price'}</span>
-          <span class="drink-admin-badge ${drink.is_active ? 'bg-success text-white' : 'bg-danger text-white'}">${drink.is_active ? 'Aktif' : 'Off'}</span>
+          <span class="drink-admin-badge">${drink.category || 'No Cat'}</span>
+          <span class="drink-admin-badge">${drink.oz_size || '-'}</span>
+          <span class="drink-admin-badge">${drink.price || '-'}</span>
+          <span class="drink-admin-badge ${drink.is_active ? 'bg-success text-white' : 'bg-danger text-white'}">${drink.is_active ? '✅ Aktif' : '⛔ Off'}</span>
         </div>
         <div class="drink-admin-actions">
           <button class="btn-icon" onclick="editDrink('${drink.id}')" title="Edit"><i class="bi bi-pencil"></i></button>
@@ -699,9 +1037,113 @@ function renderDrinks() {
           <button class="btn-icon btn-icon-danger" onclick="deleteDrink('${drink.id}')" title="Hapus"><i class="bi bi-trash"></i></button>
         </div>
       </div>
-    </div>
-  `).join('');
+    </div>`;
+  }).join('');
+
+  // Hover effect for image overlay
+  document.querySelectorAll('.drink-img-hover-overlay').forEach(overlay => {
+    const wrapper = overlay.parentElement;
+    wrapper.addEventListener('mouseenter', () => overlay.style.opacity = '1');
+    wrapper.addEventListener('mouseleave', () => overlay.style.opacity = '0');
+  });
 }
+
+window.seedDefaultDrinks = async () => {
+  const btn = document.getElementById('btn-seed-drinks');
+  if (btn) {
+    btn.disabled = true;
+    btn.innerHTML = '<i class="bi bi-arrow-repeat spin me-2"></i>Mengimpor Menu Minuman...';
+  }
+  showToast('Sedang mengimpor 8 Menu Minuman Teiko ke Supabase...', 'info');
+
+  const defaultDrinks = [
+    {
+      name: 'Es Coklat Teiko Special',
+      category: 'Chocolate',
+      price: 'Rp 15.000',
+      oz_size: '16 oz',
+      image_url: './asset/hero3.png',
+      detail: 'Paduan coklat pekat khas Belgia dengan susu segar dan krim manis yang lumer di mulut.',
+      is_active: true
+    },
+    {
+      name: 'Brown Sugar Boba Milk',
+      category: 'Milk',
+      price: 'Rp 18.000',
+      oz_size: '16 oz',
+      image_url: './asset/hero1.webp',
+      detail: 'Susu segar lembut dipadukan dengan gula aren asli khas Teiko serta kenyalnya boba premium.',
+      is_active: true
+    },
+    {
+      name: 'Matcha Oat Latte',
+      category: 'Tea',
+      price: 'Rp 20.000',
+      oz_size: '16 oz',
+      image_url: './asset/dummy_matcha.png',
+      detail: 'Teh hijau Uji Matcha pilihan bergaya Jepang dengan susu oat yang gurih dan menyehatkan.',
+      is_active: true
+    },
+    {
+      name: 'Belgian Choco Cream',
+      category: 'Chocolate',
+      price: 'Rp 18.000',
+      oz_size: '16 oz',
+      image_url: './asset/dummy_choco.png',
+      detail: 'Cokelat Belgia autentik dengan lapisan krim kental bertekstur lembut dan rasa cokelat pekat.',
+      is_active: true
+    },
+    {
+      name: 'Teiko Coffee Cream Special',
+      category: 'Coffee',
+      price: 'Rp 18.000',
+      oz_size: '16 oz',
+      image_url: './asset/dummy_coffee.png',
+      detail: 'Kopi espresso house-blend Teiko berpadu dengan susu kental lembut dan taburan bubuk kopi.',
+      is_active: true
+    },
+    {
+      name: 'Taro Creamy Milk',
+      category: 'Milk',
+      price: 'Rp 16.000',
+      oz_size: '16 oz',
+      image_url: './asset/dummy_taro.png',
+      detail: 'Aroma talas (taro) yang harum manis menyatu sempurna dengan susu krim kental khas Teiko.',
+      is_active: true
+    },
+    {
+      name: 'Jasmine Green Tea Original',
+      category: 'Tea',
+      price: 'Rp 10.000',
+      oz_size: '22 oz',
+      image_url: './asset/hero1.webp',
+      detail: 'Teh melati seduh segar alami yang harum, ringan, dan sangat menyegarkan untuk setiap waktu.',
+      is_active: true
+    },
+    {
+      name: 'Caramel Macchiato Teiko',
+      category: 'Coffee',
+      price: 'Rp 20.000',
+      oz_size: '16 oz',
+      image_url: './asset/dummy_coffee.png',
+      detail: 'Espresso kaya rasa dengan sirup karamel legit dan lapisan busa susu yang lembut.',
+      is_active: true
+    }
+  ];
+
+  try {
+    const { error } = await sb.from('drinks').insert(defaultDrinks);
+    if (error) throw error;
+    showToast('✅ 8 Menu Minuman Teiko berhasil diimpor ke Supabase!', 'success');
+    await loadDrinks();
+  } catch (err) {
+    showToast('Gagal mengimpor menu minuman: ' + err.message, 'error');
+    if (btn) {
+      btn.disabled = false;
+      btn.innerHTML = '<i class="bi bi-cloud-download me-2"></i>Coba Import Lagi';
+    }
+  }
+};
 
 // Add Drink Form Handling
 document.getElementById('add-drink-btn').addEventListener('click', () => {
@@ -826,8 +1268,11 @@ async function toggleDrinkActive(id, state) {
 async function deleteDrink(id) {
   if (!confirm('Hapus minuman ini secara permanen?')) return;
   try {
-    const { error } = await sb.from('drinks').delete().eq('id', id);
+    const { data, error } = await sb.from('drinks').delete().eq('id', id).select();
     if (error) throw error;
+    if (!data || data.length === 0) {
+      throw new Error('0 baris terhapus. Periksa kebijakan RLS (Row Level Security) untuk izin DELETE di tabel drinks Supabase Anda.');
+    }
     showToast('Minuman dihapus.');
     loadDrinks();
   } catch (err) {
@@ -1125,8 +1570,11 @@ async function toggleEventPrimary(id, isPrimary) {
 async function deleteEvent(id) {
   if (!confirm('Hapus banner event ini dari site_content?')) return;
   try {
-    const { error } = await sb.from('site_content').delete().eq('id', id);
+    const { data, error } = await sb.from('site_content').delete().eq('id', id).select();
     if (error) throw error;
+    if (!data || data.length === 0) {
+      throw new Error('0 baris terhapus. Periksa kebijakan RLS (Row Level Security) untuk izin DELETE di tabel site_content Supabase Anda.');
+    }
     showToast('Banner event dihapus.');
     loadContent();
   } catch (err) {
@@ -1401,7 +1849,15 @@ function renderFaqAdmin() {
   if(!grid) return;
   
   if (faqAdminData.length === 0) {
-    grid.innerHTML = `<div class="col-12 text-center py-5 text-muted"><p>Belum ada FAQ. Klik "Tambah FAQ Baru".</p></div>`;
+    grid.innerHTML = `
+      <div class="col-12 text-center py-5">
+        <div class="p-4 rounded-4" style="background:#e8f4fd; border:2px dashed #0d6efd; max-width:620px; margin:0 auto;">
+          <h5 class="fw-bold mb-2 text-primary"><i class="bi bi-cloud-arrow-down-fill me-2"></i>Belum Ada FAQ di Database Supabase</h5>
+          <p class="text-muted small mb-4">Website saat ini menampilkan 4 FAQ default (Kemitraan, Karir, Kualitas Minuman, Kontak Email). Klik tombol di bawah ini untuk menyalin keempat FAQ tersebut ke Supabase Anda sehingga siap diedit!</p>
+          <button class="btn btn-primary px-4 py-2 fw-bold shadow-sm" id="btn-seed-faq" onclick="seedDefaultFaqs()">
+            <i class="bi bi-cloud-download me-2"></i>Import 4 FAQ Bawaan Website ke Supabase
+          </button>
+        </div>
     return;
   }
 
@@ -1424,6 +1880,59 @@ function renderFaqAdmin() {
     </div>
   `).join('');
 }
+
+window.seedDefaultFaqs = async () => {
+  const btn = document.getElementById('btn-seed-faq');
+  if (btn) {
+    btn.disabled = true;
+    btn.innerHTML = '<i class="bi bi-arrow-repeat spin me-2"></i>Mengimpor ke Supabase...';
+  }
+  showToast('Sedang mengimpor 4 FAQ default ke database...', 'info');
+
+  const defaultFaqs = [
+    {
+      id: 'faq_1_kemitraan',
+      title: 'Apakah Teiko membuka kemitraan atau franchise?',
+      subtitle: 'Saat ini kami belum membuka sistem kemitraan (franchise). Seluruh outlet Teiko dikelola langsung oleh tim manajemen pusat untuk menjaga kualitas dan cita rasa terbaik. Informasi resmi mengenai pembukaan kemitraan di masa mendatang hanya akan diumumkan melalui kanal resmi Teiko.',
+      is_active: true,
+      updated_at: new Date().toISOString()
+    },
+    {
+      id: 'faq_2_karir',
+      title: 'Bagaimana cara melamar pekerjaan atau bergabung dengan tim Teiko?',
+      subtitle: 'Kami terus mencari talenta dan pekerja bersemangat untuk bergabung bersama keluarga besar Teiko! Kamu bisa mengirimkan CV dan surat lamaran terbaru kamu melalui email resmi kami ke support@teiko.co.id dengan subjek lamaran kerja.',
+      is_active: true,
+      updated_at: new Date().toISOString()
+    },
+    {
+      id: 'faq_3_kualitas',
+      title: 'Apakah seluruh minuman di Teiko menggunakan bahan segar dan berkualitas?',
+      subtitle: 'Tentu! Setiap minuman teh, kopi, dan krim spesial di Teiko diracik menggunakan daun teh asli pilihan, biji kopi premium, serta susu dan bahan alami berkualitas tinggi.',
+      is_active: true,
+      updated_at: new Date().toISOString()
+    },
+    {
+      id: 'faq_4_email',
+      title: 'Bagaimana cara menghubungi kontak resmi email Teiko sesuai keperluan?',
+      subtitle: 'Kami memiliki 3 alamat email resmi sesuai fungsinya:\\n• info@teiko.co.id : untuk informasi Broadcast & Media.\\n• support@teiko.co.id : untuk proses Hiring, lowongan kerja & pengiriman CV.\\n• sales@teiko.co.id : untuk komunikasi dengan distributor/reseller terkait stok, harga, atau promo.',
+      is_active: true,
+      updated_at: new Date().toISOString()
+    }
+  ];
+
+  try {
+    const { error } = await sb.from('site_content').upsert(defaultFaqs);
+    if (error) throw error;
+    showToast('✅ 4 FAQ Bawaan berhasil diimpor ke Supabase! Sekarang siap diedit.', 'success');
+    await loadContent();
+  } catch (err) {
+    showToast('Gagal mengimpor FAQ: ' + err.message, 'error');
+    if (btn) {
+      btn.disabled = false;
+      btn.innerHTML = '<i class="bi bi-cloud-download me-2"></i>Coba Import Lagi';
+    }
+  }
+};
 
 // Tambah FAQ UI
 window.showAddFaqForm = () => {
@@ -1472,7 +1981,7 @@ window.saveNewFaq = async () => {
     if (error) throw error;
     showToast('FAQ berhasil ditambahkan!');
     document.getElementById('faq-form-area').remove();
-    loadFaqAdmin();
+    loadContent();
   } catch (err) {
     showToast('Gagal: ' + err.message, 'error');
   } finally {
@@ -1526,7 +2035,7 @@ window.saveEditFaq = async (id) => {
     if (error) throw error;
     showToast('FAQ diperbarui!');
     document.getElementById('edit-faq-form-area').remove();
-    loadFaqAdmin();
+    loadContent();
   } catch (err) {
     showToast('Gagal: ' + err.message, 'error');
   } finally {
@@ -1548,8 +2057,11 @@ window.toggleFaqActiveAdmin = async (id, state) => {
 window.deleteFaqAdmin = async (id) => {
   if (!confirm('Hapus FAQ ini secara permanen?')) return;
   try {
-    const { error } = await sb.from('site_content').delete().eq('id', id);
+    const { data, error } = await sb.from('site_content').delete().eq('id', id).select();
     if (error) throw error;
+    if (!data || data.length === 0) {
+      throw new Error('0 baris terhapus. Periksa kebijakan RLS (Row Level Security) untuk izin DELETE di tabel site_content Supabase Anda.');
+    }
     showToast('FAQ telah dihapus.');
     loadContent();
   } catch (err) {

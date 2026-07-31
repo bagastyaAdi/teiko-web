@@ -27,11 +27,13 @@ class CleanURLHandler(http.server.SimpleHTTPRequestHandler):
 
 
 if __name__ == '__main__':
-    print(f'Memulai Server Teiko di http://localhost:{PORT} (Dual Stack IPv4/IPv6)...', flush=True)
+    os.chdir(os.path.dirname(os.path.abspath(__file__)))
+    print(f'Memulai Server Teiko di http://127.0.0.1:{PORT} (atau http://localhost:{PORT}) ...', flush=True)
     print('Mendukung Clean URLs (tanpa .html) sesuai konfigurasi .htaccess', flush=True)
     try:
-        # Menggunakan http.server.test agar otomatis menggunakan DualStackServer (mendukung IPv6 ::1 dan IPv4)
-        http.server.test(HandlerClass=CleanURLHandler, port=PORT)
+        from http.server import ThreadingHTTPServer
+        server = ThreadingHTTPServer(('127.0.0.1', PORT), CleanURLHandler)
+        server.serve_forever()
     except KeyboardInterrupt:
         print('\nServer dihentikan.', flush=True)
         sys.exit(0)

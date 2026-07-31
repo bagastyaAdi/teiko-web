@@ -5,12 +5,13 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>FAQ — Teiko Indonesia</title>
+  <link rel="icon" type="image/png" href="asset/favicon.png" />
 
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
-    href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Rubik:wght@400;500;600;700;800;900&display=swap"
     rel="stylesheet">
 
   <!-- Bootstrap 5 CSS -->
@@ -174,7 +175,7 @@
           Bagaimana cara melamar pekerjaan atau bergabung dengan tim Teiko? <i class="bi bi-plus-lg faq-icon"></i>
         </button>
         <div class="faq-answer">
-          Kami terus mencari talenta dan pekerja bersemangat untuk bergabung bersama keluarga besar Teiko! Kamu bisa mengirimkan <strong>CV dan surat lamaran terbaru kamu</strong> melalui email resmi kami ke <a href="mailto:support@teiko.co.id" style="color: #054E34; font-weight: 600;">support@teiko.co.id</a> dengan subjek lamaran kerja.
+          Kami terus mencari talenta dan pekerja bersemangat untuk bergabung bersama keluarga besar Teiko! Kamu bisa mengirimkan <strong>CV dan surat lamaran terbaru kamu</strong> melalui email resmi kami ke <a href="https://mail.google.com/mail/?view=cm&fs=1&to=support@teiko.co.id&su=Lamaran%20Kerja%20-%20Teiko" target="_blank" style="color: #054E34; font-weight: 600;">support@teiko.co.id</a> dengan subjek lamaran kerja.
         </div>
       </div>
       <div class="faq-item anim-item">
@@ -191,9 +192,9 @@
         </button>
         <div class="faq-answer">
           Kami memiliki 3 alamat email resmi sesuai fungsinya:<br>
-          • <a href="mailto:info@teiko.co.id" style="color: #054E34; font-weight: 600;">info@teiko.co.id</a> : untuk informasi Broadcast &amp; Media.<br>
-          • <a href="mailto:support@teiko.co.id" style="color: #054E34; font-weight: 600;">support@teiko.co.id</a> : untuk proses Hiring, lowongan kerja &amp; pengiriman CV.<br>
-          • <a href="mailto:sales@teiko.co.id" style="color: #054E34; font-weight: 600;">sales@teiko.co.id</a> : untuk komunikasi dengan distributor/reseller terkait stok, harga, atau promo.
+          • <a href="https://mail.google.com/mail/?view=cm&fs=1&to=info@teiko.co.id&su=Halo%20Teiko%20-%20Broadcast%20%26%20Media" target="_blank" style="color: #054E34; font-weight: 600;">info@teiko.co.id</a> : untuk informasi Broadcast &amp; Media.<br>
+          • <a href="https://mail.google.com/mail/?view=cm&fs=1&to=support@teiko.co.id&su=Halo%20Teiko%20-%20Karir%20%26%20Hiring" target="_blank" style="color: #054E34; font-weight: 600;">support@teiko.co.id</a> : untuk proses Hiring, lowongan kerja &amp; pengiriman CV.<br>
+          • <a href="https://mail.google.com/mail/?view=cm&fs=1&to=sales@teiko.co.id&su=Halo%20Teiko%20-%20Distributor%20%26%20Reseller" target="_blank" style="color: #054E34; font-weight: 600;">sales@teiko.co.id</a> : untuk komunikasi dengan distributor/reseller terkait stok, harga, atau promo.
         </div>
       </div>
     </div>
@@ -232,7 +233,7 @@
           return;
         }
 
-        data.sort((a,b) => b.id.localeCompare(a.id));
+        data.sort((a,b) => a.id.localeCompare(b.id));
 
         container.innerHTML = data.map(f => `
           <div class="faq-item anim-item">
@@ -240,7 +241,7 @@
               ${f.title} <i class="bi bi-plus-lg faq-icon"></i>
             </button>
             <div class="faq-answer">
-              ${f.subtitle.replace(/\n/g, '<br>')}
+              ${(f.subtitle || '').replace(/\n/g, '<br>')}
             </div>
           </div>
         `).join('');

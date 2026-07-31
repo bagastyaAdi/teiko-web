@@ -7,13 +7,13 @@
   <title>Menu Drinks - Teiko</title>
 
   <!-- SEO & Icons -->
-  <link rel="icon" type="image/png" href="asset/logo.png" />
+  <link rel="icon" type="image/png" href="asset/favicon.png" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Rubik:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
-  <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="navbar.css">
+  <link rel="stylesheet" href="style.css?v=34">
+  <link rel="stylesheet" href="navbar.css?v=34">
 
   <!-- GSAP & Lenis Smooth Scrolling -->
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
@@ -226,11 +226,30 @@
         const { data, error } = await sb.from('drinks').select('*').eq('is_active', true).order('created_at', { ascending: false });
         if (error) throw error;
 
-        allDrinks = data;
+        allDrinks = data || [];
         renderDrinks('All');
       } catch (err) {
         console.error('Error loading drinks:', err);
         container.innerHTML = `<div class="col-12 text-center text-danger">Gagal memuat menu. Silakan coba lagi nanti.</div>`;
+      }
+    }
+
+    async function seedDefaultDrinksFrontend() {
+      const defaultDrinks = [
+        { name: 'Es Coklat Teiko Special', category: 'Chocolate', price: 'Rp 15.000', oz_size: '16 oz', image_url: './asset/hero3.png', detail: 'Paduan coklat pekat khas Belgia dengan susu segar dan krim manis yang lumer di mulut.', is_active: true },
+        { name: 'Brown Sugar Boba Milk', category: 'Milk', price: 'Rp 18.000', oz_size: '16 oz', image_url: './asset/hero1.webp', detail: 'Susu segar lembut dipadukan dengan gula aren asli khas Teiko serta kenyalnya boba premium.', is_active: true },
+        { name: 'Matcha Oat Latte', category: 'Tea', price: 'Rp 20.000', oz_size: '16 oz', image_url: './asset/dummy_matcha.png', detail: 'Teh hijau Uji Matcha pilihan bergaya Jepang dengan susu oat yang gurih dan menyehatkan.', is_active: true },
+        { name: 'Belgian Choco Cream', category: 'Chocolate', price: 'Rp 18.000', oz_size: '16 oz', image_url: './asset/dummy_choco.png', detail: 'Cokelat Belgia autentik dengan lapisan krim kental bertekstur lembut dan rasa cokelat pekat.', is_active: true },
+        { name: 'Teiko Coffee Cream Special', category: 'Coffee', price: 'Rp 18.000', oz_size: '16 oz', image_url: './asset/dummy_coffee.png', detail: 'Kopi espresso house-blend Teiko berpadu dengan susu kental lembut dan taburan bubuk kopi.', is_active: true },
+        { name: 'Taro Creamy Milk', category: 'Milk', price: 'Rp 16.000', oz_size: '16 oz', image_url: './asset/dummy_taro.png', detail: 'Aroma talas (taro) yang harum manis menyatu sempurna dengan susu krim kental khas Teiko.', is_active: true },
+        { name: 'Jasmine Green Tea Original', category: 'Tea', price: 'Rp 10.000', oz_size: '22 oz', image_url: './asset/hero1.webp', detail: 'Teh melati seduh segar alami yang harum, ringan, dan sangat menyegarkan untuk setiap waktu.', is_active: true },
+        { name: 'Caramel Macchiato Teiko', category: 'Coffee', price: 'Rp 20.000', oz_size: '16 oz', image_url: './asset/dummy_coffee.png', detail: 'Espresso kaya rasa dengan sirup karamel legit dan lapisan busa susu yang lembut.', is_active: true }
+      ];
+      try {
+        await sb.from('drinks').insert(defaultDrinks);
+        loadDrinks();
+      } catch (e) {
+        console.error('Auto seed drinks error:', e);
       }
     }
 

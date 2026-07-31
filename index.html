@@ -20,14 +20,14 @@
   <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Rubik:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
   <!-- Bootstrap Icons -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
 
   <!-- Custom CSS -->
-  <link rel="stylesheet" href="style.css">
-  <link rel="stylesheet" href="navbar.css">
+  <link rel="stylesheet" href="style.css?v=35">
+  <link rel="stylesheet" href="navbar.css?v=35">
 
   <!-- GSAP & Lenis Smooth Scrolling -->
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
@@ -42,54 +42,148 @@
 <body>
   <!-- Header/Navbar -->
   <header id="navbar-placeholder"></header>
+  <div id="navbar-spacer"></div>
 
   <main>
-    <section id="hero1-section" class="hero d-flex align-items-center">
-      <img id="hero1-img" src="./asset/hero1.webp" alt="" class="hero-bg" loading="eager" decoding="async" />
-      <div class="hero-content-right gsap-hero-content">
-        <h1 id="hero1-title" class="fw-bold">ENGGA PERLU MIKIR 2 KALI<br>RASANYA BIKIN NAGIH</h1>
-        <p id="hero1-subtitle" class="mt-3">Minum puas, bayar hemat bareng Teiko.<br>Teiko selalu ada buat temani harimu.</p>
-        <div class="mt-4 pt-1">
+    <!-- ===== PRODUCT-CENTRIC HERO ===== -->
+    <section id="hero1-section" class="hero-product">
+      <div class="hero-product__inner">
+
+        <!-- Header: Eyebrow + Title + Description -->
+        <div class="hero-product__header">
+          <div class="hero-product__eyebrow" id="hero1-eyebrow">"Pendatang baru, langsung nomor satu.</div>
+          <h1 class="hero-product__title" id="hero1-title">NEW MENU ES COKLAT</h1>
+          <p class="hero-product__desc" id="hero1-subtitle" style="display: none;"></p>
+        </div>
+
+        <!-- Body: Quote | Product Image | Tags -->
+        <div class="hero-product__body">
+
+          <!-- LEFT: Quote + Reviews -->
+          <!-- LEFT: Quote Text -->
+          <div class="hero-product__quote">
+            <div class="hero-product__quote-icon">❝</div>
+            <div class="hero-product__quote-text" id="hero1-quote">Rasanya Enak Banget, Bikin Nagih! Teiko Emang Paling Pas Buat Setiap Momen.</div>
+          </div>
+
+          <!-- CENTER: Product Cup PNG -->
+          <div class="hero-product__image-wrap">
+            <img id="es-coklat-cup-img" src="./asset/hero3.png" alt="Es Coklat Teiko Cup" class="hero-product__image" fetchpriority="high" loading="eager" decoding="async" width="378" height="472" />
+            <!-- CAROUSEL DOTS: Perfectly centered under the drink cup -->
+            <div class="hero-product__dots hero-carousel-dots" id="hero-carousel-dots"></div>
+          </div>
+
+          <!-- RIGHT: Spacer/Tags -->
+          <div class="hero-product__tags" id="hero1-tags-area"></div>
+
+          <!-- FOOTER BAR: Always Side-by-Side (Menyamping) -> 10 Outlet (Left) & Follow Us On (Right) -->
+          <div class="hero-product__footer-bar">
+            <div class="hero-product__review">
+              <div class="hero-product__review-avatars">
+                <span>T</span><span>E</span><span>I</span>
+              </div>
+              <div class="hero-product__review-info">
+                <strong>10 Outlet</strong>
+                <small>Tersebar di Daerah Kota Denpasar</small>
+              </div>
+            </div>
+
+            <div class="hero-product__social">
+              <div class="hero-product__social-label">Follow Us On</div>
+              <div class="hero-product__social-icons">
+                <a href="https://www.instagram.com/te.ko_official" target="_blank" title="Instagram"><i class="bi bi-instagram"></i></a>
+                <a href="https://www.tiktok.com/@teiko.official" target="_blank" title="TikTok"><i class="bi bi-tiktok"></i></a>
+                <a href="https://api.whatsapp.com/send/?phone=6282111312779" target="_blank" title="WhatsApp"><i class="bi bi-whatsapp"></i></a>
+              </div>
+            </div>
+          </div>
+
+        </div>
+
+        <!-- CTA Buttons (Hidden for clean visual) -->
+        <div class="hero-product__actions" style="display: none;">
           <a id="hero1-btn" href="drinks" class="btn-editorial" aria-label="Lihat Menu Teiko">Lihat Menu Kami <i class="bi bi-arrow-right"></i></a>
+          <a id="hero1-btn2" href="https://api.whatsapp.com/send/?phone=6282111312779&text=Halo%20Teiko" target="_blank" class="btn-editorial-outline" aria-label="Order Partai Besar">Order Partai Besar <i class="bi bi-whatsapp"></i></a>
         </div>
-    </section>
 
-    <!-- Dynamic Heroes Container -->
-    <div id="dynamic-heroes-container"></div>
-
-    <!-- Hot & Green Tea Box -->
-    <section class="section-minuman mt-4">
-      <div class="row g-3">
-        <div class="col-12 col-xl-6">
-          <div id="hot-series-box" class="minuman-box hot-box gsap-reveal">
-            <h3 id="hot-series-title" class="fw-bold">HOT SERIES</h3>
-            <p id="hot-series-desc">Rangkaian minuman hangat Teiko, dari jahe yang menenangkan hingga kopi yang kaya rasa. Setiap tegukan membawa kehangatan dan cita rasa khas untuk menemani setiap momen.</p>
-          </div>
+        <!-- Carousel Slide Dots -->
+        <div class="hero-product__dots" id="hero-carousel-dots" style="display: none;">
+          <button class="hero-dot active" data-slide="0" aria-label="Slide 1"></button>
+          <button class="hero-dot" data-slide="1" aria-label="Slide 2"></button>
+          <button class="hero-dot" data-slide="2" aria-label="Slide 3"></button>
         </div>
-        <div class="col-12 col-xl-6">
-          <div id="greentea-box" class="minuman-box greentea-box gsap-reveal">
-            <h3 id="greentea-title" class="fw-bold">GREEN TEA</h3>
-            <p id="greentea-desc">Rasakan kesegaran teh hijau asli Jepang yang khas dengan aroma alami menenangkan.</p>
-          </div>
+
+      </div>
+
+      <!-- Marquee Ticker Bar -->
+      <div class="hero-marquee">
+        <div class="hero-marquee__track">
+          <span class="hero-marquee__item">Green Tea <span class="hero-marquee__dot"></span></span>
+          <span class="hero-marquee__item">Belgian Choco <span class="hero-marquee__dot"></span></span>
+          <span class="hero-marquee__item">Coffee Cream <span class="hero-marquee__dot"></span></span>
+          <span class="hero-marquee__item">Milk Tea <span class="hero-marquee__dot"></span></span>
+          <span class="hero-marquee__item">Hot Series <span class="hero-marquee__dot"></span></span>
+          <span class="hero-marquee__item">Matcha Latte <span class="hero-marquee__dot"></span></span>
+          <span class="hero-marquee__item">Taro Cream <span class="hero-marquee__dot"></span></span>
+          <span class="hero-marquee__item">Es Coklat <span class="hero-marquee__dot"></span></span>
+          <!-- Duplicate for seamless loop -->
+          <span class="hero-marquee__item">Green Tea <span class="hero-marquee__dot"></span></span>
+          <span class="hero-marquee__item">Belgian Choco <span class="hero-marquee__dot"></span></span>
+          <span class="hero-marquee__item">Coffee Cream <span class="hero-marquee__dot"></span></span>
+          <span class="hero-marquee__item">Milk Tea <span class="hero-marquee__dot"></span></span>
+          <span class="hero-marquee__item">Hot Series <span class="hero-marquee__dot"></span></span>
+          <span class="hero-marquee__item">Matcha Latte <span class="hero-marquee__dot"></span></span>
+          <span class="hero-marquee__item">Taro Cream <span class="hero-marquee__dot"></span></span>
+          <span class="hero-marquee__item">Es Coklat <span class="hero-marquee__dot"></span></span>
         </div>
       </div>
     </section>
 
-    <!-- Belgian & Coffee Cream Box -->
-    <section class="section-minuman mb-5">
-      <div class="row g-3">
-        <div class="col-12 col-xl-6">
-          <div id="belgian-box" class="minuman-box belgian-box gsap-reveal">
-            <h3 id="belgian-title" class="fw-bold">BELGIAN</h3>
-            <p id="belgian-desc">Rasakan kesegaran Belgian Choco yang memiliki tekstur halus dan manis yang pas di lidah.</p>
+    <!-- ===== FULL-WIDTH PROMOTIONAL BANNERS CAROUSEL (CMS: hero1, hero2, hero3) ===== -->
+    <section id="fullwidth-hero-banner-section" class="fullwidth-banner-section">
+      <div class="fullwidth-banner-track" onclick="if(!event.target.closest('.fullwidth-banner-dots')) window.location.href='drinks.html'" style="cursor: pointer;">
+        <a id="hero-banner-link" href="drinks.html" class="fullwidth-banner-link">
+          <img id="hero-banner-img" src="./asset/hero1.webp" alt="Teiko Promo Banner" class="fullwidth-banner-img" loading="eager" decoding="async" width="721" height="286" />
+          <img id="hero-banner-img-overlay" src="" alt="" class="fullwidth-banner-img fullwidth-banner-img--overlay" aria-hidden="true" decoding="async" width="721" height="286" />
+        </a>
+      </div>
+      <!-- Dots for fullwidth banner -->
+      <div class="fullwidth-banner-dots" id="fullwidth-banner-dots">
+        <button class="banner-dot active" data-slide="0" aria-label="Slide 1"></button>
+        <button class="banner-dot" data-slide="1" aria-label="Slide 2"></button>
+        <button class="banner-dot" data-slide="2" aria-label="Slide 3"></button>
+      </div>
+    </section>
+
+    <section id="promo-2box-section" class="promo-2box-section">
+      <div class="promo-2box-grid">
+        <!-- BOX 1 -->
+        <a href="drinks" class="promo-box-card" id="promo-box-1-link">
+          <div class="promo-box-img-wrap">
+            <img id="promo-box-1-img" src="./asset/dummy_choco.png" alt="Promo Teiko 1" class="promo-box-img" loading="lazy" />
           </div>
-        </div>
-        <div class="col-12 col-xl-6">
-          <div id="coffee-cream-box" class="minuman-box coffee-cream-box gsap-reveal">
-            <h3 id="coffee-cream-title" class="fw-bold">COFFEE CREAM</h3>
-            <p id="coffee-cream-desc">Rasa kopi lembut berpadu krim spesial Teiko dengan tekstur creamy tiada tara.</p>
+        </a>
+
+        <!-- BOX 2 -->
+        <a href="drinks" class="promo-box-card" id="promo-box-2-link">
+          <div class="promo-box-img-wrap">
+            <img id="promo-box-2-img" src="./asset/dummy_matcha.png" alt="Promo Teiko 2" class="promo-box-img" loading="lazy" />
           </div>
-        </div>
+        </a>
+
+        <!-- BOX 3 -->
+        <a href="drinks" class="promo-box-card" id="promo-box-3-link">
+          <div class="promo-box-img-wrap">
+            <img id="promo-box-3-img" src="./asset/dummy_coffee.png" alt="Promo Teiko 3" class="promo-box-img" loading="lazy" />
+          </div>
+        </a>
+
+        <!-- BOX 4 -->
+        <a href="drinks" class="promo-box-card" id="promo-box-4-link">
+          <div class="promo-box-img-wrap">
+            <img id="promo-box-4-img" src="./asset/dummy_taro.png" alt="Promo Teiko 4" class="promo-box-img" loading="lazy" />
+          </div>
+        </a>
       </div>
     </section>
   </main>
@@ -101,9 +195,9 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" defer></script>
 
   <!-- Custom JS -->
-  <script src="script.js" defer></script>
-  <script src="navbar.js" defer></script>
-  <script src="footer.js" defer></script>
+  <script src="script.js?v=35" defer></script>
+  <script src="navbar.js?v=35" defer></script>
+  <script src="footer.js?v=35" defer></script>
 </body>
 
 </html>

@@ -89,6 +89,7 @@ body.modal-open .navbar-custom {
   background-color: #111111;
   color: #FFFFFF;
   transform: translateY(-1px);
+  box-shadow: none !important;
 }
 
 /* Active Page: editorial black pill badge */
@@ -96,12 +97,13 @@ body.modal-open .navbar-custom {
   background-color: #111111;
   color: #FFFFFF;
   font-weight: 600;
-  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.18);
+  box-shadow: none !important;
 }
 
 .nav-desktop-link.active:hover {
   background-color: #000000;
   color: #FFFFFF;
+  box-shadow: none !important;
 }
 
 /* ===== HAMBURGER ===== */
