@@ -282,6 +282,7 @@ function renderSections() {
 
 function createSectionCard(section) {
   const data = contentData[section.id] || {};
+  const isDeleted = data.image_url === '';
   const imgSrc = data.image_url || section.defaultImg;
   const isActive = data.is_active !== false;
 
@@ -312,9 +313,15 @@ function createSectionCard(section) {
         ${typeBadge.label}
       </div>
       <div style="overflow:hidden;border-radius:var(--radius,8px) var(--radius,8px) 0 0;background:#f5f5f5;cursor:pointer;" onclick="editContent('${section.id}')" title="Klik untuk edit">
+        ${isDeleted ? `
+        <div class="drink-admin-img d-flex flex-column align-items-center justify-content-center text-muted"
+          style="aspect-ratio:${aspectRatio};width:100%;background:#eee;">
+          <i class="bi bi-image" style="font-size:2rem;"></i>
+          <small>Belum ada foto</small>
+        </div>` : `
         <img src="${imgSrc}" class="drink-admin-img" alt="Preview"
           style="object-fit:cover;aspect-ratio:${aspectRatio};width:100%;display:block;transition:transform .25s;"
-          onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='scale(1)'">
+          onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='scale(1)'">`}
       </div>
       <div class="drink-admin-body">
         <div class="drink-admin-name">${section.emoji || ''} ${section.label}
