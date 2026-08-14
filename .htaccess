@@ -1,5 +1,8 @@
 RewriteEngine On
 
+# Block access to .git directory
+RedirectMatch 404 /\.git
+
 # 1. Redirect /page.html to /page (Clean URL)
 RewriteCond %{THE_REQUEST} /([^.]+)\.html [NC]
 RewriteRule ^ /%1 [NC,L,R=301]
