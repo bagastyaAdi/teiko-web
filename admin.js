@@ -609,9 +609,12 @@ async function toggleSection(sectionId) {
 
   try {
     const updateData = { id: sectionId, is_active: newActiveState, updated_at: new Date().toISOString() };
-    const { error } = await sb.from('site_content').upsert(updateData);
+    const { data, error } = await sb.from('site_content').upsert(updateData).select();
     if (error) throw new Error(error.message);
-    
+    if (!data || data.length === 0) {
+      throw new Error('0 baris tersimpan. Periksa kebijakan RLS (Row Level Security) untuk izin UPDATE/INSERT di tabel site_content Supabase Anda.');
+    }
+
     currentData.is_active = newActiveState;
     contentData[sectionId] = currentData;
     showToast(`Section berhasil ${newActiveState ? 'diaktifkan' : 'dinonaktifkan'}!`, 'success');
@@ -624,15 +627,18 @@ async function toggleSection(sectionId) {
 async function deleteSection(sectionId) {
   if (!confirm('Hapus dan sembunyikan section ini secara permanen dari website? (Tidak akan kembali ke gambar default dari folder asset)')) return;
   try {
-    const { error } = await sb.from('site_content').upsert({
+    const { data, error } = await sb.from('site_content').upsert({
       id: sectionId,
       is_active: false,
       image_url: '',
       title: '',
       subtitle: '',
       updated_at: new Date().toISOString()
-    });
+    }).select();
     if (error) throw error;
+    if (!data || data.length === 0) {
+      throw new Error('0 baris tersimpan. Periksa kebijakan RLS (Row Level Security) untuk izin UPDATE/INSERT di tabel site_content Supabase Anda.');
+    }
     showToast('Section berhasil dihapus & disembunyikan dari website!', 'success');
     loadContent();
   } catch (err) {
