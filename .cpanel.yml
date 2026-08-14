@@ -1,4 +1,5 @@
 ---
 deployment:
   tasks:
-    - /bin/echo "Deployed to /home/teiko/public_html"
+    - export DEPLOYPATH=/home/teiko/public_html/
+    - /bin/cp -R * $DEPLOYPATH
