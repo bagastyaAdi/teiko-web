@@ -286,32 +286,16 @@ function createSectionCard(section) {
   const imgSrc = data.image_url || section.defaultImg;
   const isActive = data.is_active !== false;
 
-  // Determine card type for visual differentiation
+  // Determine card type (label only, styling stays uniform across types)
   const isDrinkDisplay = section.id === 'hero_drink_display';
   const isBanner      = section.id.startsWith('hero') && section.id !== 'hero_drink_display';
-  const isCategory    = ['hot_series','green_tea','belgian','coffee_cream'].includes(section.id);
-
-  // Type badge label + color
-  const typeBadge = isDrinkDisplay
-    ? { label: '🥤 Display Minuman', color: '#0d6efd', text: '#fff' }
-    : isBanner
-      ? { label: '🖼️ Banner Promo',   color: '#6f42c1', text: '#fff' }
-      : { label: '☕ Kategori Menu',   color: '#fd7e14', text: '#fff' };
-
-  // Card accent border color
-  const borderColor = isDrinkDisplay ? '#0d6efd'
-    : isBanner ? '#6f42c1'
-    : '#fd7e14';
+  const typeLabel = isDrinkDisplay ? 'Display Minuman' : isBanner ? 'Banner Promo' : 'Kategori Menu';
 
   // Image aspect ratio
   const aspectRatio = isDrinkDisplay ? '3/4' : (isBanner ? '16/6' : '1/1');
 
   return `
-    <div class="drink-admin-card" id="card-${section.id}" style="border-top: 4px solid ${borderColor}; position:relative;">
-      <!-- Type badge top-right -->
-      <div style="position:absolute;top:10px;right:10px;z-index:2;background:${typeBadge.color};color:${typeBadge.text};font-size:0.68rem;font-weight:700;padding:3px 9px;border-radius:20px;letter-spacing:0.02em;box-shadow:0 2px 6px rgba(0,0,0,0.18);">
-        ${typeBadge.label}
-      </div>
+    <div class="drink-admin-card" id="card-${section.id}">
       <div style="overflow:hidden;border-radius:var(--radius,8px) var(--radius,8px) 0 0;background:#f5f5f5;cursor:pointer;" onclick="editContent('${section.id}')" title="Klik untuk edit">
         ${isDeleted ? `
         <div class="drink-admin-img d-flex flex-column align-items-center justify-content-center text-muted"
@@ -324,7 +308,8 @@ function createSectionCard(section) {
           onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='scale(1)'">`}
       </div>
       <div class="drink-admin-body">
-        <div class="drink-admin-name">${section.emoji || ''} ${section.label}
+        <div style="font-size:0.68rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:4px;">${typeLabel}</div>
+        <div class="drink-admin-name">${section.label}
           <small class="text-muted" style="font-size:0.68rem;display:block;margin-top:2px;">${section.id}</small>
         </div>
         <div class="drink-admin-meta">
