@@ -411,7 +411,10 @@ async function loadContent() {
     // Sort heroes by id (hero1, hero2, hero3, hero_...)
     heroSlides.sort((a, b) => a.id.localeCompare(b.id));
 
-    if (heroSlides.length === 0) {
+    // Fallback default cuma kalau DB belum ada data site_content sama sekali.
+    // Kalau baris hero1/2/3 ADA tapi is_active:false (dihapus admin), biarin kosong -
+    // jangan balikin default, itu bikin "hapus" keliatan gak ngefek.
+    if (heroSlides.length === 0 && !data.some(s => s.id === 'hero1' || s.id === 'hero2' || s.id === 'hero3')) {
       heroSlides = [
         { id: 'hero1', image_url: './asset/hero1.webp', button_url: 'drinks' },
         { id: 'hero2', image_url: './asset/hero2.webp', button_url: 'drinks' },
