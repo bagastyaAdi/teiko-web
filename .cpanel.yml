@@ -1,0 +1,4 @@
+---
+deployment:
+  tasks:
+    - /bin/echo "Deployed to /home/teiko/public_html"
