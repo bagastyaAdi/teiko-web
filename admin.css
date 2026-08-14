@@ -49,20 +49,10 @@ body {
   margin-bottom: 2rem;
 }
 
-.login-logo .logo-badge {
-  display: inline-flex;
-  align-items: center;
-  gap: 10px;
-  background: var(--accent-glow);
-  border: 1px solid var(--accent);
-  border-radius: 50px;
-  padding: 8px 20px;
-  font-size: 0.8rem;
-  color: var(--accent-light);
-  font-weight: 600;
-  letter-spacing: 0.05em;
-  text-transform: uppercase;
-  margin-bottom: 1rem;
+.login-logo-img {
+  height: 44px;
+  width: auto;
+  margin-bottom: 1.25rem;
 }
 
 .login-logo h1 {
@@ -157,15 +147,9 @@ body {
 }
 
 .sidebar-logo .brand-icon {
-  width: 36px;
-  height: 36px;
-  background: var(--accent-glow);
-  border: 1px solid var(--accent);
-  border-radius: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1rem;
+  width: 42px;
+  height: 23px;
+  object-fit: contain;
 }
 
 .sidebar-logo .brand-name {
