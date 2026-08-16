@@ -996,21 +996,12 @@ async function loadDrinks(isInitial = false) {
   }
 }
 
-// Render kartu-kartu menu minuman, atau ajakan import 8 menu default kalau masih kosong.
+// Render kartu-kartu menu minuman.
 function renderDrinks() {
   const grid = document.getElementById('drinks-grid');
   if (!grid) return;
   if (drinksData.length === 0) {
-    grid.innerHTML = `
-      <div class="col-12 text-center py-5">
-        <div class="p-4 rounded-4" style="background:#e8f4fd; border:2px dashed #0d6efd; max-width:640px; margin:0 auto;">
-          <h5 class="fw-bold mb-2 text-primary"><i class="bi bi-cup-hot-fill me-2"></i>Belum Ada Menu Minuman di Database Supabase</h5>
-          <p class="text-muted small mb-4">Database menu Anda masih kosong. Klik tombol di bawah ini untuk menyalin 8 Menu Minuman Resmi Teiko (Es Coklat, Matcha, Brown Sugar Boba, Coffee Cream, dsb.) ke Supabase Anda!</p>
-          <button class="btn btn-primary px-4 py-2 fw-bold shadow-sm" id="btn-seed-drinks" onclick="seedDefaultDrinks()">
-            <i class="bi bi-cloud-download me-2"></i>Import 8 Menu Minuman Teiko ke Supabase
-          </button>
-        </div>
-      </div>`;
+    grid.innerHTML = `<div class="col-12 text-center py-5 text-muted"><p>Belum ada menu minuman. Klik "Tambah Menu Baru".</p></div>`;
     return;
   }
 
