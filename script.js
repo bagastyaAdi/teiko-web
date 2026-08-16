@@ -94,6 +94,7 @@ function initGsapAnimations() {
 let heroSlides = [];
 let currentSlideIdx = 0;
 let heroCarouselTimer = null;
+let newsItems = [];
 
 // === HERO DRINK SLIDES (Kubah Hijau Atas) ===
 let drinkSlides = [];
@@ -244,7 +245,7 @@ function updateGreenArchDisplay(item) {
   }
 }
 
-// Tampilin satu hero banner (carousel lebar bawah marquee) di posisi index.
+// Tampilin satu hero banner (carousel lebar promo) di posisi index.
 function renderHeroSlide(index, animate = true) {
   if (!heroSlides || heroSlides.length === 0) return;
   currentSlideIdx = index % heroSlides.length;
@@ -262,16 +263,17 @@ function renderHeroSlide(index, animate = true) {
   };
   const targetBanner = (slide.image_url && slide.image_url.trim() !== '') ? slide.image_url : (defaultBanners[slide.id] || './asset/hero1.webp');
 
-  const targetUrl = (slide.button_url && slide.button_url.trim() !== '' && slide.button_url !== '#' && slide.button_url !== 'javascript:void(0)') ? slide.button_url : 'drinks.html';
+  // Cuma bisa diklik kalau admin isi "Link Tujuan Klik" di section ini. Kosong = gambar statis, gak nge-link kemana-mana.
+  const targetUrl = (slide.button_url && slide.button_url.trim() !== '' && slide.button_url !== '#' && slide.button_url !== 'javascript:void(0)') ? slide.button_url : null;
   if (bannerLinkEl) {
-    bannerLinkEl.href = targetUrl;
-    bannerLinkEl.style.cursor = 'pointer';
+    bannerLinkEl.href = targetUrl || 'javascript:void(0)';
+    bannerLinkEl.style.cursor = targetUrl ? 'pointer' : 'default';
   }
   const trackEl = document.querySelector('.fullwidth-banner-track');
   if (trackEl) {
-    trackEl.style.cursor = 'pointer';
+    trackEl.style.cursor = targetUrl ? 'pointer' : 'default';
     trackEl.onclick = (e) => {
-      if (!e.target.closest('.fullwidth-banner-dots')) {
+      if (targetUrl && !e.target.closest('.fullwidth-banner-dots')) {
         window.location.href = targetUrl;
       }
     };
@@ -365,11 +367,18 @@ async function loadContent() {
     if (error) throw error;
 
     heroSlides = [];
+    newsItems = [];
     let foundDrinkDisplay = null;
 
     data.forEach(s => {
       if (s.id === 'hero_drink_display') {
         foundDrinkDisplay = s;
+        return;
+      }
+
+      // Kumpulin berita aktif (id "news_*") buat section News di homepage.
+      if (s.id.startsWith('news_')) {
+        if (s.is_active !== false) newsItems.push(s);
         return;
       }
 
@@ -425,14 +434,18 @@ async function loadContent() {
     // Sort heroes by id (hero1, hero2, hero3, hero_...)
     heroSlides.sort((a, b) => a.id.localeCompare(b.id));
 
+    // Berita terbaru duluan (id pake timestamp, jadi sort desc = terbaru dulu)
+    newsItems.sort((a, b) => b.id.localeCompare(a.id));
+    renderNewsSection();
+
     // Fallback default cuma kalau DB belum ada data site_content sama sekali.
     // Kalau baris hero1/2/3 ADA tapi is_active:false (dihapus admin), biarin kosong -
     // jangan balikin default, itu bikin "hapus" keliatan gak ngefek.
     if (heroSlides.length === 0 && !data.some(s => s.id === 'hero1' || s.id === 'hero2' || s.id === 'hero3')) {
       heroSlides = [
-        { id: 'hero1', image_url: './asset/hero1.webp', button_url: 'drinks' },
-        { id: 'hero2', image_url: './asset/hero2.webp', button_url: 'drinks' },
-        { id: 'hero3', image_url: './asset/hero1.webp', button_url: 'drinks' }
+        { id: 'hero1', image_url: './asset/hero1.webp' },
+        { id: 'hero2', image_url: './asset/hero2.webp' },
+        { id: 'hero3', image_url: './asset/hero1.webp' }
       ];
     }
 
@@ -455,6 +468,30 @@ async function loadContent() {
       initHeroCarousel();
     }
   }
+}
+
+// Render section News (lowongan kerja, pindah/buka outlet, dll) di homepage.
+// Section disembunyiin total kalau gak ada berita aktif - gak ada dummy/contoh.
+function renderNewsSection() {
+  const section = document.getElementById('news-section');
+  const grid = document.getElementById('news-grid');
+  if (!section || !grid) return;
+
+  if (newsItems.length === 0) {
+    section.style.display = 'none';
+    return;
+  }
+
+  section.style.display = '';
+  grid.innerHTML = newsItems.map(n => `
+    <div class="news-card">
+      ${n.image_url ? `<img src="${n.image_url}" alt="${n.title || ''}" class="news-card__img">` : ''}
+      <div class="news-card__body">
+        <h3 class="news-card__title">${n.title || ''}</h3>
+        <p class="news-card__text">${(n.subtitle || '').replace(/\n/g, '<br>')}</p>
+      </div>
+    </div>
+  `).join('');
 }
 
 // 4. Shared page helpers

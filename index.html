@@ -114,35 +114,12 @@
         </div>
 
       </div>
-
-      <!-- Marquee Ticker Bar -->
-      <div class="hero-marquee">
-        <div class="hero-marquee__track">
-          <span class="hero-marquee__item">Green Tea <span class="hero-marquee__dot"></span></span>
-          <span class="hero-marquee__item">Belgian Choco <span class="hero-marquee__dot"></span></span>
-          <span class="hero-marquee__item">Coffee Cream <span class="hero-marquee__dot"></span></span>
-          <span class="hero-marquee__item">Milk Tea <span class="hero-marquee__dot"></span></span>
-          <span class="hero-marquee__item">Hot Series <span class="hero-marquee__dot"></span></span>
-          <span class="hero-marquee__item">Matcha Latte <span class="hero-marquee__dot"></span></span>
-          <span class="hero-marquee__item">Taro Cream <span class="hero-marquee__dot"></span></span>
-          <span class="hero-marquee__item">Es Coklat <span class="hero-marquee__dot"></span></span>
-          <!-- Duplicate for seamless loop -->
-          <span class="hero-marquee__item">Green Tea <span class="hero-marquee__dot"></span></span>
-          <span class="hero-marquee__item">Belgian Choco <span class="hero-marquee__dot"></span></span>
-          <span class="hero-marquee__item">Coffee Cream <span class="hero-marquee__dot"></span></span>
-          <span class="hero-marquee__item">Milk Tea <span class="hero-marquee__dot"></span></span>
-          <span class="hero-marquee__item">Hot Series <span class="hero-marquee__dot"></span></span>
-          <span class="hero-marquee__item">Matcha Latte <span class="hero-marquee__dot"></span></span>
-          <span class="hero-marquee__item">Taro Cream <span class="hero-marquee__dot"></span></span>
-          <span class="hero-marquee__item">Es Coklat <span class="hero-marquee__dot"></span></span>
-        </div>
-      </div>
     </section>
 
     <!-- ===== FULL-WIDTH PROMOTIONAL BANNERS CAROUSEL (CMS: hero1, hero2, hero3) ===== -->
     <section id="fullwidth-hero-banner-section" class="fullwidth-banner-section">
-      <div class="fullwidth-banner-track" onclick="if(!event.target.closest('.fullwidth-banner-dots')) window.location.href='drinks.html'" style="cursor: pointer;">
-        <a id="hero-banner-link" href="drinks.html" class="fullwidth-banner-link">
+      <div class="fullwidth-banner-track">
+        <a id="hero-banner-link" href="javascript:void(0)" class="fullwidth-banner-link">
           <img id="hero-banner-img" src="./asset/hero1.webp" alt="Teiko Promo Banner" class="fullwidth-banner-img" loading="eager" decoding="async" width="721" height="286" />
           <img id="hero-banner-img-overlay" src="" alt="" class="fullwidth-banner-img fullwidth-banner-img--overlay" aria-hidden="true" decoding="async" width="721" height="286" />
         </a>
@@ -152,6 +129,14 @@
         <button class="banner-dot active" data-slide="0" aria-label="Slide 1"></button>
         <button class="banner-dot" data-slide="1" aria-label="Slide 2"></button>
         <button class="banner-dot" data-slide="2" aria-label="Slide 3"></button>
+      </div>
+    </section>
+
+    <!-- ===== NEWS (CMS: site_content, id "news_*") ===== -->
+    <section id="news-section" class="news-section" style="display:none;">
+      <div class="news-section__inner">
+        <h2 class="news-section__heading">Info &amp; Update Terbaru</h2>
+        <div id="news-grid" class="news-grid"></div>
       </div>
     </section>
 

@@ -82,8 +82,7 @@ h1, h2, h3, h4, h5, h6,
 .hero h1, .minuman-box h3, .drink-name, .card-title, .navbar-brand-logo, .page-title-section h1,
 .section-title, .section-subtitle, .section-header h1, .section-header h2, .section-header h3,
 .promo-box-title, .promo-box-tag, .hero-product__review-author, .hero-product__review-role,
-.hero-product__footer-text, .fullwidth-banner-content h2, .fullwidth-banner-content p,
-.hero-marquee__item {
+.hero-product__footer-text, .fullwidth-banner-content h2, .fullwidth-banner-content p {
   font-family: 'Rubik', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
   letter-spacing: -0.02em;
 }
@@ -514,49 +513,7 @@ img {
   box-shadow: 0 10px 24px rgba(0,0,0,0.15);
 }
 
-/* --- Marquee Ticker --- */
-.hero-marquee {
-  position: relative;
-  z-index: 10;
-  background: #FFFFFF;
-  color: #111111;
-  border-top: 1px solid rgba(0, 0, 0, 0.06);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
-  padding: 14px 0;
-  overflow: hidden;
-  white-space: nowrap;
-}
-
-.hero-marquee__track {
-  display: inline-flex;
-  animation: marquee-scroll 25s linear infinite;
-}
-
-.hero-marquee__item {
-  display: inline-flex;
-  align-items: center;
-  gap: 20px;
-  padding: 0 20px;
-  font-family: 'Outfit', sans-serif;
-  font-size: 0.95rem;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-}
-
-.hero-marquee__dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #111111;
-  flex-shrink: 0;
-}
-
-@keyframes marquee-scroll {
-  0% { transform: translateX(0); }
-  100% { transform: translateX(-50%); }
-}
-
-/* ===== FULL-WIDTH PROMOTIONAL BANNERS CAROUSEL (BELOW MARQUEE) ===== */
+/* ===== FULL-WIDTH PROMOTIONAL BANNERS CAROUSEL ===== */
 .fullwidth-banner-section {
   position: relative;
   width: 100%;
@@ -710,6 +667,71 @@ img {
     flex: 0 0 100%;
     height: 260px;
   }
+}
+
+/* ===== NEWS SECTION (Homepage, CMS: site_content id "news_*") ===== */
+.news-section {
+  background: var(--bg-primary);
+  padding: 60px 0;
+}
+
+.news-section__inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1.5rem;
+}
+
+.news-section__heading {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: var(--text-main);
+  margin-bottom: 1.75rem;
+  text-align: center;
+}
+
+.news-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 1.5rem;
+}
+
+.news-card {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition-smooth);
+}
+
+.news-card:hover {
+  box-shadow: var(--shadow-md);
+  transform: translateY(-4px);
+}
+
+.news-card__img {
+  width: 100%;
+  aspect-ratio: 4/3;
+  object-fit: cover;
+  display: block;
+}
+
+.news-card__body {
+  padding: 1.25rem;
+}
+
+.news-card__title {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: 0.5rem;
+}
+
+.news-card__text {
+  font-size: 0.9rem;
+  color: var(--text-muted);
+  line-height: 1.6;
+  margin: 0;
 }
 
 /* Spacing between heroes */

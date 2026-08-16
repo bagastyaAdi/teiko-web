@@ -3,6 +3,10 @@
 // Requires db_config.php with MySQL credentials
 require_once 'db_config.php';
 
+// Nama mailing list cPanel (Email > Mailing Lists) yang mau di-broadcast.
+// Ganti kalau nama list di cPanel lu beda dari "subscribers".
+define('MAILMAN_LIST', 'subscribers');
+
 // Get the page that submitted the form (redirect back there after)
 $redirect = (!empty($_SERVER['HTTP_REFERER'])) ? $_SERVER['HTTP_REFERER'] : '/index.html';
 
@@ -37,10 +41,43 @@ if ($stmt->num_rows > 0) {
 }
 $stmt->close();
 
+// Daftarin email ke mailing list cPanel (Mailman) buat broadcast.
+// Best-effort: kalau gagal (list beda nama, Mailman down, dll) gak nge-block
+// subscribe di DB kita sendiri, cuma dicatat via error_log.
+function joinMailmanList($email) {
+    $url = 'http://' . $_SERVER['HTTP_HOST'] . '/mailman/subscribe/' . MAILMAN_LIST;
+    $postData = http_build_query(['email' => $email, 'subscribe' => 'Subscribe']);
+    try {
+        if (function_exists('curl_init')) {
+            $ch = curl_init($url);
+            curl_setopt_array($ch, [
+                CURLOPT_POST => true,
+                CURLOPT_POSTFIELDS => $postData,
+                CURLOPT_RETURNTRANSFER => true,
+                CURLOPT_TIMEOUT => 5,
+            ]);
+            curl_exec($ch);
+            curl_close($ch);
+        } else {
+            $context = stream_context_create(['http' => [
+                'method' => 'POST',
+                'header' => 'Content-Type: application/x-www-form-urlencoded',
+                'content' => $postData,
+                'timeout' => 5,
+            ]]);
+            @file_get_contents($url, false, $context);
+        }
+    } catch (Throwable $e) {
+        error_log('Gagal join Mailman list: ' . $e->getMessage());
+    }
+}
+
 // Insert new subscriber
 $stmt = $mysqli->prepare('INSERT INTO subscribers (email) VALUES (?)');
 $stmt->bind_param('s', $email);
 if ($stmt->execute()) {
+    joinMailmanList($email);
+
     // Send confirmation email (using PHP mail())
     $subject = 'Terima kasih telah berlangganan Teiko Newsletter';
     $message = "Hai,\n\nTerima kasih telah berlangganan newsletter Teiko. Anda akan menerima promo, berita, dan update terbaru.\n\nJika Anda ingin berhenti berlangganan, klik tautan berikut:\n" .
