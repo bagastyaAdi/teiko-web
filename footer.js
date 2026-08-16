@@ -1,3 +1,4 @@
+// Pasang footer.html ke placeholder yang ada di tiap halaman.
 const footerPlaceholder = document.getElementById('footer-placeholder');
 
 fetch('/footer.html')

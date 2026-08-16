@@ -1,4 +1,5 @@
 // ===== DRAWER LOGIC =====
+// Pasang event buka/tutup drawer navigasi mobile (hamburger, overlay, tombol close, link).
 function initDrawer() {
   const hamburger = document.getElementById('hamburger-btn');
   const drawer    = document.getElementById('nav-drawer');
@@ -34,6 +35,8 @@ function initDrawer() {
 }
 
 // ===== NAVBAR SPACER =====
+// Samain tinggi elemen spacer sama tinggi navbar (navbar fixed, jadi konten
+// di bawahnya butuh spacer biar gak ketiban).
 function updateNavbarSpacer() {
   const navbar = document.querySelector('#navbar-placeholder nav');
   const spacer = document.getElementById('navbar-spacer');
@@ -46,6 +49,7 @@ window.addEventListener('load', updateNavbarSpacer);
 window.addEventListener('resize', updateNavbarSpacer);
 
 // ===== HIGHLIGHT ACTIVE NAV =====
+// Kasih class 'active' ke link navbar yang cocok sama halaman yang lagi dibuka.
 function highlightActiveNav() {
   const currentPath = window.location.pathname.replace(/^\/|\.html$/g, '').toLowerCase() || 'index';
   document.querySelectorAll('.nav-desktop-link, .drawer-nav-links a').forEach(link => {
@@ -58,6 +62,9 @@ function highlightActiveNav() {
 }
 
 // ===== LOAD NAVBAR =====
+// Pasang navbar.html ke placeholder. Kalau ada versi ke-cache di localStorage,
+// tampilin itu dulu (instan, gak nunggu network) lalu tetep fetch ulang buat
+// refresh cache-nya di background.
 const navbarPlaceholder = document.getElementById('navbar-placeholder');
 
 if (localStorage.getItem('navbarHTML')) {

@@ -142,25 +142,19 @@ body {
 
 .sidebar-logo .brand {
   display: flex;
-  align-items: center;
-  gap: 10px;
+  flex-direction: column;
+  gap: 6px;
 }
 
 .sidebar-logo .brand-icon {
-  width: 42px;
-  height: 23px;
+  width: 100px;
+  height: auto;
   object-fit: contain;
-}
-
-.sidebar-logo .brand-name {
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: var(--text);
 }
 
 .sidebar-logo .brand-sub {
   font-size: 0.7rem;
-  color: var(--accent-light);
+  color: var(--muted);
   font-weight: 500;
   text-transform: uppercase;
   letter-spacing: 0.05em;
