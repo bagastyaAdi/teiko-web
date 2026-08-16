@@ -71,6 +71,9 @@
         <a class="nav-item" href="javascript:void(0)" id="nav-events">
           <i class="bi bi-images"></i> Kelola Event
         </a>
+        <a class="nav-item" href="javascript:void(0)" id="nav-news">
+          <i class="bi bi-newspaper"></i> Kelola News
+        </a>
         <a class="nav-item" href="javascript:void(0)" id="nav-feedback">
           <i class="bi bi-chat-dots"></i> Masukan
         </a>
@@ -187,6 +190,26 @@
           <div class="loading-state">
             <div class="spinner"></div>
             <p>Memuat daftar event...</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ===== NEWS MANAGEMENT VIEW ===== -->
+      <div id="news-view" style="display:none">
+        <div class="page-header d-flex justify-content-between align-items-center">
+          <div>
+            <h2>Kelola News</h2>
+            <p>Info lowongan kerja, pindah outlet, buka outlet baru, dan pengumuman lain di homepage.</p>
+          </div>
+          <button class="btn btn-dark px-4 py-2" id="add-news-btn" onclick="showAddNewsForm()">
+            <i class="bi bi-plus-lg me-2"></i> Tambah Berita
+          </button>
+        </div>
+
+        <div id="news-grid" class="drinks-grid mt-4">
+          <div class="loading-state">
+            <div class="spinner"></div>
+            <p>Memuat daftar berita...</p>
           </div>
         </div>
       </div>

@@ -14,10 +14,13 @@ window.onerror = function(msg, url, line, col, error) {
 // This ensures functions are available even if the script has errors later
 window.showAddEventForm = () => { console.log('Init phase: showAddEventForm not yet fully loaded'); };
 window.showAddFaqForm   = () => { console.log('Init phase: showAddFaqForm not yet fully loaded'); };
+window.showAddNewsForm  = () => { console.log('Init phase: showAddNewsForm not yet fully loaded'); };
 window.saveNewEventBanner = () => {};
 window.saveNewFaq = () => {};
+window.saveNewNews = () => {};
 window.loadEventsAdmin = () => {};
 window.loadFaqAdmin = () => {};
+window.loadNewsAdmin = () => {};
 
 console.log('DEBUG: admin.js initialization started');
 
@@ -38,7 +41,7 @@ const SECTIONS = [
   },
   {
     id: 'hero1',
-    label: 'Banner Promo Lebar 1 (Bawah Marquee)',
+    label: 'Banner Promo Lebar 1 (Bawah Hero)',
     emoji: '🖼️',
     defaultImg: './asset/hero1.webp',
     fields: [
@@ -47,7 +50,7 @@ const SECTIONS = [
   },
   {
     id: 'hero2',
-    label: 'Banner Promo Lebar 2 (Bawah Marquee)',
+    label: 'Banner Promo Lebar 2 (Bawah Hero)',
     emoji: '🖼️',
     defaultImg: './asset/hero2.webp',
     fields: [
@@ -56,7 +59,7 @@ const SECTIONS = [
   },
   {
     id: 'hero3',
-    label: 'Banner Promo Lebar 3 (Bawah Marquee)',
+    label: 'Banner Promo Lebar 3 (Bawah Hero)',
     emoji: '🖼️',
     defaultImg: './asset/hero1.webp',
     fields: [
@@ -147,6 +150,7 @@ let pendingUploads = {};
 let drinksData = [];
 let eventsAdminData = [];
 let faqAdminData = [];
+let newsAdminData = [];
 
 // ===== AUTH =====
 // Cek session Supabase Auth yang lagi aktif, tampilin dashboard atau login screen.
@@ -217,7 +221,7 @@ document.getElementById('logout-btn').addEventListener('click', async () => {
 
 // ===== CONTENT =====
 // Ambil semua baris site_content, pisahin jadi sections (hero/promo), events
-// (id "event_*"), dan FAQ (id "faq_*"), lalu render ketiganya.
+// (id "event_*"), FAQ (id "faq_*"), dan News (id "news_*"), lalu render semua.
 async function loadContent(isInitial = false) {
   const container = document.getElementById('sections-grid');
   if (!isInitial) {
@@ -231,28 +235,33 @@ async function loadContent(isInitial = false) {
     contentData = {};
     eventsAdminData = [];
     faqAdminData = [];
+    newsAdminData = [];
 
     data.forEach(row => {
       if (row.id.startsWith('event_')) {
         eventsAdminData.push(row);
       } else if (row.id.startsWith('faq_')) {
         faqAdminData.push(row);
+      } else if (row.id.startsWith('news_')) {
+        newsAdminData.push(row);
       } else {
         // Hero / Other site content
         contentData[row.id] = row;
       }
     });
-    
-    // Sort events by ID desc
+
+    // Sort events & news by ID desc (terbaru dulu)
     eventsAdminData.sort((a, b) => b.id.localeCompare(a.id));
+    newsAdminData.sort((a, b) => b.id.localeCompare(a.id));
 
     // Update Stats
     const syncedEl = document.getElementById('stat-synced');
-    if (syncedEl) syncedEl.textContent = Object.keys(contentData).length + eventsAdminData.length + faqAdminData.length;
+    if (syncedEl) syncedEl.textContent = Object.keys(contentData).length + eventsAdminData.length + faqAdminData.length + newsAdminData.length;
 
     renderSections();
     renderEventsAdmin();
     renderFaqAdmin();
+    renderNewsAdmin();
   } catch (err) {
     showToast('Gagal memuat: ' + err.message, 'error');
   }
@@ -462,7 +471,7 @@ window.editContent = (id) => {
       </div>
     </div>
   `;
-  
+
   document.getElementById('content-view').insertBefore(createDiv(formHtml), document.getElementById('sections-grid'));
 
   const upload = document.getElementById('edit-content-upload-area');
@@ -474,7 +483,7 @@ window.editContent = (id) => {
       showToast('Sedang memproses gambar...', 'info');
       const optimizedFile = await optimizeImage(file);
       pendingUploads[id] = optimizedFile;
-      
+
       const reader = new FileReader();
       reader.onload = (re) => {
         document.getElementById('edit-content-preview').src = re.target.result;
@@ -482,7 +491,7 @@ window.editContent = (id) => {
       reader.readAsDataURL(optimizedFile);
     }
   };
-  
+
   document.getElementById('edit-content-form-area').scrollIntoView({ behavior: 'smooth' });
 };
 
@@ -627,17 +636,19 @@ const contentNav   = document.getElementById('nav-content');
 const slidesNav    = document.getElementById('nav-slides');
 const drinksNav    = document.getElementById('nav-drinks');
 const eventsNav    = document.getElementById('nav-events');
+const newsNav      = document.getElementById('nav-news');
 const feedbackNav  = document.getElementById('nav-feedback');
 const faqNav       = document.getElementById('nav-faq');
 const contentView  = document.getElementById('content-view');
 const slidesView   = document.getElementById('slides-view');
 const drinksView   = document.getElementById('drinks-view');
 const eventsView   = document.getElementById('events-view');
+const newsView     = document.getElementById('news-view');
 const feedbackView = document.getElementById('feedback-view');
 const faqView      = document.getElementById('faq-view');
 
-const allNavs  = [contentNav, slidesNav, drinksNav, eventsNav, feedbackNav, faqNav];
-const allViews = [contentView, slidesView, drinksView, eventsView, feedbackView, faqView];
+const allNavs  = [contentNav, slidesNav, drinksNav, eventsNav, newsNav, feedbackNav, faqNav];
+const allViews = [contentView, slidesView, drinksView, eventsView, newsView, feedbackView, faqView];
 
 // Pindah tab sidebar: aktifin nav+view yang dipilih, sembunyiin sisanya,
 // terus jalanin loaderCallback (fetch data) kalau ada.
@@ -658,6 +669,7 @@ if (contentNav)  contentNav.addEventListener('click',  () => activateView('nav-c
 if (slidesNav)   slidesNav.addEventListener('click',   () => { activateView('nav-slides',  'slides-view');  loadSlidesAdmin(); });
 if (drinksNav)   drinksNav.addEventListener('click',   () => { activateView('nav-drinks',  'drinks-view');  loadDrinks(); });
 if (eventsNav)   eventsNav.addEventListener('click',   () => { activateView('nav-events',  'events-view');  loadEventsAdmin(); });
+if (newsNav)     newsNav.addEventListener('click',     () => { activateView('nav-news',    'news-view');    loadNewsAdmin(); });
 if (feedbackNav) feedbackNav.addEventListener('click', () => activateView('nav-feedback', 'feedback-view', loadFeedback));
 if (faqNav)      faqNav.addEventListener('click',      () => { activateView('nav-faq',     'faq-view');     loadFaqAdmin(); });
 
@@ -1839,7 +1851,290 @@ window.saveEditEventBanner = async (id) => {
   }
 };
 
-// ===== FAQ MANAGEMENT =====
+// ===== NEWS MANAGEMENT (DATA FROM site_content) =====
+
+function loadNewsAdmin() {
+  // Data is now pre-loaded by loadContent()
+  renderNewsAdmin();
+}
+
+// Render kartu-kartu berita ke grid.
+function renderNewsAdmin() {
+  const grid = document.getElementById('news-grid');
+  if (!grid) return;
+
+  if (newsAdminData.length === 0) {
+    grid.innerHTML = `<div class="col-12 text-center py-5 text-muted"><p>Belum ada berita di site_content. Klik "Tambah Berita".</p></div>`;
+    return;
+  }
+
+  grid.innerHTML = newsAdminData.map(n => `
+    <div class="drink-admin-card" id="news-card-${n.id}">
+      ${n.image_url ? `<img src="${n.image_url}" class="drink-admin-img" alt="News" style="object-fit: cover; aspect-ratio: 4/3;">` : ''}
+      <div class="drink-admin-body">
+        <div class="drink-admin-name">${n.title || '(Tanpa Judul)'}</div>
+        <div class="drink-admin-meta">
+          <span class="drink-admin-badge ${n.is_active !== false ? 'bg-success text-white' : 'bg-danger text-white'}">${n.is_active !== false ? 'Aktif' : 'Off'}</span>
+          <span class="small text-muted d-block mt-1" style="font-size:0.7rem">${(n.subtitle || '').substring(0, 80)}${(n.subtitle || '').length > 80 ? '…' : ''}</span>
+        </div>
+        <div class="drink-admin-actions mt-3">
+          <button class="btn-icon" onclick="editNews('${n.id}')" title="Edit"><i class="bi bi-pencil"></i></button>
+          <button class="btn-icon ${n.is_active !== false ? '' : 'text-success'}" onclick="toggleNewsActive('${n.id}', ${n.is_active === false})" title="${n.is_active !== false ? 'Matikan' : 'Aktifkan'}">
+            <i class="bi ${n.is_active !== false ? 'bi-eye-slash' : 'bi-eye'}"></i>
+          </button>
+          <button class="btn-icon btn-icon-danger" onclick="deleteNews('${n.id}')" title="Hapus"><i class="bi bi-trash"></i></button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+// Aktif/nonaktifin satu berita.
+async function toggleNewsActive(id, state) {
+  try {
+    const { error } = await sb.from('site_content').update({ is_active: state }).eq('id', id);
+    if (error) throw error;
+    showToast('Status berita diperbarui');
+    loadContent();
+  } catch (err) {
+    showToast('Gagal: ' + err.message, 'error');
+  }
+}
+
+// Hapus satu berita secara permanen dari DB.
+async function deleteNews(id) {
+  if (!confirm('Hapus berita ini dari site_content?')) return;
+  try {
+    const { data, error } = await sb.from('site_content').delete().eq('id', id).select();
+    if (error) throw error;
+    if (!data || data.length === 0) {
+      throw new Error('0 baris terhapus. Periksa kebijakan RLS (Row Level Security) untuk izin DELETE di tabel site_content Supabase Anda.');
+    }
+    showToast('Berita dihapus.');
+    loadContent();
+  } catch (err) {
+    showToast('Gagal menghapus: ' + err.message, 'error');
+  }
+}
+
+// Tambah Berita UI & Logic. Foto opsional - beda dari Event yang wajib foto.
+window.showAddNewsForm = () => {
+  const grid = document.getElementById('news-grid');
+  if (!grid) return;
+
+  const existingForm = document.getElementById('news-form-area');
+  if (existingForm) { existingForm.remove(); return; }
+
+  const formHtml = `
+    <div id="news-form-area" class="drink-form-container fade-up mb-4" style="border: 2px solid var(--accent); background: white;">
+      <h4 class="mb-3">Tambah Berita</h4>
+      <div class="row g-3">
+        <div class="col-md-4">
+          <div class="upload-area" id="news-upload-area">
+            <img id="news-preview" src="" class="img-preview" style="display:none; object-fit: cover; aspect-ratio: 4/3;">
+            <div class="upload-placeholder" id="news-placeholder">
+              <i class="bi bi-plus-circle"></i><p>Pilih Foto (opsional)</p>
+            </div>
+          </div>
+          <input type="file" id="news-file-input" accept="image/*" style="display:none">
+        </div>
+        <div class="col-md-8">
+          <div class="row g-2">
+            <div class="col-12"><input type="text" id="news-title" class="form-input" placeholder="Judul Berita (misal: Lowongan Kerja Outlet Sanur)"></div>
+            <div class="col-12"><textarea id="news-body" class="form-input" placeholder="Isi Berita" rows="4"></textarea></div>
+            <div class="col-12 text-end mt-2">
+               <button class="btn btn-light me-2" onclick="document.getElementById('news-form-area').remove()">Batal</button>
+               <button class="btn btn-dark px-4" id="submit-news-btn" onclick="saveNewNews()">Simpan Berita</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  grid.insertAdjacentHTML('beforebegin', formHtml);
+
+  const upload = document.getElementById('news-upload-area');
+  const input = document.getElementById('news-file-input');
+  if (upload && input) {
+    upload.onclick = () => input.click();
+    input.onchange = async (e) => {
+      const file = e.target.files[0];
+      if (file) {
+        showToast('Memproses foto...', 'info');
+        const optimizedFile = await optimizeImage(file, 1200);
+        pendingUploads['new_news'] = optimizedFile;
+        const reader = new FileReader();
+        reader.onload = (re) => {
+          document.getElementById('news-preview').src = re.target.result;
+          document.getElementById('news-preview').style.display = 'block';
+          document.getElementById('news-placeholder').style.display = 'none';
+        };
+        reader.readAsDataURL(optimizedFile);
+      }
+    };
+  }
+};
+
+// Simpan berita baru (id auto-generate "news_<timestamp>") ke site_content. Foto opsional.
+window.saveNewNews = async () => {
+  const btn = document.getElementById('submit-news-btn');
+  const titleVal = document.getElementById('news-title')?.value || '';
+  const bodyVal  = document.getElementById('news-body')?.value  || '';
+
+  if (!titleVal.trim()) { showToast('Judul berita wajib diisi!', 'error'); return; }
+
+  btn.disabled = true;
+  btn.innerHTML = '<i class="bi bi-arrow-repeat spin"></i> Menyimpan...';
+
+  try {
+    let imageUrl = null;
+    if (pendingUploads['new_news']) {
+      imageUrl = await uploadAndOptimizeImage(pendingUploads['new_news'], 'news', 1200);
+      delete pendingUploads['new_news'];
+    }
+
+    const newsId = `news_${Date.now()}`;
+    const { error } = await sb.from('site_content').insert({
+      id: newsId,
+      image_url: imageUrl,
+      is_active: true,
+      title: titleVal,
+      subtitle: bodyVal || null,
+      updated_at: new Date().toISOString()
+    });
+
+    if (error) throw error;
+
+    showToast('Berita berhasil ditambahkan!');
+    document.getElementById('news-form-area').remove();
+    delete pendingUploads['new_news'];
+    loadContent();
+  } catch (err) {
+    showToast('Gagal menambah berita: ' + err.message, 'error');
+  } finally {
+    if (btn) { btn.disabled = false; btn.innerHTML = 'Simpan Berita'; }
+  }
+};
+
+// Global expose
+window.toggleNewsActive = toggleNewsActive;
+window.deleteNews = deleteNews;
+window.loadNewsAdmin = loadNewsAdmin;
+window.renderNewsAdmin = renderNewsAdmin;
+
+// Tampilin form edit buat satu berita (isi field dari data yang ada). Foto opsional.
+window.editNews = (id) => {
+  const n = newsAdminData.find(x => x.id === id);
+  if (!n) return;
+
+  const existingForm = document.getElementById('edit-news-form-area');
+  if (existingForm) existingForm.remove();
+
+  const formHtml = `
+    <div id="edit-news-form-area" class="drink-form-container fade-up mt-4" style="border: 2px solid var(--primary-color);">
+      <h4 class="mb-3">Edit Berita</h4>
+      <div class="row g-3">
+        <div class="col-md-4">
+          <div class="upload-area" id="edit-news-upload-area">
+            <img id="edit-news-preview" src="${n.image_url || ''}" class="img-preview" style="display:${n.image_url ? 'block' : 'none'}; object-fit: cover; aspect-ratio: 4/3;">
+            <div class="upload-placeholder" id="edit-news-placeholder" style="display:${n.image_url ? 'none' : 'flex'}">
+              <i class="bi bi-plus-circle"></i><p>Pilih Foto (opsional)</p>
+            </div>
+            <div class="upload-overlay">
+              <i class="bi bi-camera"></i><span>Ganti Foto</span>
+            </div>
+          </div>
+          <input type="file" id="edit-news-file-input" accept="image/*" style="display:none">
+        </div>
+        <div class="col-md-8">
+          <div class="row g-2">
+            <div class="col-12">
+              <label class="form-label mb-1" style="font-size: 0.8rem; color: #666;">Judul Berita</label>
+              <input type="text" id="edit-news-title" class="form-input" value="${(n.title || '').replace(/"/g, '&quot;')}">
+            </div>
+            <div class="col-12">
+              <label class="form-label mb-1" style="font-size: 0.8rem; color: #666;">Isi Berita</label>
+              <textarea id="edit-news-body" class="form-input" rows="4">${n.subtitle || ''}</textarea>
+            </div>
+            <div class="col-12 text-end mt-3">
+               <button class="btn btn-light me-2" onclick="document.getElementById('edit-news-form-area').remove()">Batal</button>
+               <button class="btn btn-dark px-4" id="submit-edit-news-btn" onclick="saveEditNewsItem('${n.id}')">Simpan Perubahan</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
+
+  document.getElementById('news-view').insertBefore(createDiv(formHtml), document.getElementById('news-grid'));
+
+  const upload = document.getElementById('edit-news-upload-area');
+  const input = document.getElementById('edit-news-file-input');
+  upload.onclick = () => input.click();
+  input.onchange = async (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      showToast('Memproses foto...', 'info');
+      const optimizedFile = await optimizeImage(file, 1200);
+      pendingUploads['edit_news'] = optimizedFile;
+
+      const reader = new FileReader();
+      reader.onload = (re) => {
+        document.getElementById('edit-news-preview').src = re.target.result;
+        document.getElementById('edit-news-preview').style.display = 'block';
+        document.getElementById('edit-news-placeholder').style.display = 'none';
+      };
+      reader.readAsDataURL(optimizedFile);
+    }
+  };
+
+  document.getElementById('edit-news-form-area').scrollIntoView({ behavior: 'smooth' });
+};
+
+// Simpan hasil edit berita (upload foto baru kalau ada, lalu update field-fieldnya).
+window.saveEditNewsItem = async (id) => {
+  const titleVal = document.getElementById('edit-news-title')?.value || '';
+  const bodyVal  = document.getElementById('edit-news-body')?.value  || '';
+
+  const btn = document.getElementById('submit-edit-news-btn');
+  if (!btn) return;
+  btn.disabled = true;
+  btn.innerHTML = '<i class="bi bi-arrow-repeat spin"></i> Mengupdate...';
+
+  try {
+    const n = newsAdminData.find(x => x.id === id);
+    if (!n) throw new Error('Data berita tidak ditemukan, coba refresh halaman.');
+    let imageUrl = n.image_url;
+
+    if (pendingUploads['edit_news']) {
+      imageUrl = await uploadAndOptimizeImage(pendingUploads['edit_news'], 'news', 1200);
+      delete pendingUploads['edit_news'];
+    }
+
+    const { error } = await sb.from('site_content').update({
+      title: titleVal || null,
+      subtitle: bodyVal || null,
+      image_url: imageUrl,
+      updated_at: new Date().toISOString()
+    }).eq('id', id);
+
+    if (error) throw error;
+
+    showToast('Berita berhasil diperbarui!');
+    document.getElementById('edit-news-form-area').remove();
+    delete pendingUploads['edit_news'];
+    loadContent();
+  } catch (err) {
+    showToast('Gagal mengubah berita: ' + err.message, 'error');
+  } finally {
+    if (btn) {
+      btn.disabled = false;
+      btn.innerHTML = 'Simpan Perubahan';
+    }
+  }
+};
+
 // ===== FAQ MANAGEMENT (DATA FROM site_content) =====
 
 function loadFaqAdmin() {
@@ -2082,6 +2377,7 @@ window.deleteFaqAdmin = async (id) => {
 // Final Global Assignments
 window.loadEventsAdmin = loadEventsAdmin;
 window.loadFaqAdmin    = loadFaqAdmin;
+window.loadNewsAdmin   = loadNewsAdmin;
 window.toggleEventPrimary = toggleEventPrimary;
 
 // ===== INITIALIZATION =====
