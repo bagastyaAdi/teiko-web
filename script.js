@@ -34,6 +34,7 @@ if (typeof Lenis !== 'undefined') {
 }
 
 // 2. GSAP Animations for Hero & Editorial Grid
+// Reveal hero text/buttons dan beverage box pas halaman/scroll load pertama kali.
 function initGsapAnimations() {
   if (typeof gsap === 'undefined') return;
 
@@ -99,6 +100,8 @@ let drinkSlides = [];
 let currentDrinkIdx = 0;
 let drinkSlideTimer = null;
 
+// Ambil daftar minuman buat slideshow "kubah hijau" (hero_drink_slides table).
+// Fallback ke defaultDrinkSlides kalau DB kosong/error.
 async function loadDrinkSlides() {
   const defaultDrinkSlides = [
     {
@@ -152,6 +155,7 @@ async function loadDrinkSlides() {
   buildDrinkDots();
 }
 
+// Bikin tombol titik navigasi buat slideshow minuman, satu titik per slide.
 function buildDrinkDots() {
   const dotsContainer = document.getElementById('hero-carousel-dots');
   if (!dotsContainer || drinkSlides.length <= 1) return;
@@ -168,6 +172,8 @@ function buildDrinkDots() {
   });
 }
 
+// Tampilin satu slide minuman (gambar, judul, quote) di posisi idx.
+// animate=true pake fade GSAP, false langsung ganti (dipakai pas load pertama).
 function renderDrinkSlide(idx, animate = true) {
   if (!drinkSlides || drinkSlides.length === 0) return;
   currentDrinkIdx = idx % drinkSlides.length;
@@ -208,6 +214,7 @@ function renderDrinkSlide(idx, animate = true) {
   });
 }
 
+// Jalanin auto-rotate slideshow minuman tiap 4.5 detik.
 function startDrinkSlideTimer() {
   clearInterval(drinkSlideTimer);
   if (drinkSlides.length <= 1) return;
@@ -216,6 +223,7 @@ function startDrinkSlideTimer() {
   }, 4500);
 }
 
+// Isi gambar/judul/quote di kubah hijau langsung tanpa animasi (dipakai fallback).
 function updateGreenArchDisplay(item) {
   const imgEl = document.getElementById('es-coklat-cup-img');
   const titleEl = document.getElementById('hero1-title');
@@ -236,6 +244,7 @@ function updateGreenArchDisplay(item) {
   }
 }
 
+// Tampilin satu hero banner (carousel lebar bawah marquee) di posisi index.
 function renderHeroSlide(index, animate = true) {
   if (!heroSlides || heroSlides.length === 0) return;
   currentSlideIdx = index % heroSlides.length;
@@ -307,6 +316,7 @@ function renderHeroSlide(index, animate = true) {
   });
 }
 
+// Bikin titik navigasi buat hero carousel & jalanin auto-rotate.
 function initHeroCarousel() {
   const dotsContainer = document.getElementById('fullwidth-banner-dots');
   if (dotsContainer && heroSlides && heroSlides.length > 0) {
@@ -330,6 +340,7 @@ function initHeroCarousel() {
   startHeroCarouselTimer();
 }
 
+// Jalanin auto-rotate hero carousel tiap 5 detik.
 function startHeroCarouselTimer() {
   if (heroCarouselTimer) clearInterval(heroCarouselTimer);
   heroCarouselTimer = setInterval(() => {
@@ -339,11 +350,14 @@ function startHeroCarouselTimer() {
   }, 4500);
 }
 
+// Restart timer auto-rotate (dipanggil abis user klik dot manual).
 function resetHeroCarouselTimer() {
   if (heroCarouselTimer) clearInterval(heroCarouselTimer);
   startHeroCarouselTimer();
 }
 
+// Ambil semua konten homepage dari site_content (hero banner, kategori
+// minuman, kotak promo) sekali jalan, terus render ke section masing-masing.
 async function loadContent() {
   try {
     if (typeof sb === 'undefined') return;
@@ -361,7 +375,7 @@ async function loadContent() {
 
       // Collect active heroes for carousel (hero1, hero2, hero3, and any dynamic hero_... added from admin)
       if (s.id === 'hero1' || s.id === 'hero2' || s.id === 'hero3' || (s.id.startsWith('hero') && s.id !== 'hero_drink_display')) {
-        if (s.is_active !== false) {
+        if (s.is_active !== false && s.image_url) {
           heroSlides.push(s);
         }
         return;
@@ -443,7 +457,70 @@ async function loadContent() {
   }
 }
 
-// 4. Initialize on DOMContentLoaded
+// 4. Shared page helpers
+// Dulu ke-copy paste sendiri-sendiri di faq.html, feedback.html, drinks.html,
+// dan event.html. Dipindah ke sini biar cuma ada satu versi.
+
+// Reveal elemen satu-satu (stagger) dengan nambahin class 'visible' bertahap.
+// Dipakai buat animasi masuk kartu/section pas halaman baru dimuat.
+function staggerAnimate(selector, baseDelay = 0, step = 80) {
+  document.querySelectorAll(selector).forEach((el, i) => {
+    setTimeout(() => el.classList.add('visible'), baseDelay + i * step);
+  });
+}
+
+// Buka/tutup satu accordion FAQ, nutup accordion lain yang lagi kebuka.
+function toggleFaq(btn) {
+  const answer = btn.nextElementSibling;
+  const isOpen = btn.classList.contains('open');
+  document.querySelectorAll('.faq-question').forEach(q => {
+    q.classList.remove('open');
+    q.nextElementSibling.classList.remove('open');
+  });
+  if (!isOpen) {
+    btn.classList.add('open');
+    answer.classList.add('open');
+  }
+}
+
+// Ambil FAQ aktif dari site_content (id diawali "faq_") dan render ke satu
+// container. Dipakai di halaman FAQ.
+async function loadFaqFrontend(containerId = 'faq-dynamic-container', animBaseDelay = 150, animStep = 80) {
+  const container = document.getElementById(containerId);
+  if (!container) return;
+
+  try {
+    const { data, error } = await sb.from('site_content')
+      .select('*')
+      .eq('is_active', true)
+      .like('id', 'faq_%');
+    if (error) throw error;
+
+    // Kosong dari DB = biarin FAQ default yang udah ada di HTML.
+    if (!data || data.length === 0) return;
+
+    data.sort((a, b) => a.id.localeCompare(b.id));
+
+    container.innerHTML = data.map(f => `
+      <div class="faq-item anim-item">
+        <button class="faq-question" onclick="toggleFaq(this)">
+          ${f.title} <i class="bi bi-plus-lg faq-icon"></i>
+        </button>
+        <div class="faq-answer">
+          ${(f.subtitle || '').replace(/\n/g, '<br>')}
+        </div>
+      </div>
+    `).join('');
+
+    setTimeout(() => {
+      staggerAnimate(`#${containerId} .faq-item`, animBaseDelay, animStep);
+    }, 50);
+  } catch (err) {
+    console.error('Error loading FAQ:', err);
+  }
+}
+
+// 5. Initialize on DOMContentLoaded
 document.addEventListener('DOMContentLoaded', () => {
   initGsapAnimations();
   loadContent();

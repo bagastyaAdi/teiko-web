@@ -22,6 +22,9 @@ window.loadFaqAdmin = () => {};
 console.log('DEBUG: admin.js initialization started');
 
 
+// Daftar slot konten statis di homepage (posisi tetap, gak bisa dihapus,
+// cuma bisa dikosongin). Dipakai renderSections() buat gambar kartu edit di
+// "Kelola Konten", dan deleteSection() buat bedain slot statis vs hero dinamis.
 const SECTIONS = [
   {
     id: 'hero_drink_display',
@@ -146,6 +149,7 @@ let eventsAdminData = [];
 let faqAdminData = [];
 
 // ===== AUTH =====
+// Cek session Supabase Auth yang lagi aktif, tampilin dashboard atau login screen.
 async function checkAuth() {
   const { data: { session } } = await sb.auth.getSession();
   if (session) {
@@ -155,11 +159,13 @@ async function checkAuth() {
   }
 }
 
+// Tampilin layar login, sembunyiin dashboard.
 function showLogin() {
   document.getElementById('login-screen').style.display = 'flex';
   document.getElementById('dashboard').style.display = 'none';
 }
 
+// Tampilin dashboard, sembunyiin layar login, terus load semua data admin.
 function showDashboard(user) {
   document.getElementById('login-screen').style.display = 'none';
   document.getElementById('dashboard').style.display = 'flex';
@@ -171,6 +177,7 @@ function showDashboard(user) {
   fetchAllData();
 }
 
+// Load semua data admin sekaligus pas dashboard pertama kali dibuka.
 async function fetchAllData() {
   showToast('Menyelaraskan data...', 'info');
   await Promise.all([
@@ -180,6 +187,7 @@ async function fetchAllData() {
   showToast('Data disinkronkan', 'success');
 }
 
+// Handle submit form login (email + password lewat Supabase Auth).
 document.getElementById('login-form').addEventListener('submit', async (e) => {
   e.preventDefault();
   const email = document.getElementById('login-email').value;
@@ -200,6 +208,7 @@ document.getElementById('login-form').addEventListener('submit', async (e) => {
   }
 });
 
+// Handle klik tombol keluar.
 document.getElementById('logout-btn').addEventListener('click', async () => {
   await sb.auth.signOut();
   showLogin();
@@ -207,6 +216,8 @@ document.getElementById('logout-btn').addEventListener('click', async () => {
 });
 
 // ===== CONTENT =====
+// Ambil semua baris site_content, pisahin jadi sections (hero/promo), events
+// (id "event_*"), dan FAQ (id "faq_*"), lalu render ketiganya.
 async function loadContent(isInitial = false) {
   const container = document.getElementById('sections-grid');
   if (!isInitial) {
@@ -247,6 +258,8 @@ async function loadContent(isInitial = false) {
   }
 }
 
+// Gabungin slot statis (SECTIONS) + hero dinamis dari DB, render semua jadi
+// kartu di grid "Kelola Konten".
 function renderSections() {
   const grid = document.getElementById('sections-grid');
   if (!grid) return;
@@ -280,6 +293,7 @@ function renderSections() {
   grid.innerHTML = allSections.map(s => createSectionCard(s)).join('');
 }
 
+// Bikin HTML satu kartu section (thumbnail, badge aktif, tombol edit/toggle/hapus).
 function createSectionCard(section) {
   const data = contentData[section.id] || {};
   const isDeleted = data.image_url === '';
@@ -472,6 +486,7 @@ window.editContent = (id) => {
   document.getElementById('edit-content-form-area').scrollIntoView({ behavior: 'smooth' });
 };
 
+// Simpan hasil edit form section (upload foto baru kalau ada, lalu upsert field-fieldnya).
 window.saveEditContent = async (id) => {
   const btn = document.getElementById('submit-content-btn');
   const section = SECTIONS.find(s => s.id === id) || { fields: [] };
@@ -509,63 +524,6 @@ window.saveEditContent = async (id) => {
     if(btn) { btn.disabled = false; btn.innerHTML = 'Simpan Perubahan'; }
   }
 };
-
-function handleFileSelect(sectionId, file) {
-  pendingUploads[sectionId] = file;
-
-  const reader = new FileReader();
-  reader.onload = (e) => {
-    const preview = document.getElementById(`preview-${sectionId}`);
-    preview.src = e.target.result;
-    preview.style.display = 'block';
-    document.getElementById(`placeholder-${sectionId}`).style.display = 'none';
-  };
-  reader.readAsDataURL(file);
-
-  document.getElementById(`hint-${sectionId}`).textContent = `📁 ${file.name} — siap diupload`;
-}
-
-async function saveSection(sectionId) {
-  const section = SECTIONS.find(s => s.id === sectionId);
-  const btn = document.getElementById(`save-btn-${sectionId}`);
-
-  btn.disabled = true;
-  btn.innerHTML = '<i class="bi bi-arrow-repeat spin"></i> Menyimpan...';
-
-  try {
-    let imageUrl = contentData[sectionId]?.image_url || null;
-
-    // Upload foto jika ada file baru
-    if (pendingUploads[sectionId]) {
-      imageUrl = await uploadAndOptimizeImage(pendingUploads[sectionId], sectionId, 1400);
-      delete pendingUploads[sectionId];
-      const hintEl = document.getElementById(`hint-${sectionId}`);
-      if (hintEl) hintEl.textContent = '✅ Foto WebP berhasil diupload';
-    }
-
-    // Kumpulkan nilai dari form
-    const updateData = { id: sectionId, image_url: imageUrl, updated_at: new Date().toISOString() };
-    const allFields = ['title', 'subtitle', 'subtitle2', 'button_text', 'button_url'];
-
-    allFields.forEach(f => {
-      const el = document.getElementById(`field-${sectionId}-${f}`);
-      updateData[f] = el ? (el.value || null) : null;
-    });
-
-    // Simpan ke Supabase
-    const { error } = await sb.from('site_content').upsert(updateData);
-    if (error) throw new Error('DB error: ' + error.message);
-
-    contentData[sectionId] = updateData;
-    showToast(`✅ "${section.label}" berhasil disimpan!`, 'success');
-
-  } catch (err) {
-    showToast('❌ ' + err.message, 'error');
-  } finally {
-    btn.disabled = false;
-    btn.innerHTML = '<i class="bi bi-check2-circle"></i> Simpan Perubahan';
-  }
-}
 
 // ===== TOGGLE SECTION =====
 async function toggleSection(sectionId) {
@@ -609,22 +567,44 @@ async function toggleSection(sectionId) {
 }
 
 // ===== DELETE SECTION =====
+// Slot statis (SECTIONS di atas) punya posisi tetap di homepage & gak bisa
+// benar-benar hilang, jadi "hapus" cuma ngosongin isinya. Hero dinamis
+// (ditambah lewat "Tambah Hero Baru") bukan slot tetap, jadi dihapus permanen
+// dari DB supaya card-nya beneran hilang dari grid.
 async function deleteSection(sectionId) {
-  if (!confirm('Hapus dan sembunyikan section ini secara permanen dari website? (Tidak akan kembali ke gambar default dari folder asset)')) return;
+  const isStaticSlot = SECTIONS.some(s => s.id === sectionId);
+
+  if (isStaticSlot) {
+    if (!confirm('Kosongkan section ini? (Slot tetap ada di homepage, foto & teks akan dihapus)')) return;
+    try {
+      const { data, error } = await sb.from('site_content').upsert({
+        id: sectionId,
+        is_active: false,
+        image_url: '',
+        title: '',
+        subtitle: '',
+        updated_at: new Date().toISOString()
+      }).select();
+      if (error) throw error;
+      if (!data || data.length === 0) {
+        throw new Error('0 baris tersimpan. Periksa kebijakan RLS (Row Level Security) untuk izin UPDATE/INSERT di tabel site_content Supabase Anda.');
+      }
+      showToast('Section berhasil dikosongkan!', 'success');
+      loadContent();
+    } catch (err) {
+      showToast('Gagal menghapus: ' + err.message, 'error');
+    }
+    return;
+  }
+
+  if (!confirm('Hapus banner ini secara permanen?')) return;
   try {
-    const { data, error } = await sb.from('site_content').upsert({
-      id: sectionId,
-      is_active: false,
-      image_url: '',
-      title: '',
-      subtitle: '',
-      updated_at: new Date().toISOString()
-    }).select();
+    const { data, error } = await sb.from('site_content').delete().eq('id', sectionId).select();
     if (error) throw error;
     if (!data || data.length === 0) {
-      throw new Error('0 baris tersimpan. Periksa kebijakan RLS (Row Level Security) untuk izin UPDATE/INSERT di tabel site_content Supabase Anda.');
+      throw new Error('0 baris terhapus. Periksa kebijakan RLS (Row Level Security) untuk izin DELETE di tabel site_content Supabase Anda.');
     }
-    showToast('Section berhasil dihapus & disembunyikan dari website!', 'success');
+    showToast('Banner dihapus.', 'success');
     loadContent();
   } catch (err) {
     showToast('Gagal menghapus: ' + err.message, 'error');
@@ -659,6 +639,8 @@ const faqView      = document.getElementById('faq-view');
 const allNavs  = [contentNav, slidesNav, drinksNav, eventsNav, feedbackNav, faqNav];
 const allViews = [contentView, slidesView, drinksView, eventsView, feedbackView, faqView];
 
+// Pindah tab sidebar: aktifin nav+view yang dipilih, sembunyiin sisanya,
+// terus jalanin loaderCallback (fetch data) kalau ada.
 function activateView(navId, viewId, loaderCallback) {
   allNavs.forEach(nav  => { if (nav)  nav.classList.remove('active'); });
   const activeNav = document.getElementById(navId);
@@ -671,6 +653,7 @@ function activateView(navId, viewId, loaderCallback) {
   if (loaderCallback) loaderCallback();
 }
 
+// Sambungin tiap link sidebar ke tab-nya masing-masing.
 if (contentNav)  contentNav.addEventListener('click',  () => activateView('nav-content',  'content-view'));
 if (slidesNav)   slidesNav.addEventListener('click',   () => { activateView('nav-slides',  'slides-view');  loadSlidesAdmin(); });
 if (drinksNav)   drinksNav.addEventListener('click',   () => { activateView('nav-drinks',  'drinks-view');  loadDrinks(); });
@@ -681,6 +664,7 @@ if (faqNav)      faqNav.addEventListener('click',      () => { activateView('nav
 // ===== SLIDE MINUMAN HERO MANAGEMENT =====
 let slidesAdminData = [];
 
+// Ambil daftar slide minuman (hero_drink_slides table) buat tab "Slide Display Minuman".
 async function loadSlidesAdmin() {
   const grid = document.getElementById('slides-grid');
   if (!grid) return;
@@ -695,6 +679,7 @@ async function loadSlidesAdmin() {
   }
 }
 
+// Render kartu-kartu slide minuman ke grid.
 function renderSlidesAdmin() {
   const grid = document.getElementById('slides-grid');
   if (!grid) return;
@@ -734,6 +719,7 @@ document.addEventListener('DOMContentLoaded', () => {
   if (addSlideBtn) addSlideBtn.addEventListener('click', showAddSlideForm);
 });
 
+// Toggle form tambah slide baru (tutup kalau udah kebuka).
 function showAddSlideForm() {
   const existing = document.getElementById('slide-form-area');
   if (existing) { existing.remove(); return; }
@@ -810,6 +796,7 @@ window.saveNewSlide = async () => {
   }
 };
 
+// Tampilin form edit buat satu slide minuman (isi field dari data yang ada).
 window.editSlide = (id) => {
   const slide = slidesAdminData.find(s => s.id === id);
   if (!slide) return;
@@ -858,6 +845,7 @@ window.editSlide = (id) => {
   document.getElementById('edit-slide-form-area').scrollIntoView({ behavior: 'smooth' });
 };
 
+// Simpan hasil edit slide (nama, subtitle, urutan, foto baru kalau ada).
 window.saveEditSlide = async (id) => {
   const name     = document.getElementById('edit-slide-name').value.trim();
   const subtitle = document.getElementById('edit-slide-subtitle').value.trim();
@@ -885,6 +873,7 @@ window.saveEditSlide = async (id) => {
   }
 };
 
+// Aktif/nonaktifin satu slide minuman.
 window.toggleSlide = async (id, state) => {
   try {
     const { error } = await sb.from('hero_drink_slides').update({ is_active: state }).eq('id', id);
@@ -894,6 +883,7 @@ window.toggleSlide = async (id, state) => {
   } catch (err) { showToast('Gagal: ' + err.message, 'error'); }
 };
 
+// Hapus satu slide minuman secara permanen dari DB.
 window.deleteSlide = async (id) => {
   if (!confirm('Hapus slide ini secara permanen?')) return;
   try {
@@ -953,6 +943,7 @@ async function loadFeedback() {
   }
 }
 
+// Hapus satu masukan pengunjung dari DB.
 async function deleteFeedback(id, btn) {
   if (!confirm('Hapus masukan ini?')) return;
   if (btn) btn.disabled = true;
@@ -974,6 +965,7 @@ window.deleteFeedback = deleteFeedback;
 
 // ===== DRINKS MANAGEMENT =====
 
+// Ambil semua menu minuman (drinks table) buat tab "Kelola Menu".
 async function loadDrinks(isInitial = false) {
   const grid = document.getElementById('drinks-grid');
   if (!grid) return;
@@ -992,6 +984,7 @@ async function loadDrinks(isInitial = false) {
   }
 }
 
+// Render kartu-kartu menu minuman, atau ajakan import 8 menu default kalau masih kosong.
 function renderDrinks() {
   const grid = document.getElementById('drinks-grid');
   if (!grid) return;
@@ -1046,6 +1039,7 @@ function renderDrinks() {
   });
 }
 
+// Import 8 menu minuman default Teiko ke tabel drinks (buat DB yang masih kosong).
 window.seedDefaultDrinks = async () => {
   const btn = document.getElementById('btn-seed-drinks');
   if (btn) {
@@ -1212,8 +1206,7 @@ document.getElementById('add-drink-btn').addEventListener('click', () => {
   };
 });
 
-// createDiv removed (duplicate)
-
+// Simpan menu minuman baru dari form "Tambah Menu Baru" (upload foto, insert ke DB).
 async function saveNewDrink() {
   const name = document.getElementById('drink-name').value;
   const detail = document.getElementById('drink-detail').value;
@@ -1252,6 +1245,7 @@ async function saveNewDrink() {
   }
 }
 
+// Aktif/nonaktifin satu menu minuman.
 async function toggleDrinkActive(id, state) {
   try {
     const { error } = await sb.from('drinks').update({ is_active: state }).eq('id', id);
@@ -1263,6 +1257,7 @@ async function toggleDrinkActive(id, state) {
   }
 }
 
+// Hapus satu menu minuman secara permanen dari DB.
 async function deleteDrink(id) {
   if (!confirm('Hapus minuman ini secara permanen?')) return;
   try {
@@ -1281,6 +1276,7 @@ async function deleteDrink(id) {
 // Global exposure for onclick handlers
 window.toggleDrinkActive = toggleDrinkActive;
 window.deleteDrink = deleteDrink;
+// Tampilin form edit buat satu menu minuman (isi field dari data yang ada).
 window.editDrink = (id) => {
   const drink = drinksData.find(d => d.id === id);
   if (!drink) return;
@@ -1364,6 +1360,7 @@ window.editDrink = (id) => {
   document.getElementById('edit-drink-form-area').scrollIntoView({ behavior: 'smooth' });
 };
 
+// Simpan hasil edit menu minuman (upload foto baru kalau ada, lalu update DB).
 window.saveEditDrink = async (id) => {
   const name = document.getElementById('edit-drink-name').value;
   const detail = document.getElementById('edit-drink-detail').value;
@@ -1409,6 +1406,7 @@ window.addNewHero = addNewHero;
 window.saveNewHero = saveNewHero;
 window.saveNewDrink = saveNewDrink;
 
+// Toggle form tambah hero banner dinamis baru (tutup kalau udah kebuka).
 async function addNewHero() {
   const existingForm = document.getElementById('new-hero-form-area');
   if (existingForm) { existingForm.remove(); return; }
@@ -1464,6 +1462,7 @@ async function addNewHero() {
   };
 }
 
+// Simpan hero banner dinamis baru (id auto-generate "hero_<timestamp>") ke site_content.
 async function saveNewHero() {
   const btn = document.getElementById('submit-new-hero-btn');
   const title = document.getElementById('new-hero-title').value;
@@ -1506,6 +1505,7 @@ function loadEventsAdmin() {
   renderEventsAdmin();
 }
 
+// Render kartu-kartu banner event ke grid.
 function renderEventsAdmin() {
   const grid = document.getElementById('events-grid');
   if(!grid) return;
@@ -1539,6 +1539,7 @@ function renderEventsAdmin() {
   `).join('');
 }
 
+// Aktif/nonaktifin satu banner event.
 async function toggleEventActive(id, state) {
   try {
     const { error } = await sb.from('site_content').update({ is_active: state }).eq('id', id);
@@ -1550,6 +1551,7 @@ async function toggleEventActive(id, state) {
   }
 }
 
+// Jadiin satu event "PRIMARY" (tampil landscape besar) atau balikin jadi reguler.
 async function toggleEventPrimary(id, isPrimary) {
   try {
     const { error } = await sb.from('site_content').update({ 
@@ -1565,6 +1567,7 @@ async function toggleEventPrimary(id, isPrimary) {
 }
 
 
+// Hapus satu banner event secara permanen dari DB.
 async function deleteEvent(id) {
   if (!confirm('Hapus banner event ini dari site_content?')) return;
   try {
@@ -1643,6 +1646,7 @@ window.showAddEventForm = () => {
 };
 
 
+// Simpan banner event baru (id auto-generate "event_<timestamp>") ke site_content.
 window.saveNewEventBanner = async () => {
   if (!pendingUploads['new_event']) { showToast('Wajib memilih foto banner!', 'error'); return; }
   
@@ -1778,6 +1782,7 @@ window.editEvent = (id) => {
   document.getElementById('edit-event-form-area').scrollIntoView({ behavior: 'smooth' });
 };
 
+// Simpan hasil edit banner event (upload foto baru kalau ada, lalu upsert field-fieldnya).
 window.saveEditEventBanner = async (id) => {
   const titleVal   = document.getElementById('edit-event-title')?.value   || '';
   const dateVal    = document.getElementById('edit-event-date')?.value    || '';
@@ -1842,6 +1847,7 @@ function loadFaqAdmin() {
   renderFaqAdmin();
 }
 
+// Render kartu-kartu FAQ ke grid.
 function renderFaqAdmin() {
   const grid = document.getElementById('faq-grid');
   if(!grid) return;
@@ -1960,6 +1966,7 @@ window.showAddFaqForm = () => {
   document.getElementById('faq-view').insertBefore(createDiv(formHtml), document.getElementById('faq-grid'));
 };
 
+// Simpan FAQ baru (id auto-generate "faq_<timestamp>") ke site_content.
 window.saveNewFaq = async () => {
   const q = document.getElementById('faq-q').value;
   const a = document.getElementById('faq-a').value;
@@ -1988,6 +1995,7 @@ window.saveNewFaq = async () => {
   }
 };
 
+// Tampilin form edit buat satu FAQ (isi field dari data yang ada).
 window.editFaq = (id) => {
   const f = faqAdminData.find(x => x.id === id);
   if (!f) return;
@@ -2018,6 +2026,7 @@ window.editFaq = (id) => {
   document.getElementById('edit-faq-form-area').scrollIntoView({ behavior: 'smooth' });
 };
 
+// Simpan hasil edit FAQ (pertanyaan & jawaban).
 window.saveEditFaq = async (id) => {
   const q = document.getElementById('edit-faq-q').value;
   const a = document.getElementById('edit-faq-a').value;
@@ -2042,6 +2051,7 @@ window.saveEditFaq = async (id) => {
   }
 };
 
+// Aktif/nonaktifin satu FAQ.
 window.toggleFaqActiveAdmin = async (id, state) => {
   try {
     const { error } = await sb.from('site_content').update({ is_active: state }).eq('id', id);
@@ -2053,6 +2063,7 @@ window.toggleFaqActiveAdmin = async (id, state) => {
   }
 };
 
+// Hapus satu FAQ secara permanen dari DB.
 window.deleteFaqAdmin = async (id) => {
   if (!confirm('Hapus FAQ ini secara permanen?')) return;
   try {

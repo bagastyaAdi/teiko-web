@@ -285,11 +285,7 @@
       modal.show();
     }
 
-    function staggerAnimate(selector, baseDelay = 0, step = 90) {
-      document.querySelectorAll(selector).forEach((el, i) => {
-        setTimeout(() => el.classList.add('visible'), baseDelay + i * step);
-      });
-    }
+    // staggerAnimate ada di script.js (dipakai bareng halaman lain)
 
     document.addEventListener('DOMContentLoaded', () => {
       requestAnimationFrame(() => document.body.classList.add('page-loaded'));
