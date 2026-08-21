@@ -117,10 +117,13 @@
         if (error || !data) throw error || new Error('not found');
 
         document.title = `${data.title || 'Berita'} - Teiko`;
+        // Kalau udah ada foto poster, teks isi berita gak ditampilin lagi (biasanya
+        // infonya udah lengkap di dalam foto) - teks cuma dipake buat berita tanpa foto.
+        const showText = !data.image_url && data.subtitle;
         container.innerHTML = `
           ${data.image_url ? `<img src="${data.image_url}" alt="${data.title || ''}" class="news-detail-img">` : ''}
           <h1 class="news-detail-title h2">${data.title || ''}</h1>
-          <p class="news-detail-text">${(data.subtitle || '').replace(/</g, '&lt;')}</p>
+          ${showText ? `<p class="news-detail-text">${data.subtitle.replace(/</g, '&lt;')}</p>` : ''}
         `;
       } catch (err) {
         console.error('Gagal memuat berita:', err);

@@ -725,6 +725,12 @@ img {
   font-weight: 700;
   color: var(--text-main);
   margin-bottom: 0.5rem;
+  transition: color 0.2s ease;
+}
+
+.news-card:hover .news-card__title {
+  color: var(--accent-green);
+  text-decoration: underline;
 }
 
 .news-card__text {
