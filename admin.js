@@ -300,48 +300,38 @@ function createSectionCard(section) {
   const imgSrc = data.image_url || section.defaultImg;
   const isActive = data.is_active !== false;
 
-  // Determine card type (label only, styling stays uniform across types)
   const isDrinkDisplay = section.id === 'hero_drink_display';
   const isBanner      = section.id.startsWith('hero') && section.id !== 'hero_drink_display';
-  const typeLabel = isDrinkDisplay ? 'Display Minuman' : isBanner ? 'Banner Promo' : 'Kategori Menu';
 
   // Image aspect ratio
   const aspectRatio = isDrinkDisplay ? '3/4' : (isBanner ? '16/6' : '1/1');
 
   return `
-    <div class="drink-admin-card" id="card-${section.id}">
-      <div style="overflow:hidden;border-radius:var(--radius,8px) var(--radius,8px) 0 0;background:#f5f5f5;cursor:pointer;" onclick="editContent('${section.id}')" title="Klik untuk edit">
+    <div class="drink-admin-card section-card-v2" id="card-${section.id}">
+      <div class="section-card-v2-imgwrap" onclick="editContent('${section.id}')" title="Klik untuk edit">
         ${isDeleted ? `
         <div class="drink-admin-img d-flex flex-column align-items-center justify-content-center text-muted"
-          style="aspect-ratio:${aspectRatio};width:100%;background:#eee;">
+          style="aspect-ratio:${aspectRatio};width:100%;background:#eee;border-radius:12px;">
           <i class="bi bi-image" style="font-size:2rem;"></i>
           <small>Belum ada foto</small>
         </div>` : `
         <img src="${imgSrc}" class="drink-admin-img" alt="Preview"
-          style="object-fit:cover;aspect-ratio:${aspectRatio};width:100%;display:block;transition:transform .25s;"
-          onmouseover="this.style.transform='scale(1.03)'" onmouseout="this.style.transform='scale(1)'">`}
+          style="object-fit:cover;aspect-ratio:${aspectRatio};width:100%;display:block;border-radius:12px;">`}
       </div>
       <div class="drink-admin-body">
-        <div style="font-size:0.68rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:0.04em;margin-bottom:4px;">${typeLabel}</div>
-        <div class="drink-admin-name">${section.label}
-          <small class="text-muted" style="font-size:0.68rem;display:block;margin-top:2px;">${section.id}</small>
-        </div>
-        <div class="drink-admin-meta">
-           <span class="drink-admin-badge ${isActive ? 'bg-success text-white' : 'bg-danger text-white'}" id="badge-${section.id}">${isActive ? 'Aktif' : 'Off'}</span>
-        </div>
-        <div class="drink-admin-actions">
+        <div class="section-card-v2-name">${section.label}</div>
+        <div class="section-card-v2-row">
+          <span class="section-card-v2-badge ${isActive ? 'is-active' : 'is-off'}" id="badge-${section.id}">${isActive ? 'Aktif' : 'Off'}</span>
           <button class="btn-icon" onclick="editContent('${section.id}')" title="Edit"><i class="bi bi-pencil"></i></button>
-          <button class="btn-icon ${isActive ? '' : 'text-success'}" id="toggle-btn-${section.id}" onclick="toggleSection('${section.id}')" title="${isActive ? 'Matikan' : 'Aktifkan'}">
+          <button class="btn-icon" id="toggle-btn-${section.id}" onclick="toggleSection('${section.id}')" title="${isActive ? 'Matikan' : 'Aktifkan'}">
             <i class="bi ${isActive ? 'bi-toggle-on' : 'bi-toggle-off'}"></i>
           </button>
           <button class="btn-icon btn-icon-danger" onclick="deleteSection('${section.id}')" title="Hapus"><i class="bi bi-trash"></i></button>
         </div>
         ${isDrinkDisplay ? `
-        <div style="padding: 10px 12px; background: #e8f4fd; border-top: 1px solid #c5e0f5; text-align: center;">
-          <button class="btn btn-primary w-100 fw-bold" onclick="document.getElementById('nav-slides').click();" style="font-size: 0.82rem; padding: 7px 10px; border-radius: 6px;">
-            <i class="bi bi-images me-1"></i> Kelola / Tambah Slide Minuman
-          </button>
-        </div>` : ''}
+        <button class="btn btn-primary w-100 fw-bold mt-3" onclick="document.getElementById('nav-slides').click();" style="font-size: 0.82rem; padding: 7px 10px; border-radius: 6px;">
+          <i class="bi bi-images me-1"></i> Kelola / Tambah Slide Minuman
+        </button>` : ''}
       </div>
     </div>`;
 }
