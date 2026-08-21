@@ -290,6 +290,7 @@ body {
 .sections-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(440px, 1fr));
+  align-items: start;
   gap: 1.5rem;
 }
 
