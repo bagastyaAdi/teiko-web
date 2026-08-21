@@ -1016,7 +1016,7 @@ window.seedDefaultDrinks = async () => {
       category: 'Tea',
       price: 'Rp 20.000',
       oz_size: '16 oz',
-      image_url: './asset/dummy_matcha.png',
+      image_url: './asset/hero1.webp',
       detail: 'Teh hijau Uji Matcha pilihan bergaya Jepang dengan susu oat yang gurih dan menyehatkan.',
       is_active: true
     },
@@ -1025,7 +1025,7 @@ window.seedDefaultDrinks = async () => {
       category: 'Chocolate',
       price: 'Rp 18.000',
       oz_size: '16 oz',
-      image_url: './asset/dummy_choco.png',
+      image_url: './asset/hero3.png',
       detail: 'Cokelat Belgia autentik dengan lapisan krim kental bertekstur lembut dan rasa cokelat pekat.',
       is_active: true
     },
@@ -1034,7 +1034,7 @@ window.seedDefaultDrinks = async () => {
       category: 'Coffee',
       price: 'Rp 18.000',
       oz_size: '16 oz',
-      image_url: './asset/dummy_coffee.png',
+      image_url: './asset/hero1.webp',
       detail: 'Kopi espresso house-blend Teiko berpadu dengan susu kental lembut dan taburan bubuk kopi.',
       is_active: true
     },
@@ -1043,7 +1043,7 @@ window.seedDefaultDrinks = async () => {
       category: 'Milk',
       price: 'Rp 16.000',
       oz_size: '16 oz',
-      image_url: './asset/dummy_taro.png',
+      image_url: './asset/hero3.png',
       detail: 'Aroma talas (taro) yang harum manis menyatu sempurna dengan susu krim kental khas Teiko.',
       is_active: true
     },
@@ -1061,7 +1061,7 @@ window.seedDefaultDrinks = async () => {
       category: 'Coffee',
       price: 'Rp 20.000',
       oz_size: '16 oz',
-      image_url: './asset/dummy_coffee.png',
+      image_url: './asset/hero1.webp',
       detail: 'Espresso kaya rasa dengan sirup karamel legit dan lapisan busa susu yang lembut.',
       is_active: true
     }
