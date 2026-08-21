@@ -530,7 +530,6 @@ img {
   margin: 0;
   padding: 0;
   display: block;
-  cursor: pointer !important;
   z-index: 5;
 }
 
@@ -539,7 +538,6 @@ img {
   display: block;
   width: 100%;
   overflow: hidden;
-  cursor: pointer !important;
   z-index: 5;
   text-decoration: none;
 }
