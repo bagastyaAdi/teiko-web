@@ -293,7 +293,9 @@ function createDiv(htmlString) {
 }
 
 // ===== IMAGE OPTIMIZATION (WebP & Resize) =====
-async function optimizeImage(file, maxWidth = 1280) {
+// maxWidth null/Infinity = gak di-resize (dimensi asli dipertahankan).
+// quality 1 = WebP kualitas maksimal (gak dikompres lossy), cuma ganti kontainer format.
+async function optimizeImage(file, maxWidth = 1280, quality = 0.82) {
   return new Promise((resolve) => {
     const reader = new FileReader();
     reader.onload = (e) => {
@@ -304,7 +306,7 @@ async function optimizeImage(file, maxWidth = 1280) {
         let height = img.height;
 
         // Resize if width > maxWidth
-        if (width > maxWidth) {
+        if (maxWidth && width > maxWidth) {
           height = Math.round((height * maxWidth) / width);
           width = maxWidth;
         }
@@ -322,7 +324,7 @@ async function optimizeImage(file, maxWidth = 1280) {
             lastModified: Date.now()
           });
           resolve(newFile);
-        }, 'image/webp', 0.82); // 0.82 quality for good balance
+        }, 'image/webp', quality);
       };
       img.src = e.target.result;
     };
@@ -330,9 +332,9 @@ async function optimizeImage(file, maxWidth = 1280) {
   });
 }
 
-// Helper: Kompres ke WebP & Upload ke Supabase Storage
-async function uploadAndOptimizeImage(file, prefix, maxWidth = 1280) {
-  const optimizedFile = await optimizeImage(file, maxWidth);
+// Helper: Convert ke WebP (biar cepet di-render browser) & Upload ke Supabase Storage
+async function uploadAndOptimizeImage(file, prefix, maxWidth = 1280, quality = 0.82) {
+  const optimizedFile = await optimizeImage(file, maxWidth, quality);
   const filename = `${prefix}_${Date.now()}.webp`;
   const { error: uploadError } = await sb.storage
     .from('site-images')
@@ -444,7 +446,9 @@ window.saveEditContent = async (id) => {
     let imageUrl = contentData[id]?.image_url || null;
 
     if (pendingUploads[id]) {
-      imageUrl = await uploadAndOptimizeImage(pendingUploads[id], id, 1400);
+      // Foto hero gak diresize/dikompres kualitasnya - cuma diconvert ke WebP.
+      const isHero = id.startsWith('hero');
+      imageUrl = await uploadAndOptimizeImage(pendingUploads[id], id, isHero ? null : 1400, isHero ? 1 : 0.82);
       delete pendingUploads[id];
     }
 
@@ -1416,7 +1420,8 @@ async function saveNewHero() {
   btn.innerHTML = '<i class="bi bi-arrow-repeat spin"></i> Menyimpan...';
 
   try {
-    const imageUrl = await uploadAndOptimizeImage(pendingUploads['new_hero'], 'hero', 1400);
+    // Foto hero gak diresize/dikompres kualitasnya - cuma diconvert ke WebP.
+    const imageUrl = await uploadAndOptimizeImage(pendingUploads['new_hero'], 'hero', null, 1);
     delete pendingUploads['new_hero'];
     
     const { error } = await sb.from('site_content').insert({
