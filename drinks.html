@@ -83,12 +83,6 @@
       text-align: center;
     }
 
-    .drink-oz {
-      color: #888;
-      font-size: 0.9rem;
-      text-align: center;
-    }
-
     .drink-price {
       font-weight: 600;
       color: #444;
@@ -279,7 +273,6 @@
             </div>
             <div class="drink-info text-center">
               <div class="drink-name">${drink.name}</div>
-              <div class="drink-oz">${drink.oz_size || '-'}</div>
               ${drink.price ? `<div class="drink-price">${drink.price}</div>` : ''}
               ${drink.detail ? `<div class="drink-detail mt-2 text-muted" style="font-size: 0.85rem; line-height: 1.4;">${drink.detail.replace(/\n/g, '<br>')}</div>` : ''}
             </div>
