@@ -32,7 +32,6 @@ const SECTIONS = [
   {
     id: 'hero_drink_display',
     label: 'Display Minuman Kubah Hijau (Atas)',
-    emoji: '🥤',
     defaultImg: './asset/hero3.png',
     fields: [
       { key: 'title',       label: 'Judul Menu Atas',            type: 'textarea', placeholder: 'NEW MENU ES COKLAT' },
@@ -42,7 +41,6 @@ const SECTIONS = [
   {
     id: 'hero1',
     label: 'Banner Promo Lebar 1 (Bawah Hero)',
-    emoji: '🖼️',
     defaultImg: './asset/hero1.webp',
     optional: true, // gak dipaksa nongol kalau belum ada foto; hapus = beneran hilang dari grid
     fields: [
@@ -52,7 +50,6 @@ const SECTIONS = [
   {
     id: 'hero2',
     label: 'Banner Promo Lebar 2 (Bawah Hero)',
-    emoji: '🖼️',
     defaultImg: './asset/hero2.webp',
     optional: true,
     fields: [
@@ -62,7 +59,6 @@ const SECTIONS = [
   {
     id: 'hero3',
     label: 'Banner Promo Lebar 3 (Bawah Hero)',
-    emoji: '🖼️',
     defaultImg: './asset/hero1.webp',
     optional: true,
     fields: [
@@ -72,7 +68,6 @@ const SECTIONS = [
   {
     id: 'hot_series',
     label: 'HOT SERIES',
-    emoji: '☕',
     defaultImg: './asset/3.svg',
     fields: [
       { key: 'title',    label: 'Judul',      type: 'text',     placeholder: 'HOT SERIES' },
@@ -82,7 +77,6 @@ const SECTIONS = [
   {
     id: 'green_tea',
     label: 'GREEN TEA',
-    emoji: '🍵',
     defaultImg: './asset/4.svg',
     fields: [
       { key: 'title',    label: 'Judul',      type: 'text',     placeholder: 'GREEN TEA' },
@@ -92,7 +86,6 @@ const SECTIONS = [
   {
     id: 'belgian',
     label: 'BELGIAN',
-    emoji: '🍫',
     defaultImg: './asset/5.svg',
     fields: [
       { key: 'title',    label: 'Judul',      type: 'text',     placeholder: 'BELGIAN' },
@@ -102,7 +95,6 @@ const SECTIONS = [
   {
     id: 'coffee_cream',
     label: 'COFFEE CREAM',
-    emoji: '🥛',
     defaultImg: './asset/6.svg',
     fields: [
       { key: 'title',    label: 'Judul',      type: 'text',     placeholder: 'COFFEE CREAM' },
@@ -112,8 +104,7 @@ const SECTIONS = [
   // ===== KONTROL SECTION PROMO BAWAH =====
   {
     id: 'promo_section',
-    label: '📸 Tampilkan/Sembunyikan Seluruh Kotak Foto Promo',
-    emoji: '🔀',
+    label: 'Tampilkan/Sembunyikan Seluruh Kotak Foto Promo',
     defaultImg: './asset/dummy_choco.png',
     fields: [] // Hanya toggle aktif/nonaktif
   },
@@ -121,28 +112,24 @@ const SECTIONS = [
   {
     id: 'promo_box_1',
     label: 'Kotak Foto Promo 1 (Kiri Atas)',
-    emoji: '🖼️',
     defaultImg: './asset/dummy_choco.png',
     fields: [{ key: 'button_url', label: 'Link Tujuan Klik', type: 'text', placeholder: 'drinks' }]
   },
   {
     id: 'promo_box_2',
     label: 'Kotak Foto Promo 2 (Kanan Atas)',
-    emoji: '🖼️',
     defaultImg: './asset/dummy_matcha.png',
     fields: [{ key: 'button_url', label: 'Link Tujuan Klik', type: 'text', placeholder: 'drinks' }]
   },
   {
     id: 'promo_box_3',
     label: 'Kotak Foto Promo 3 (Kiri Bawah)',
-    emoji: '🖼️',
     defaultImg: './asset/dummy_coffee.png',
     fields: [{ key: 'button_url', label: 'Link Tujuan Klik', type: 'text', placeholder: 'drinks' }]
   },
   {
     id: 'promo_box_4',
     label: 'Kotak Foto Promo 4 (Kanan Bawah)',
-    emoji: '🖼️',
     defaultImg: './asset/dummy_taro.png',
     fields: [{ key: 'button_url', label: 'Link Tujuan Klik', type: 'text', placeholder: 'drinks' }]
   }
@@ -291,7 +278,6 @@ function renderSections() {
       allSections.push({
         id: row.id,
         label: `Dynamic Hero`,
-        emoji: '✨',
         defaultImg: './asset/hero1.webp',
         fields: [
           { key: 'title',       label: 'Judul',           type: 'textarea' },
@@ -341,7 +327,7 @@ function createSectionCard(section) {
           <small class="text-muted" style="font-size:0.68rem;display:block;margin-top:2px;">${section.id}</small>
         </div>
         <div class="drink-admin-meta">
-           <span class="drink-admin-badge ${isActive ? 'bg-success text-white' : 'bg-danger text-white'}" id="badge-${section.id}">${isActive ? '✅ Aktif' : '⛔ Off'}</span>
+           <span class="drink-admin-badge ${isActive ? 'bg-success text-white' : 'bg-danger text-white'}" id="badge-${section.id}">${isActive ? 'Aktif' : 'Off'}</span>
         </div>
         <div class="drink-admin-actions">
           <button class="btn-icon" onclick="editContent('${section.id}')" title="Edit"><i class="bi bi-pencil"></i></button>
@@ -709,7 +695,7 @@ function renderSlidesAdmin() {
     const imgSrc = (slide.image_url && slide.image_url.trim()) ? slide.image_url : './asset/hero3.png';
     return `
     <div class="drink-admin-card" id="slide-card-${slide.id}" style="border-top:4px solid #0d6efd;position:relative;">
-      <div style="position:absolute;top:8px;right:8px;z-index:2;background:#0d6efd;color:#fff;font-size:0.65rem;font-weight:700;padding:2px 8px;border-radius:20px;">🥤 Slide ${slide.sort_order ?? ''}</div>
+      <div style="position:absolute;top:8px;right:8px;z-index:2;background:#0d6efd;color:#fff;font-size:0.65rem;font-weight:700;padding:2px 8px;border-radius:20px;">Slide ${slide.sort_order ?? ''}</div>
       <div style="overflow:hidden;border-radius:8px 8px 0 0;cursor:pointer;" onclick="editSlide('${slide.id}')" title="Edit slide">
         <img src="${imgSrc}" style="width:100%;aspect-ratio:3/4;object-fit:cover;display:block;transition:transform .25s;"
           onmouseover="this.style.transform='scale(1.04)'" onmouseout="this.style.transform='scale(1)'">
@@ -718,7 +704,7 @@ function renderSlidesAdmin() {
         <div class="drink-admin-name">${slide.name || '(Tanpa Nama)'}</div>
         <div class="drink-admin-meta" style="font-size:0.75rem;color:#888;margin-top:4px;">${slide.subtitle ? slide.subtitle.substring(0,60) + (slide.subtitle.length > 60 ? '…' : '') : '-'}</div>
         <div class="drink-admin-meta mt-2">
-          <span class="drink-admin-badge ${slide.is_active ? 'bg-success text-white' : 'bg-danger text-white'}">${slide.is_active ? '✅ Aktif' : '⛔ Off'}</span>
+          <span class="drink-admin-badge ${slide.is_active ? 'bg-success text-white' : 'bg-danger text-white'}">${slide.is_active ? 'Aktif' : 'Off'}</span>
         </div>
         <div class="drink-admin-actions">
           <button class="btn-icon" onclick="editSlide('${slide.id}')" title="Edit"><i class="bi bi-pencil"></i></button>
@@ -942,7 +928,7 @@ async function loadFeedback() {
         <div class="feedback-item-card">
           <div class="feedback-item-header">
             <div class="feedback-user-info">
-              <div class="feedback-user-avatar">💬</div>
+              <div class="feedback-user-avatar"><i class="bi bi-chat-dots"></i></div>
               <div class="feedback-user-details">
                 <div class="feedback-user-email">${fb.email}</div>
                 <div class="feedback-user-date">${date}</div>
@@ -1027,7 +1013,7 @@ function renderDrinks() {
           <span class="drink-admin-badge">${drink.category || 'No Cat'}</span>
           <span class="drink-admin-badge">${drink.oz_size || '-'}</span>
           <span class="drink-admin-badge">${drink.price || '-'}</span>
-          <span class="drink-admin-badge ${drink.is_active ? 'bg-success text-white' : 'bg-danger text-white'}">${drink.is_active ? '✅ Aktif' : '⛔ Off'}</span>
+          <span class="drink-admin-badge ${drink.is_active ? 'bg-success text-white' : 'bg-danger text-white'}">${drink.is_active ? 'Aktif' : 'Off'}</span>
         </div>
         <div class="drink-admin-actions">
           <button class="btn-icon" onclick="editDrink('${drink.id}')" title="Edit"><i class="bi bi-pencil"></i></button>
@@ -1135,7 +1121,7 @@ window.seedDefaultDrinks = async () => {
   try {
     const { error } = await sb.from('drinks').insert(defaultDrinks);
     if (error) throw error;
-    showToast('✅ 8 Menu Minuman Teiko berhasil diimpor ke Supabase!', 'success');
+    showToast('8 Menu Minuman Teiko berhasil diimpor ke Supabase!', 'success');
     await loadDrinks();
   } catch (err) {
     showToast('Gagal mengimpor menu minuman: ' + err.message, 'error');
@@ -2220,7 +2206,7 @@ window.seedDefaultFaqs = async () => {
   try {
     const { error } = await sb.from('site_content').upsert(defaultFaqs);
     if (error) throw error;
-    showToast('✅ 4 FAQ Bawaan berhasil diimpor ke Supabase! Sekarang siap diedit.', 'success');
+    showToast('4 FAQ Bawaan berhasil diimpor ke Supabase! Sekarang siap diedit.', 'success');
     await loadContent();
   } catch (err) {
     showToast('Gagal mengimpor FAQ: ' + err.message, 'error');
