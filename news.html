@@ -41,13 +41,31 @@
     }
     .news-detail-back:hover { color: #111; }
 
+    .news-detail-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 32px;
+      align-items: flex-start;
+    }
+
+    .news-detail-imgwrap {
+      flex: 1 1 380px;
+      max-width: 460px;
+      background: #f5f5f5;
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
     .news-detail-img {
       width: 100%;
-      max-height: 420px;
-      object-fit: cover;
-      border-radius: 16px;
-      margin-bottom: 28px;
+      height: auto;
+      max-height: 640px;
+      object-fit: contain;
       display: block;
+    }
+
+    .news-detail-body {
+      flex: 1 1 320px;
     }
 
     .news-detail-title {
@@ -83,7 +101,7 @@
   <header id="navbar-placeholder"></header>
   <div id="navbar-spacer"></div>
 
-  <main class="container mb-5" style="max-width: 760px; padding-top: 40px;">
+  <main class="container mb-5" style="max-width: 980px; padding-top: 40px;">
     <a href="index.html#news-section" class="news-detail-back">
       <i class="bi bi-arrow-left"></i> Kembali ke Beranda
     </a>
@@ -117,14 +135,18 @@
         if (error || !data) throw error || new Error('not found');
 
         document.title = `${data.title || 'Berita'} - Teiko`;
-        // Kalau udah ada foto poster, teks isi berita gak ditampilin lagi (biasanya
-        // infonya udah lengkap di dalam foto) - teks cuma dipake buat berita tanpa foto.
-        const showText = !data.image_url && data.subtitle;
-        container.innerHTML = `
-          ${data.image_url ? `<img src="${data.image_url}" alt="${data.title || ''}" class="news-detail-img">` : ''}
+        const body = `
           <h1 class="news-detail-title h2">${data.title || ''}</h1>
-          ${showText ? `<p class="news-detail-text">${data.subtitle.replace(/</g, '&lt;')}</p>` : ''}
+          ${data.subtitle ? `<p class="news-detail-text">${data.subtitle.replace(/</g, '&lt;')}</p>` : ''}
         `;
+        container.innerHTML = data.image_url ? `
+          <div class="news-detail-row">
+            <div class="news-detail-imgwrap">
+              <img src="${data.image_url}" alt="${data.title || ''}" class="news-detail-img">
+            </div>
+            <div class="news-detail-body">${body}</div>
+          </div>
+        ` : body;
       } catch (err) {
         console.error('Gagal memuat berita:', err);
         container.innerHTML = `<p class="text-muted">Berita tidak ditemukan atau sudah dihapus.</p>`;
