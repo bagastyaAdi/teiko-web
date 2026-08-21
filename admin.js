@@ -267,7 +267,10 @@ function renderSections() {
 
   // 1. Static Sections (slot tetap di homepage). Yang "optional" (banner hero1/2/3)
   // cuma ditampilin kalau udah pernah diisi foto - gak dipaksa jadi template kosong.
+  // hero_drink_display gak ditampilin di sini - udah punya tombol pintasan sendiri di header
+  // ("Display Minuman"), biar grid ini khusus hero banner & konten lain.
   SECTIONS.forEach(s => {
+    if (s.id === 'hero_drink_display') return;
     if (s.optional && !contentData[s.id]) return;
     allSections.push(s);
   });
