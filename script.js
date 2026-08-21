@@ -483,38 +483,16 @@ function renderNewsSection() {
   }
 
   section.style.display = '';
-  grid.innerHTML = newsItems.map((n, i) => `
-    <div class="news-card" onclick="openNewsModal(${i})" style="cursor:pointer;">
+  grid.innerHTML = newsItems.map(n => `
+    <a class="news-card" href="news.html?id=${encodeURIComponent(n.id)}">
       ${n.image_url ? `<img src="${n.image_url}" alt="${n.title || ''}" class="news-card__img">` : ''}
       <div class="news-card__body">
         <h3 class="news-card__title">${n.title || ''}</h3>
         <p class="news-card__text">${(n.subtitle || '').replace(/\n/g, '<br>')}</p>
       </div>
-    </div>
+    </a>
   `).join('');
 }
-
-// Buka modal fokus 1 berita (dipanggil dari klik card news di homepage).
-function openNewsModal(index) {
-  const n = newsItems[index];
-  if (!n) return;
-
-  const imgEl = document.getElementById('news-modal-img');
-  if (n.image_url) {
-    imgEl.src = n.image_url;
-    imgEl.style.display = 'block';
-  } else {
-    imgEl.style.display = 'none';
-  }
-  document.getElementById('news-modal-title').textContent = n.title || '';
-  document.getElementById('news-modal-text').textContent = n.subtitle || '';
-
-  const modalEl = document.getElementById('newsModal');
-  if (modalEl && typeof bootstrap !== 'undefined') {
-    new bootstrap.Modal(modalEl).show();
-  }
-}
-window.openNewsModal = openNewsModal;
 
 // 4. Shared page helpers
 // Dulu ke-copy paste sendiri-sendiri di faq.html, feedback.html, drinks.html,

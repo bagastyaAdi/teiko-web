@@ -694,12 +694,14 @@ img {
 }
 
 .news-card {
+  display: block;
   background: var(--bg-surface);
   border: 1px solid var(--border-color);
   border-radius: var(--radius-md);
   overflow: hidden;
   box-shadow: var(--shadow-sm);
   transition: var(--transition-smooth);
+  text-decoration: none;
 }
 
 .news-card:hover {
