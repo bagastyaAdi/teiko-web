@@ -115,19 +115,19 @@ async function loadDrinkSlides() {
       id: 'slide-2',
       name: 'BELGIAN CHOCO ICE',
       subtitle: 'Coklat Belgia pilihan dengan kelembutan yang meleleh di mulut. Nyegerin banget!',
-      image_url: './asset/dummy_choco.png'
+      image_url: './asset/hero3.png'
     },
     {
       id: 'slide-3',
       name: 'GREEN TEA CREAM',
       subtitle: 'Teh hijau asli Jepang berpadu dengan susu creamy. Sensasi tenang di tiap tegukan!',
-      image_url: './asset/dummy_matcha.png'
+      image_url: './asset/hero1.webp'
     },
     {
       id: 'slide-4',
       name: 'COFFEE CREAM SPECIAL',
       subtitle: 'Rasa kopi lembut berpadu krim spesial Teiko. Semangat hari-harimu jadi maksimal!',
-      image_url: './asset/dummy_coffee.png'
+      image_url: './asset/hero3.png'
     }
   ];
 
@@ -400,9 +400,11 @@ async function loadContent() {
       if (promoMap[s.id]) {
         const promoImg = document.getElementById(promoMap[s.id]);
         const promoCard = promoImg ? promoImg.closest('a') : null;
-        if (promoImg && s.image_url) promoImg.src = s.image_url;
-        if (promoCard && s.button_url) promoCard.href = s.button_url;
-        if (promoCard && s.is_active === false) promoCard.style.display = 'none';
+        if (promoCard && s.image_url && s.is_active !== false) {
+          promoImg.src = s.image_url;
+          if (s.button_url) promoCard.href = s.button_url;
+          promoCard.style.display = '';
+        }
       }
     });
 
