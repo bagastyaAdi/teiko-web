@@ -191,7 +191,7 @@
             html += `
               <div class="col-12 mb-4 anim-item">
                 <div class="card event-card border-0 shadow-sm overflow-hidden" ${linkAction}>
-                  <img src="${ev.image_url}" class="img-fluid w-100" style="object-fit: cover; aspect-ratio: 16/9;">
+                  <img src="${ev.image_url}" alt="${ev.title || 'Event Teiko Bali'}" loading="lazy" class="img-fluid w-100" style="object-fit: cover; aspect-ratio: 16/9;">
                 </div>
               </div>
             `;
@@ -201,7 +201,7 @@
                 <div class="card event-card border-0 shadow-sm overflow-hidden" ${linkAction}>
                   <div class="row g-0 align-items-center">
                     <div class="col-12 col-md-7">
-                      <img src="${ev.image_url}" class="img-fluid w-100" style="object-fit: cover; aspect-ratio: 16/9;">
+                      <img src="${ev.image_url}" alt="${ev.title || 'Event Teiko Bali'}" loading="lazy" class="img-fluid w-100" style="object-fit: cover; aspect-ratio: 16/9;">
                     </div>
                     <div class="col-12 col-md-5 p-4 p-md-5">
                       <span class="badge mb-3 px-3 py-2" style="background: #F5F5F5; color: #111111; border: 1px solid rgba(17,17,17,0.18);">Event Unggulan</span>
@@ -229,7 +229,7 @@
                return `
                  <div class="col-12 col-md-6 col-lg-4 mb-4">
                    <div class="card event-card border-0 shadow-sm h-100 overflow-hidden" ${linkAction ? `style="cursor: pointer;" ${linkAction}` : ''}>
-                     <img src="${ev.image_url}" alt="" class="card-img-top h-100" loading="lazy" style="object-fit: cover; aspect-ratio: 16/9;">
+                     <img src="${ev.image_url}" alt="${ev.title || 'Event Teiko Bali'}" class="card-img-top h-100" loading="lazy" style="object-fit: cover; aspect-ratio: 16/9;">
                    </div>
                  </div>
                `;
@@ -238,7 +238,7 @@
             return `
               <div class="col-12 col-md-6 col-lg-4 mb-4">
                 <div class="card event-card border-0 shadow-sm h-100" ${linkAction ? `style="cursor: pointer;" ${linkAction}` : ''}>
-                  <img src="${ev.image_url}" alt="" class="card-img-top" loading="lazy" style="object-fit: cover; aspect-ratio: 16/9;">
+                  <img src="${ev.image_url}" alt="${ev.title || 'Event Teiko Bali'}" class="card-img-top" loading="lazy" style="object-fit: cover; aspect-ratio: 16/9;">
                   <div class="card-body">
                     <h5 class="card-title fw-bold mb-2">${ev.title || 'Event Menarik'}</h5>
                     <p class="card-text text-muted small"><i class="bi bi-clock me-1"></i> ${ev.subtitle || 'Promo Terbatas'}</p>
