@@ -438,19 +438,16 @@ async function loadContent() {
     newsItems.sort((a, b) => b.id.localeCompare(a.id));
     renderNewsSection();
 
-    // Fallback default cuma kalau DB belum ada data site_content sama sekali.
-    // Kalau baris hero1/2/3 ADA tapi is_active:false (dihapus admin), biarin kosong -
-    // jangan balikin default, itu bikin "hapus" keliatan gak ngefek.
-    if (heroSlides.length === 0 && !data.some(s => s.id === 'hero1' || s.id === 'hero2' || s.id === 'hero3')) {
-      heroSlides = [
-        { id: 'hero1', image_url: './asset/hero1.webp' },
-        { id: 'hero2', image_url: './asset/hero2.webp' },
-        { id: 'hero3', image_url: './asset/hero1.webp' }
-      ];
+    // Gak ada hero aktif sama sekali (dihapus/off semua) - section disembunyiin
+    // total, bukan balik ke foto default. "Hapus" harus beneran keliatan kosong.
+    const bannerSection = document.getElementById('fullwidth-hero-banner-section');
+    if (heroSlides.length === 0) {
+      if (bannerSection) bannerSection.style.display = 'none';
+    } else {
+      if (bannerSection) bannerSection.style.display = '';
+      initHeroCarousel();
+      renderHeroSlide(0, false);
     }
-
-    initHeroCarousel();
-    renderHeroSlide(0, false);
 
     // Refresh ScrollTrigger after content is loaded
     if (typeof ScrollTrigger !== 'undefined') {
