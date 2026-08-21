@@ -916,11 +916,6 @@ img {
   box-shadow: var(--shadow-lg);
 }
 
-.hot-box          { background-image: url('./asset/3.svg'); }
-.greentea-box     { background-image: url('./asset/4.svg'); }
-.belgian-box      { background-image: url('./asset/5.svg'); }
-.coffee-cream-box { background-image: url('./asset/6.svg'); }
-
 .minuman-box h3 {
   position: relative;
   z-index: 2;

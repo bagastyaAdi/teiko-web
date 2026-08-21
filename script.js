@@ -390,29 +390,6 @@ async function loadContent() {
         return;
       }
 
-      // Handle OTHER SECTIONS (Beverages / Editorial Boxes)
-      let boxEl = null;
-      switch (s.id) {
-        case 'hot_series': boxEl = document.getElementById('hot-series-box'); break;
-        case 'green_tea': boxEl = document.getElementById('greentea-box'); break;
-        case 'belgian': boxEl = document.getElementById('belgian-box'); break;
-        case 'coffee_cream': boxEl = document.getElementById('coffee-cream-box'); break;
-      }
-
-      if (boxEl) {
-        if (s.is_active === false) {
-          boxEl.style.setProperty('display', 'none', 'important');
-        } else {
-          boxEl.style.display = '';
-          if (s.image_url) boxEl.style.backgroundImage = `url('${s.image_url}')`;
-          const titleEl = boxEl.querySelector('h3');
-          const descEl = boxEl.querySelector('p');
-          if (titleEl && s.title) titleEl.textContent = s.title;
-          if (descEl && s.subtitle) descEl.textContent = s.subtitle;
-        }
-        return;
-      }
-
       // Handle PROMO BOXES (4-grid bawah homepage)
       const promoMap = {
         'promo_box_1': 'promo-box-1-img',
