@@ -483,15 +483,19 @@ function renderNewsSection() {
   }
 
   section.style.display = '';
-  grid.innerHTML = newsItems.map(n => `
+  grid.innerHTML = newsItems.map(n => {
+    // Cuma tampilin 1 kalimat pertama di card - isi lengkap ada di halaman detail.
+    const firstSentence = (n.subtitle || '').trim().split(/(?<=[.!?])\s+/)[0] || '';
+    return `
     <a class="news-card" href="news.html?id=${encodeURIComponent(n.id)}">
       ${n.image_url ? `<img src="${n.image_url}" alt="${n.title || ''}" class="news-card__img">` : ''}
       <div class="news-card__body">
         <h3 class="news-card__title">${n.title || ''}</h3>
-        <p class="news-card__text">${(n.subtitle || '').replace(/\n/g, '<br>')}</p>
+        <p class="news-card__text">${firstSentence}</p>
       </div>
     </a>
-  `).join('');
+  `;
+  }).join('');
 }
 
 // 4. Shared page helpers
