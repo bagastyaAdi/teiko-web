@@ -602,6 +602,46 @@ body {
   border-bottom: 1px solid var(--border);
 }
 
+/* ===== Section card v2 (Kelola Konten): padded square image, big title, flat action row ===== */
+.section-card-v2-imgwrap {
+  padding: 16px 16px 0;
+  cursor: pointer;
+}
+.section-card-v2-imgwrap .drink-admin-img {
+  border-bottom: none;
+}
+.section-card-v2-name {
+  font-weight: 800;
+  font-size: 1.1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  color: var(--text);
+  margin-bottom: 12px;
+}
+.section-card-v2-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.section-card-v2-badge {
+  flex: 1;
+  text-align: center;
+  padding: 9px 10px;
+  border-radius: 8px;
+  font-weight: 800;
+  font-size: 0.8rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: #fff;
+}
+.section-card-v2-badge.is-active { background: #1a7a4c; }
+.section-card-v2-badge.is-off { background: #c0392b; }
+.section-card-v2-row .btn-icon {
+  background: var(--input-bg);
+  border: none;
+  flex-shrink: 0;
+}
+
 .drink-admin-body {
   padding: 1.25rem;
 }
