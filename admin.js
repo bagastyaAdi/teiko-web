@@ -61,12 +61,6 @@ const SECTIONS = [
       { key: 'button_url',  label: 'Link Tujuan Klik',           type: 'text',     placeholder: 'drinks' },
     ]
   },
-  // ===== KONTROL SECTION PROMO BAWAH =====
-  {
-    id: 'promo_section',
-    label: 'Tampilkan/Sembunyikan Seluruh Kotak Foto Promo',
-    fields: [] // Hanya toggle aktif/nonaktif
-  },
   // ===== 4 KOTAK FOTO PROMO BAWAH =====
   {
     id: 'promo_box_1',
