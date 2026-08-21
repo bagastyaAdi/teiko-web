@@ -32,7 +32,6 @@ const SECTIONS = [
   {
     id: 'hero_drink_display',
     label: 'Display Minuman Kubah Hijau (Atas)',
-    defaultImg: './asset/hero3.png',
     fields: [
       { key: 'title',       label: 'Judul Menu Atas',            type: 'textarea', placeholder: 'NEW MENU ES COKLAT' },
       { key: 'subtitle',    label: 'Teks Kutipan (Quote)',       type: 'textarea', placeholder: 'Rasanya Enak Banget, Bikin Nagih! Teiko Emang Paling Pas Buat Setiap Momen.' },
@@ -41,7 +40,6 @@ const SECTIONS = [
   {
     id: 'hero1',
     label: 'Banner Promo Lebar 1 (Bawah Hero)',
-    defaultImg: './asset/hero1.webp',
     optional: true, // gak dipaksa nongol kalau belum ada foto; hapus = beneran hilang dari grid
     fields: [
       { key: 'button_url',  label: 'Link Tujuan Klik',           type: 'text',     placeholder: 'drinks' },
@@ -50,7 +48,6 @@ const SECTIONS = [
   {
     id: 'hero2',
     label: 'Banner Promo Lebar 2 (Bawah Hero)',
-    defaultImg: './asset/hero2.webp',
     optional: true,
     fields: [
       { key: 'button_url',  label: 'Link Tujuan Klik',           type: 'text',     placeholder: 'drinks' },
@@ -59,78 +56,36 @@ const SECTIONS = [
   {
     id: 'hero3',
     label: 'Banner Promo Lebar 3 (Bawah Hero)',
-    defaultImg: './asset/hero1.webp',
     optional: true,
     fields: [
       { key: 'button_url',  label: 'Link Tujuan Klik',           type: 'text',     placeholder: 'drinks' },
-    ]
-  },
-  {
-    id: 'hot_series',
-    label: 'HOT SERIES',
-    defaultImg: './asset/3.svg',
-    fields: [
-      { key: 'title',    label: 'Judul',      type: 'text',     placeholder: 'HOT SERIES' },
-      { key: 'subtitle', label: 'Deskripsi',  type: 'textarea', placeholder: 'Rangkaian minuman hangat Teiko...' },
-    ]
-  },
-  {
-    id: 'green_tea',
-    label: 'GREEN TEA',
-    defaultImg: './asset/4.svg',
-    fields: [
-      { key: 'title',    label: 'Judul',      type: 'text',     placeholder: 'GREEN TEA' },
-      { key: 'subtitle', label: 'Deskripsi',  type: 'textarea', placeholder: 'Rasakan kesegaran teh hijau asli Jepang.' },
-    ]
-  },
-  {
-    id: 'belgian',
-    label: 'BELGIAN',
-    defaultImg: './asset/5.svg',
-    fields: [
-      { key: 'title',    label: 'Judul',      type: 'text',     placeholder: 'BELGIAN' },
-      { key: 'subtitle', label: 'Deskripsi',  type: 'textarea', placeholder: 'Rasakan kesegaran Belgian Choco...' },
-    ]
-  },
-  {
-    id: 'coffee_cream',
-    label: 'COFFEE CREAM',
-    defaultImg: './asset/6.svg',
-    fields: [
-      { key: 'title',    label: 'Judul',      type: 'text',     placeholder: 'COFFEE CREAM' },
-      { key: 'subtitle', label: 'Deskripsi',  type: 'textarea', placeholder: 'Rasa kopi lembut berpadu krim spesial Teiko.' },
     ]
   },
   // ===== KONTROL SECTION PROMO BAWAH =====
   {
     id: 'promo_section',
     label: 'Tampilkan/Sembunyikan Seluruh Kotak Foto Promo',
-    defaultImg: './asset/dummy_choco.png',
     fields: [] // Hanya toggle aktif/nonaktif
   },
   // ===== 4 KOTAK FOTO PROMO BAWAH =====
   {
     id: 'promo_box_1',
     label: 'Kotak Foto Promo 1 (Kiri Atas)',
-    defaultImg: './asset/dummy_choco.png',
     fields: [{ key: 'button_url', label: 'Link Tujuan Klik', type: 'text', placeholder: 'drinks' }]
   },
   {
     id: 'promo_box_2',
     label: 'Kotak Foto Promo 2 (Kanan Atas)',
-    defaultImg: './asset/dummy_matcha.png',
     fields: [{ key: 'button_url', label: 'Link Tujuan Klik', type: 'text', placeholder: 'drinks' }]
   },
   {
     id: 'promo_box_3',
     label: 'Kotak Foto Promo 3 (Kiri Bawah)',
-    defaultImg: './asset/dummy_coffee.png',
     fields: [{ key: 'button_url', label: 'Link Tujuan Klik', type: 'text', placeholder: 'drinks' }]
   },
   {
     id: 'promo_box_4',
     label: 'Kotak Foto Promo 4 (Kanan Bawah)',
-    defaultImg: './asset/dummy_taro.png',
     fields: [{ key: 'button_url', label: 'Link Tujuan Klik', type: 'text', placeholder: 'drinks' }]
   }
 ];
@@ -281,7 +236,6 @@ function renderSections() {
       allSections.push({
         id: row.id,
         label: `Dynamic Hero`,
-        defaultImg: './asset/hero1.webp',
         fields: [
           { key: 'title',       label: 'Judul',           type: 'textarea' },
           { key: 'subtitle',    label: 'Paragraf 1',      type: 'textarea' },
@@ -299,8 +253,7 @@ function renderSections() {
 // Bikin HTML satu kartu section (thumbnail, badge aktif, tombol edit/toggle/hapus).
 function createSectionCard(section) {
   const data = contentData[section.id] || {};
-  const isDeleted = data.image_url === '';
-  const imgSrc = data.image_url || section.defaultImg;
+  const hasImage = !!data.image_url;
   const isActive = data.is_active !== false;
 
   const isDrinkDisplay = section.id === 'hero_drink_display';
@@ -311,13 +264,13 @@ function createSectionCard(section) {
   return `
     <div class="drink-admin-card section-card-v2" id="card-${section.id}">
       <div class="section-card-v2-imgwrap" onclick="editContent('${section.id}')" title="Klik untuk edit">
-        ${isDeleted ? `
+        ${!hasImage ? `
         <div class="drink-admin-img d-flex flex-column align-items-center justify-content-center text-muted"
           style="aspect-ratio:${aspectRatio};width:100%;background:#eee;border-radius:12px;">
           <i class="bi bi-image" style="font-size:2rem;"></i>
           <small>Belum ada foto</small>
         </div>` : `
-        <img src="${imgSrc}" class="drink-admin-img" alt="Preview"
+        <img src="${data.image_url}" class="drink-admin-img" alt="Preview"
           style="object-fit:contain;background:#f5f5f5;aspect-ratio:${aspectRatio};width:100%;display:block;border-radius:12px;">`}
       </div>
       <div class="drink-admin-body">
@@ -435,7 +388,10 @@ window.editContent = (id) => {
       <div class="row g-3">
         <div class="col-md-4">
           <div class="upload-area" id="edit-content-upload-area">
-            <img id="edit-content-preview" src="${data.image_url || section.defaultImg}" class="img-preview" style="display:block">
+            <img id="edit-content-preview" src="${data.image_url || ''}" class="img-preview" style="display:${data.image_url ? 'block' : 'none'}">
+            <div class="upload-placeholder" id="edit-content-placeholder" style="display:${data.image_url ? 'none' : 'flex'}">
+              <i class="bi bi-plus-circle"></i><p>Pilih Foto</p>
+            </div>
             <div class="upload-overlay">
               <i class="bi bi-camera"></i><span>Ganti Foto</span>
             </div>
@@ -469,7 +425,11 @@ window.editContent = (id) => {
 
       const reader = new FileReader();
       reader.onload = (re) => {
-        document.getElementById('edit-content-preview').src = re.target.result;
+        const preview = document.getElementById('edit-content-preview');
+        preview.src = re.target.result;
+        preview.style.display = 'block';
+        const placeholder = document.getElementById('edit-content-placeholder');
+        if (placeholder) placeholder.style.display = 'none';
       };
       reader.readAsDataURL(optimizedFile);
     }
@@ -684,12 +644,18 @@ function renderSlidesAdmin() {
     return;
   }
   grid.innerHTML = slidesAdminData.map(slide => {
-    const imgSrc = (slide.image_url && slide.image_url.trim()) ? slide.image_url : './asset/hero3.png';
+    const hasImage = !!(slide.image_url && slide.image_url.trim());
     const subtitle = slide.subtitle ? slide.subtitle.substring(0, 60) + (slide.subtitle.length > 60 ? '…' : '') : '';
     return `
     <div class="drink-admin-card section-card-v2" id="slide-card-${slide.id}">
       <div class="section-card-v2-imgwrap" onclick="editSlide('${slide.id}')" title="Klik untuk edit">
-        <img src="${imgSrc}" class="drink-admin-img" alt="Preview" style="object-fit:contain;background:#f5f5f5;aspect-ratio:1/1;width:100%;display:block;border-radius:12px;">
+        ${!hasImage ? `
+        <div class="drink-admin-img d-flex flex-column align-items-center justify-content-center text-muted"
+          style="aspect-ratio:1/1;width:100%;background:#eee;border-radius:12px;">
+          <i class="bi bi-image" style="font-size:2rem;"></i>
+          <small>Belum ada foto</small>
+        </div>` : `
+        <img src="${slide.image_url}" class="drink-admin-img" alt="Preview" style="object-fit:contain;background:#f5f5f5;aspect-ratio:1/1;width:100%;display:block;border-radius:12px;">`}
       </div>
       <div class="drink-admin-body">
         <div class="section-card-v2-name">${slide.name || '(Tanpa Nama)'}</div>
