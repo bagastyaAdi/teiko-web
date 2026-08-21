@@ -44,6 +44,7 @@ const SECTIONS = [
     label: 'Banner Promo Lebar 1 (Bawah Hero)',
     emoji: '🖼️',
     defaultImg: './asset/hero1.webp',
+    optional: true, // gak dipaksa nongol kalau belum ada foto; hapus = beneran hilang dari grid
     fields: [
       { key: 'button_url',  label: 'Link Tujuan Klik',           type: 'text',     placeholder: 'drinks' },
     ]
@@ -53,6 +54,7 @@ const SECTIONS = [
     label: 'Banner Promo Lebar 2 (Bawah Hero)',
     emoji: '🖼️',
     defaultImg: './asset/hero2.webp',
+    optional: true,
     fields: [
       { key: 'button_url',  label: 'Link Tujuan Klik',           type: 'text',     placeholder: 'drinks' },
     ]
@@ -62,6 +64,7 @@ const SECTIONS = [
     label: 'Banner Promo Lebar 3 (Bawah Hero)',
     emoji: '🖼️',
     defaultImg: './asset/hero1.webp',
+    optional: true,
     fields: [
       { key: 'button_url',  label: 'Link Tujuan Klik',           type: 'text',     placeholder: 'drinks' },
     ]
@@ -274,9 +277,11 @@ function renderSections() {
   if (!grid) return;
   
   const allSections = [];
-  
-  // 1. Static Sections
+
+  // 1. Static Sections (slot tetap di homepage). Yang "optional" (banner hero1/2/3)
+  // cuma ditampilin kalau udah pernah diisi foto - gak dipaksa jadi template kosong.
   SECTIONS.forEach(s => {
+    if (s.optional && !contentData[s.id]) return;
     allSections.push(s);
   });
 
@@ -581,7 +586,8 @@ async function toggleSection(sectionId) {
 // (ditambah lewat "Tambah Hero Baru") bukan slot tetap, jadi dihapus permanen
 // dari DB supaya card-nya beneran hilang dari grid.
 async function deleteSection(sectionId) {
-  const isStaticSlot = SECTIONS.some(s => s.id === sectionId);
+  const section = SECTIONS.find(s => s.id === sectionId);
+  const isStaticSlot = !!section && !section.optional;
 
   if (isStaticSlot) {
     if (!confirm('Kosongkan section ini? (Slot tetap ada di homepage, foto & teks akan dihapus)')) return;
