@@ -301,10 +301,9 @@ function createSectionCard(section) {
   const isActive = data.is_active !== false;
 
   const isDrinkDisplay = section.id === 'hero_drink_display';
-  const isBanner      = section.id.startsWith('hero') && section.id !== 'hero_drink_display';
 
-  // Image aspect ratio
-  const aspectRatio = isDrinkDisplay ? '3/4' : (isBanner ? '16/6' : '1/1');
+  // Semua card thumbnail kotak (1/1), konsisten kayak mockup - gak ada lagi rasio beda-beda per tipe.
+  const aspectRatio = '1/1';
 
   return `
     <div class="drink-admin-card section-card-v2" id="card-${section.id}">
