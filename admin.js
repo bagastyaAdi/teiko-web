@@ -682,22 +682,19 @@ function renderSlidesAdmin() {
   }
   grid.innerHTML = slidesAdminData.map(slide => {
     const imgSrc = (slide.image_url && slide.image_url.trim()) ? slide.image_url : './asset/hero3.png';
+    const subtitle = slide.subtitle ? slide.subtitle.substring(0, 60) + (slide.subtitle.length > 60 ? '…' : '') : '';
     return `
-    <div class="drink-admin-card" id="slide-card-${slide.id}" style="border-top:4px solid #0d6efd;position:relative;">
-      <div style="position:absolute;top:8px;right:8px;z-index:2;background:#0d6efd;color:#fff;font-size:0.65rem;font-weight:700;padding:2px 8px;border-radius:20px;">Slide ${slide.sort_order ?? ''}</div>
-      <div style="overflow:hidden;border-radius:8px 8px 0 0;cursor:pointer;" onclick="editSlide('${slide.id}')" title="Edit slide">
-        <img src="${imgSrc}" style="width:100%;aspect-ratio:3/4;object-fit:cover;display:block;transition:transform .25s;"
-          onmouseover="this.style.transform='scale(1.04)'" onmouseout="this.style.transform='scale(1)'">
+    <div class="drink-admin-card section-card-v2" id="slide-card-${slide.id}">
+      <div class="section-card-v2-imgwrap" onclick="editSlide('${slide.id}')" title="Klik untuk edit">
+        <img src="${imgSrc}" class="drink-admin-img" alt="Preview" style="object-fit:cover;aspect-ratio:1/1;width:100%;display:block;border-radius:12px;">
       </div>
       <div class="drink-admin-body">
-        <div class="drink-admin-name">${slide.name || '(Tanpa Nama)'}</div>
-        <div class="drink-admin-meta" style="font-size:0.75rem;color:#888;margin-top:4px;">${slide.subtitle ? slide.subtitle.substring(0,60) + (slide.subtitle.length > 60 ? '…' : '') : '-'}</div>
-        <div class="drink-admin-meta mt-2">
-          <span class="drink-admin-badge ${slide.is_active ? 'bg-success text-white' : 'bg-danger text-white'}">${slide.is_active ? 'Aktif' : 'Off'}</span>
-        </div>
-        <div class="drink-admin-actions">
+        <div class="section-card-v2-name">${slide.name || '(Tanpa Nama)'}</div>
+        ${subtitle ? `<div class="text-muted" style="font-size:0.8rem;margin:-6px 0 12px;">${subtitle}</div>` : ''}
+        <div class="section-card-v2-row">
+          <span class="section-card-v2-badge ${slide.is_active ? 'is-active' : 'is-off'}">${slide.is_active ? 'Aktif' : 'Off'}</span>
           <button class="btn-icon" onclick="editSlide('${slide.id}')" title="Edit"><i class="bi bi-pencil"></i></button>
-          <button class="btn-icon ${slide.is_active ? '' : 'text-success'}" onclick="toggleSlide('${slide.id}', ${!slide.is_active})" title="${slide.is_active ? 'Matikan' : 'Aktifkan'}">
+          <button class="btn-icon" onclick="toggleSlide('${slide.id}', ${!slide.is_active})" title="${slide.is_active ? 'Matikan' : 'Aktifkan'}">
             <i class="bi ${slide.is_active ? 'bi-eye-slash' : 'bi-eye'}"></i>
           </button>
           <button class="btn-icon btn-icon-danger" onclick="deleteSlide('${slide.id}')" title="Hapus"><i class="bi bi-trash"></i></button>
