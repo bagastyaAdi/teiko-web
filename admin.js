@@ -318,7 +318,7 @@ function createSectionCard(section) {
           <small>Belum ada foto</small>
         </div>` : `
         <img src="${imgSrc}" class="drink-admin-img" alt="Preview"
-          style="object-fit:cover;aspect-ratio:${aspectRatio};width:100%;display:block;border-radius:12px;">`}
+          style="object-fit:contain;background:#f5f5f5;aspect-ratio:${aspectRatio};width:100%;display:block;border-radius:12px;">`}
       </div>
       <div class="drink-admin-body">
         <div class="section-card-v2-name">${section.label}</div>
@@ -689,7 +689,7 @@ function renderSlidesAdmin() {
     return `
     <div class="drink-admin-card section-card-v2" id="slide-card-${slide.id}">
       <div class="section-card-v2-imgwrap" onclick="editSlide('${slide.id}')" title="Klik untuk edit">
-        <img src="${imgSrc}" class="drink-admin-img" alt="Preview" style="object-fit:cover;aspect-ratio:1/1;width:100%;display:block;border-radius:12px;">
+        <img src="${imgSrc}" class="drink-admin-img" alt="Preview" style="object-fit:contain;background:#f5f5f5;aspect-ratio:1/1;width:100%;display:block;border-radius:12px;">
       </div>
       <div class="drink-admin-body">
         <div class="section-card-v2-name">${slide.name || '(Tanpa Nama)'}</div>
