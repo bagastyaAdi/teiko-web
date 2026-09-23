@@ -1,28 +1,36 @@
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
 :root {
-  --bg: #f1f5f9;
+  /* Big Sur-inspired: soft neutral surfaces, translucent panels, big radii */
+  --bg: #f5f5f7;
   --surface: #ffffff;
+  --surface-translucent: rgba(255, 255, 255, 0.72);
   --card: #ffffff;
-  --border: #e2e8f0;
-  --text: #0f172a;
-  --muted: #64748b;
+  --border: #e5e5e7;
+  --text: #1d1d1f;
+  --muted: #6e6e73;
   --accent: #16a34a;
   --accent-light: #15803d;
   --accent-glow: rgba(22, 163, 74, 0.1);
   --danger: #ef4444;
   --warning: #f59e0b;
-  --input-bg: #f8fafc;
-  --sidebar-w: 260px;
+  --input-bg: #f5f5f7;
+  --sidebar-w: 264px;
+  --radius-lg: 20px;
+  --radius-md: 14px;
+  --radius-sm: 10px;
+  --shadow-soft: 0 1px 2px rgba(0,0,0,0.04), 0 8px 24px rgba(0,0,0,0.06);
+  --shadow-float: 0 4px 12px rgba(0,0,0,0.05), 0 16px 40px rgba(0,0,0,0.08);
 }
 
 * { margin: 0; padding: 0; box-sizing: border-box; }
 
 body {
-  font-family: 'Inter', sans-serif;
+  font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Inter', 'Segoe UI', sans-serif;
   background: var(--bg);
   color: var(--text);
   min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
 }
 
 /* ===== LOGIN ===== */
@@ -31,17 +39,19 @@ body {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: radial-gradient(ellipse at 30% 30%, #dcfce7 0%, var(--bg) 60%);
+  background: radial-gradient(ellipse at 30% 20%, #e8f8ee 0%, var(--bg) 55%);
 }
 
 .login-card {
-  background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 20px;
+  background: var(--surface-translucent);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
+  border: 1px solid rgba(255,255,255,0.6);
+  border-radius: var(--radius-lg);
   padding: 2.5rem;
   width: 100%;
   max-width: 420px;
-  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow-float);
 }
 
 .login-logo {
@@ -80,11 +90,11 @@ body {
   padding: 12px 16px;
   background: var(--input-bg);
   border: 1px solid var(--border);
-  border-radius: 10px;
+  border-radius: var(--radius-sm);
   color: var(--text);
   font-size: 0.95rem;
-  font-family: 'Inter', sans-serif;
-  transition: border-color 0.2s;
+  font-family: inherit;
+  transition: border-color 0.2s, box-shadow 0.2s;
   outline: none;
 }
 
@@ -101,7 +111,7 @@ body {
   background: var(--accent);
   color: white;
   border: none;
-  border-radius: 10px;
+  border-radius: var(--radius-sm);
   font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
@@ -119,10 +129,12 @@ body {
   min-height: 100vh;
 }
 
-/* Sidebar */
+/* Sidebar (frosted / vibrancy panel, macOS Big Sur style) */
 .sidebar {
   width: var(--sidebar-w);
-  background: var(--surface);
+  background: var(--surface-translucent);
+  backdrop-filter: blur(24px) saturate(180%);
+  -webkit-backdrop-filter: blur(24px) saturate(180%);
   border-right: 1px solid var(--border);
   display: flex;
   flex-direction: column;
@@ -132,7 +144,6 @@ body {
   height: 100vh;
   z-index: 100;
   padding: 1.5rem 0;
-  box-shadow: 2px 0 10px rgba(0,0,0,0.04);
 }
 
 .sidebar-logo {
@@ -180,7 +191,7 @@ body {
   align-items: center;
   gap: 10px;
   padding: 10px 12px;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   color: var(--muted);
   font-size: 0.9rem;
   font-weight: 500;
@@ -190,9 +201,15 @@ body {
   text-decoration: none;
 }
 
-.nav-item:hover, .nav-item.active {
-  background: var(--accent-glow);
-  color: var(--accent-light);
+.nav-item:hover {
+  background: rgba(0,0,0,0.04);
+  color: var(--text);
+}
+
+.nav-item.active {
+  background: var(--accent);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(22, 163, 74, 0.3);
 }
 
 .sidebar-footer {
@@ -205,7 +222,7 @@ body {
   padding: 10px;
   background: transparent;
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   color: var(--muted);
   font-size: 0.85rem;
   font-weight: 500;
@@ -256,18 +273,19 @@ body {
 .stat-chip {
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   padding: 12px 18px;
   display: flex;
   align-items: center;
   gap: 10px;
   font-size: 0.85rem;
+  box-shadow: var(--shadow-soft);
 }
 
 .stat-chip .stat-icon {
   width: 32px;
   height: 32px;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   background: var(--accent-glow);
   display: flex;
   align-items: center;
@@ -298,14 +316,16 @@ body {
 .section-card {
   background: var(--card);
   border: 1px solid var(--border);
-  border-radius: 16px;
+  border-radius: var(--radius-lg);
   overflow: hidden;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  transition: border-color 0.2s, box-shadow 0.2s, transform 0.2s;
+  box-shadow: var(--shadow-soft);
 }
 
 .section-card:hover {
-  border-color: #2a3f5f;
-  box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+  border-color: rgba(22, 163, 74, 0.3);
+  box-shadow: var(--shadow-float);
+  transform: translateY(-2px);
 }
 
 .card-header {
@@ -314,7 +334,7 @@ body {
   gap: 12px;
   padding: 1.2rem 1.5rem;
   border-bottom: 1px solid var(--border);
-  background: #f8fafc;
+  background: var(--input-bg);
 }
 
 .card-emoji { font-size: 1.3rem; }
@@ -380,7 +400,7 @@ body {
   width: 100%;
   height: 180px;
   border: 2px dashed var(--border);
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   overflow: hidden;
   cursor: pointer;
   transition: border-color 0.2s;
@@ -461,10 +481,10 @@ body {
   padding: 10px 14px;
   background: var(--input-bg);
   border: 1px solid var(--border);
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   color: var(--text);
   font-size: 0.9rem;
-  font-family: 'Inter', sans-serif;
+  font-family: inherit;
   outline: none;
   transition: border-color 0.2s;
   resize: vertical;
@@ -480,7 +500,7 @@ body {
 .card-footer {
   padding: 1rem 1.5rem;
   border-top: 1px solid var(--border);
-  background: #f8fafc;
+  background: var(--input-bg);
 }
 
 .btn-save {
@@ -493,12 +513,12 @@ body {
   background: var(--accent);
   color: white;
   border: none;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
   transition: background 0.2s, transform 0.1s;
-  font-family: 'Inter', sans-serif;
+  font-family: inherit;
 }
 
 .btn-save:hover { background: #15803d; }
@@ -535,7 +555,7 @@ body {
   bottom: 2rem;
   right: 2rem;
   padding: 14px 20px;
-  border-radius: 10px;
+  border-radius: var(--radius-md);
   font-size: 0.9rem;
   font-weight: 500;
   z-index: 9999;
@@ -543,7 +563,9 @@ body {
   opacity: 0;
   transition: all 0.3s ease;
   max-width: 360px;
-  box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+  backdrop-filter: blur(20px) saturate(180%);
+  -webkit-backdrop-filter: blur(20px) saturate(180%);
+  box-shadow: var(--shadow-float);
 }
 
 .toast.show {
@@ -586,13 +608,15 @@ body {
 .drink-admin-card {
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: var(--radius-md);
   overflow: hidden;
-  transition: box-shadow 0.2s;
+  transition: box-shadow 0.2s, transform 0.2s;
+  box-shadow: var(--shadow-soft);
 }
 
 .drink-admin-card:hover {
-  box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+  box-shadow: var(--shadow-float);
+  transform: translateY(-2px);
 }
 
 .drink-admin-img {
@@ -682,7 +706,7 @@ body {
 .btn-icon {
   width: 36px;
   height: 36px;
-  border-radius: 8px;
+  border-radius: var(--radius-sm);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -709,24 +733,25 @@ body {
 .drink-form-container {
   background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 12px;
+  border-radius: var(--radius-lg);
   padding: 1.5rem;
   margin-bottom: 2rem;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+  box-shadow: var(--shadow-float);
 }
 
 /* Feedback Management Styles */
 .feedback-item-card {
   background: #fff;
-  border: 1.5px solid #e5e7eb;
-  border-radius: 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
   padding: 1.25rem 1.5rem;
   margin-bottom: 0.85rem;
   transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: var(--shadow-soft);
 }
 
 .feedback-item-card:hover {
-  box-shadow: 0 4px 12px rgba(0,0,0,0.03);
+  box-shadow: var(--shadow-float);
 }
 
 .feedback-item-header {
