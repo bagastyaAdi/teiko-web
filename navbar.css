@@ -84,24 +84,24 @@ body.modal-open .navbar-custom {
   position: relative;
 }
 
-/* Hover: editorial black badge */
+/* Hover: brand green pill */
 .nav-desktop-link:hover {
-  background-color: #111111;
+  background-color: #174F3C;
   color: #FFFFFF;
   transform: translateY(-1px);
   box-shadow: none !important;
 }
 
-/* Active Page: editorial black pill badge */
+/* Active Page: brand green pill */
 .nav-desktop-link.active {
-  background-color: #111111;
+  background-color: #174F3C;
   color: #FFFFFF;
   font-weight: 600;
   box-shadow: none !important;
 }
 
 .nav-desktop-link.active:hover {
-  background-color: #000000;
+  background-color: #0f3a2b;
   color: #FFFFFF;
   box-shadow: none !important;
 }
@@ -253,12 +253,12 @@ body:not(.drawer-open) > *:not(#navbar-placeholder):not(.nav-drawer):not(.drawer
 }
 
 .drawer-nav-links a:hover {
-  background: #111111;
+  background: #174F3C;
   color: #FFFFFF;
 }
 
 .drawer-nav-links a.active {
-  background: #111111;
+  background: #174F3C;
   color: #FFFFFF;
   font-weight: 600;
 }
