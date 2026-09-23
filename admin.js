@@ -22,7 +22,6 @@ window.saveNewNews = () => {};
 window.loadEventsAdmin = () => {};
 window.loadFaqAdmin = () => {};
 window.loadNewsAdmin = () => {};
-window.loadOutletsAdmin = () => {};
 
 console.log('DEBUG: admin.js initialization started');
 
