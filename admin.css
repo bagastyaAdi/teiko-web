@@ -207,9 +207,9 @@ body {
 }
 
 .nav-item.active {
-  background: var(--accent);
-  color: #fff;
-  box-shadow: 0 2px 8px rgba(22, 163, 74, 0.3);
+  background: #f0f0f2;
+  color: var(--text);
+  font-weight: 600;
 }
 
 .sidebar-footer {
