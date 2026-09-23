@@ -3,7 +3,7 @@
    Fonts: Outfit (Headings) + Plus Jakarta Sans (Body & UI)
    ========================================================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Outfit:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
 
 /* Ensure Bootstrap Icons font loads with font-display: swap to fix Lighthouse font display warning */
 @font-face {
@@ -82,9 +82,10 @@ h1, h2, h3, h4, h5, h6,
 .hero h1, .minuman-box h3, .drink-name, .card-title, .navbar-brand-logo, .page-title-section h1,
 .section-title, .section-subtitle, .section-header h1, .section-header h2, .section-header h3,
 .promo-box-title, .promo-box-tag, .hero-product__review-author, .hero-product__review-role,
-.hero-product__footer-text, .fullwidth-banner-content h2, .fullwidth-banner-content p {
-  font-family: 'Rubik', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
-  letter-spacing: -0.02em;
+.hero-product__footer-text, .fullwidth-banner-content h2, .fullwidth-banner-content p,
+.faq-hero h1, .feedback-hero h1 {
+  font-family: 'Fredoka', 'Rubik', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+  letter-spacing: -0.01em;
 }
 
 /* ===== PRODUCT-CENTRIC HERO SECTION ===== */
@@ -482,12 +483,32 @@ img {
   background-color: #0f3a2b;
   border-color: #0f3a2b;
   color: #FFFFFF;
-  transform: translateY(-2px);
-  box-shadow: 0 14px 32px rgba(23, 79, 60, 0.35);
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 16px 34px rgba(23, 79, 60, 0.38);
 }
 
 .btn-editorial:active {
-  transform: translateY(0);
+  transform: translateY(0) scale(0.98);
+}
+
+/* Small pill badge for card/photo corners (e.g. "Baru", "Promo") —
+   reusable accent so product-style cards don't read as bare template grids. */
+.corner-badge {
+  position: absolute;
+  top: 14px;
+  right: 14px;
+  z-index: 3;
+  display: inline-flex;
+  align-items: center;
+  padding: 5px 14px;
+  border-radius: var(--radius-full);
+  background: #174F3C;
+  color: #FFFFFF;
+  font-family: 'Fredoka', sans-serif;
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  box-shadow: 0 6px 16px rgba(23, 79, 60, 0.3);
 }
 
 .btn-editorial-outline {
@@ -937,9 +958,33 @@ img {
 }
 
 /* ===== PAGE HEADER & SECTION SPACING (Memberi Ruang Lega / Tidak Mepet) ===== */
-.page-title-section {
+.page-title-section,
+.faq-hero,
+.feedback-hero {
+  position: relative;
   padding: 70px 0 35px;
   text-align: center;
+  isolation: isolate;
+}
+
+/* Soft organic watermark blobs behind page titles — a hand-placed accent
+   instead of a flat, templated header block. Pure CSS, no markup needed. */
+.page-title-section::before,
+.faq-hero::before,
+.feedback-hero::before {
+  content: '';
+  position: absolute;
+  top: -60px;
+  left: 50%;
+  width: 640px;
+  height: 320px;
+  transform: translateX(-50%);
+  background:
+    radial-gradient(circle at 18% 30%, rgba(23, 79, 60, 0.08) 0%, transparent 55%),
+    radial-gradient(circle at 82% 60%, rgba(234, 245, 239, 0.9) 0%, transparent 60%);
+  filter: blur(6px);
+  z-index: -1;
+  pointer-events: none;
 }
 
 .page-title-section h6 {
