@@ -15,12 +15,14 @@ window.onerror = function(msg, url, line, col, error) {
 window.showAddEventForm = () => { console.log('Init phase: showAddEventForm not yet fully loaded'); };
 window.showAddFaqForm   = () => { console.log('Init phase: showAddFaqForm not yet fully loaded'); };
 window.showAddNewsForm  = () => { console.log('Init phase: showAddNewsForm not yet fully loaded'); };
+window.showAddOutletForm = () => { console.log('Init phase: showAddOutletForm not yet fully loaded'); };
 window.saveNewEventBanner = () => {};
 window.saveNewFaq = () => {};
 window.saveNewNews = () => {};
 window.loadEventsAdmin = () => {};
 window.loadFaqAdmin = () => {};
 window.loadNewsAdmin = () => {};
+window.loadOutletsAdmin = () => {};
 
 console.log('DEBUG: admin.js initialization started');
 
@@ -90,6 +92,7 @@ let drinksData = [];
 let eventsAdminData = [];
 let faqAdminData = [];
 let newsAdminData = [];
+let outletsAdminData = [];
 
 // ===== AUTH =====
 // Cek session Supabase Auth yang lagi aktif, tampilin dashboard atau login screen.
@@ -577,6 +580,7 @@ function showToast(message, type = 'success') {
 const contentNav   = document.getElementById('nav-content');
 const slidesNav    = document.getElementById('nav-slides');
 const drinksNav    = document.getElementById('nav-drinks');
+const outletsNav   = document.getElementById('nav-outlets');
 const eventsNav    = document.getElementById('nav-events');
 const newsNav      = document.getElementById('nav-news');
 const feedbackNav  = document.getElementById('nav-feedback');
@@ -584,13 +588,14 @@ const faqNav       = document.getElementById('nav-faq');
 const contentView  = document.getElementById('content-view');
 const slidesView   = document.getElementById('slides-view');
 const drinksView   = document.getElementById('drinks-view');
+const outletsView  = document.getElementById('outlets-view');
 const eventsView   = document.getElementById('events-view');
 const newsView     = document.getElementById('news-view');
 const feedbackView = document.getElementById('feedback-view');
 const faqView      = document.getElementById('faq-view');
 
-const allNavs  = [contentNav, slidesNav, drinksNav, eventsNav, newsNav, feedbackNav, faqNav];
-const allViews = [contentView, slidesView, drinksView, eventsView, newsView, feedbackView, faqView];
+const allNavs  = [contentNav, slidesNav, drinksNav, outletsNav, eventsNav, newsNav, feedbackNav, faqNav];
+const allViews = [contentView, slidesView, drinksView, outletsView, eventsView, newsView, feedbackView, faqView];
 
 // Pindah tab sidebar: aktifin nav+view yang dipilih, sembunyiin sisanya,
 // terus jalanin loaderCallback (fetch data) kalau ada.
@@ -610,6 +615,7 @@ function activateView(navId, viewId, loaderCallback) {
 if (contentNav)  contentNav.addEventListener('click',  () => activateView('nav-content',  'content-view'));
 if (slidesNav)   slidesNav.addEventListener('click',   () => { activateView('nav-slides',  'slides-view');  loadSlidesAdmin(); });
 if (drinksNav)   drinksNav.addEventListener('click',   () => { activateView('nav-drinks',  'drinks-view');  loadDrinks(); });
+if (outletsNav)  outletsNav.addEventListener('click',  () => { activateView('nav-outlets', 'outlets-view'); loadOutletsAdmin(); });
 if (eventsNav)   eventsNav.addEventListener('click',   () => { activateView('nav-events',  'events-view');  loadEventsAdmin(); });
 if (newsNav)     newsNav.addEventListener('click',     () => { activateView('nav-news',    'news-view');    loadNewsAdmin(); });
 if (feedbackNav) feedbackNav.addEventListener('click', () => activateView('nav-feedback', 'feedback-view', loadFeedback));
@@ -2311,10 +2317,332 @@ window.deleteFaqAdmin = async (id) => {
   }
 };
 
+// ===== OUTLET MANAGEMENT (tabel `outlets` sendiri, dipakai outlet.html) =====
+// 10 outlet awal yang sebelumnya hardcode di outlet.html - dipakai tombol
+// "Import Outlet Bawaan" kalau tabel outlets masih kosong.
+const DEFAULT_OUTLETS = [
+  { name: 'Teiko Dukuh Sari', region: 'Denpasar Selatan', address: 'Kawasan Sesetan / Dukuh Sari, Denpasar Selatan. Suasana santai dan nyaman untuk nongkrong bersama teman.', lat: -8.6954097, lng: 115.2147496, maps_url: 'https://maps.app.goo.gl/Yo5a6RSY87gFaoKL6' },
+  { name: 'Teiko Pendidikan', region: 'Denpasar Selatan', address: 'Jl. Pendidikan, Denpasar Selatan. Berada dekat area kampus, destinasi favorit mahasiswa untuk nugas & bersantai.', lat: -8.7021815, lng: 115.2290236, maps_url: 'https://maps.app.goo.gl/XQzCqaq9a6Z2AAJcA' },
+  { name: 'Teiko Pulau Enggano', region: 'Denpasar Selatan', address: 'Jl. Pulau Enggano, Pemogan, Denpasar Selatan, Kota Denpasar, Bali 80221. Konsep modern & hangat untuk kumpul bareng keluarga maupun rekan kerja.', lat: -8.6866606, lng: 115.2000703, maps_url: 'https://www.google.com/maps/search/?api=1&query=-8.6866606,115.2000703' },
+  { name: 'Teiko Sidakarya', region: 'Denpasar Selatan', address: 'Outlet dengan nuansa minimalis & nyaman.', lat: -8.7017229, lng: 115.2302853, maps_url: 'https://maps.app.goo.gl/3hVmAG1hGNhmHDje6' },
+  { name: 'Teiko Palapa', region: 'Denpasar Selatan', address: 'Jl. Palapa, Denpasar Selatan. Tempat yang cocok untuk nongkrong sore dan menikmati aneka minuman manis khas Teiko.', lat: -8.7027368, lng: 115.2233252, maps_url: 'https://maps.app.goo.gl/GjTQf66dA7GSTnV19' },
+  { name: 'Teiko Ceningan Sari', region: 'Denpasar Selatan', address: 'Jl. Ceningan Sari, Sesetan, Denpasar Selatan. Outlet strategis dengan pelayanan cepat bersahabat untuk take-away maupun dine-in.', lat: -8.69864, lng: 115.2206848, maps_url: 'https://www.google.com/maps/place/Te.Ko+Ceningan+Sari/@-8.69864,115.2206848,17z' },
+  { name: 'Teiko Tukad Balian (Renon)', region: 'Denpasar Timur', address: 'Jl. Tukad Balian, Renon, Denpasar Timur. Berada di kawasan pusat pemerintahan Renon, nyaman untuk hangout atau meeting santai.', lat: -8.6785534, lng: 115.2422921, maps_url: 'https://maps.app.goo.gl/CvFMCLUoZF9aKAh3A' },
+  { name: 'Teiko Waturenggong', region: 'Denpasar Selatan', address: 'Jl. Waturenggong, Panjer, Denpasar Selatan. Outlet dengan vibes modern di tengah kota, ideal untuk rehat setelah beraktivitas.', lat: -8.6778718, lng: 115.218813, maps_url: 'https://maps.app.goo.gl/Yi7sVg1kL6k3sp9fA' },
+  { name: 'Teiko Merta Jati', region: 'Denpasar Selatan', address: 'Jl. Merta Jati, Denpasar Selatan. Pilihan tepat untuk menikmati teh dan kopi segar berkualitas dengan harga terjangkau.', lat: -8.7006334, lng: 115.2271831, maps_url: 'https://maps.app.goo.gl/PmDBFzmLJN8dFi6A6' },
+  { name: 'Teiko Pemogan', region: 'Denpasar Selatan', address: 'Kawasan Pemogan, Denpasar Selatan. Outlet terbaru dengan menu terlengkap & suasana fresh untuk semua kalangan.', lat: -8.71182, lng: 115.20521, maps_url: 'https://maps.app.goo.gl/txsQs4K5nUt3HD8D9' }
+];
+
+// Ambil semua baris tabel outlets, urut sort_order.
+async function loadOutletsAdmin() {
+  const grid = document.getElementById('outlets-grid');
+  if (!grid) return;
+  grid.innerHTML = `<div class="loading-state"><div class="spinner"></div><p>Memuat daftar outlet...</p></div>`;
+  try {
+    const { data, error } = await sb.from('outlets').select('*').order('sort_order', { ascending: true });
+    if (error) throw error;
+    outletsAdminData = data || [];
+    renderOutletsAdmin();
+  } catch (err) {
+    grid.innerHTML = `<div class="loading-state" style="color:#e74c3c;"><p>Gagal memuat: ${err.message}</p><p class="small text-muted">Pastikan tabel <code>outlets</code> sudah dibuat di Supabase.</p></div>`;
+  }
+}
+
+// Render kartu-kartu outlet ke grid.
+function renderOutletsAdmin() {
+  const grid = document.getElementById('outlets-grid');
+  if (!grid) return;
+
+  if (outletsAdminData.length === 0) {
+    grid.innerHTML = `
+      <div class="col-12 text-center py-5">
+        <div class="p-4 rounded-4" style="background:#e8f4fd; border:2px dashed #0d6efd; max-width:620px; margin:0 auto;">
+          <h5 class="fw-bold mb-2 text-primary"><i class="bi bi-cloud-arrow-down-fill me-2"></i>Belum Ada Outlet di Database</h5>
+          <p class="text-muted small mb-4">Klik tombol di bawah untuk mengimpor 10 outlet yang sebelumnya sudah tampil di halaman Outlet, supaya siap diedit lewat sini.</p>
+          <button class="btn btn-primary px-4 py-2 fw-bold shadow-sm" id="btn-seed-outlets" onclick="seedDefaultOutlets()">
+            <i class="bi bi-cloud-download me-2"></i>Import 10 Outlet Bawaan
+          </button>
+        </div>
+      </div>`;
+    return;
+  }
+
+  grid.innerHTML = outletsAdminData.map(o => `
+    <div class="drink-admin-card">
+      <div class="drink-admin-body">
+        <div class="drink-admin-name" style="font-size:1rem;">${o.name}</div>
+        <div class="drink-admin-meta">
+          <span class="drink-admin-badge">${o.region}</span>
+        </div>
+        <p class="text-muted small line-clamp-2">${o.address || ''}</p>
+        <div class="drink-admin-meta">
+          <span class="drink-admin-badge ${o.is_active ? 'bg-success text-white' : 'bg-danger text-white'}">${o.is_active ? 'Aktif' : 'Off'}</span>
+        </div>
+        <div class="drink-admin-actions mt-3">
+          <button class="btn-icon" onclick="editOutlet('${o.id}')" title="Edit"><i class="bi bi-pencil"></i></button>
+          <button class="btn-icon ${o.is_active ? '' : 'text-success'}" onclick="toggleOutletActiveAdmin('${o.id}', ${!o.is_active})" title="${o.is_active ? 'Matikan' : 'Aktifkan'}">
+            <i class="bi ${o.is_active ? 'bi-eye-slash' : 'bi-eye'}"></i>
+          </button>
+          <button class="btn-icon btn-icon-danger" onclick="deleteOutletAdmin('${o.id}')" title="Hapus"><i class="bi bi-trash"></i></button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+}
+
+window.seedDefaultOutlets = async () => {
+  const btn = document.getElementById('btn-seed-outlets');
+  if (btn) {
+    btn.disabled = true;
+    btn.innerHTML = '<i class="bi bi-arrow-repeat spin me-2"></i>Mengimpor...';
+  }
+  try {
+    const now = new Date().toISOString();
+    const rows = DEFAULT_OUTLETS.map((o, i) => ({
+      id: `outlet_${Date.now()}_${i}`,
+      name: o.name,
+      region: o.region,
+      address: o.address,
+      lat: o.lat,
+      lng: o.lng,
+      maps_url: o.maps_url,
+      sort_order: i,
+      is_active: true,
+      updated_at: now
+    }));
+    const { error } = await sb.from('outlets').insert(rows);
+    if (error) throw error;
+    showToast('10 outlet bawaan berhasil diimpor!', 'success');
+    loadOutletsAdmin();
+  } catch (err) {
+    showToast('Gagal mengimpor: ' + err.message, 'error');
+    if (btn) { btn.disabled = false; btn.innerHTML = '<i class="bi bi-cloud-download me-2"></i>Coba Import Lagi'; }
+  }
+};
+
+// Form tambah outlet baru.
+window.showAddOutletForm = () => {
+  const existingForm = document.getElementById('outlet-form-area');
+  if (existingForm) { existingForm.remove(); return; }
+
+  const formHtml = `
+    <div id="outlet-form-area" class="drink-form-container fade-up mb-4" style="border: 2px solid var(--primary-color);">
+      <h4 class="mb-3">Tambah Outlet Baru</h4>
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label small text-muted mb-1">Nama Outlet</label>
+          <input type="text" id="outlet-name" class="form-input" placeholder="Teiko Nama Jalan">
+        </div>
+        <div class="col-md-6">
+          <label class="form-label small text-muted mb-1">Wilayah / Region</label>
+          <input type="text" id="outlet-region" class="form-input" list="outlet-region-list" placeholder="Denpasar Selatan">
+          <datalist id="outlet-region-list">${getOutletRegionOptions()}</datalist>
+        </div>
+        <div class="col-12">
+          <label class="form-label small text-muted mb-1">Alamat / Deskripsi Singkat</label>
+          <textarea id="outlet-address" class="form-input" placeholder="Jl. Contoh No.1, Denpasar." rows="2"></textarea>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label small text-muted mb-1">Latitude</label>
+          <input type="text" id="outlet-lat" class="form-input" placeholder="-8.6954097">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label small text-muted mb-1">Longitude</label>
+          <input type="text" id="outlet-lng" class="form-input" placeholder="115.2147496">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label small text-muted mb-1">Urutan Tampil</label>
+          <input type="number" id="outlet-sort" class="form-input" value="${outletsAdminData.length}">
+        </div>
+        <div class="col-12">
+          <label class="form-label small text-muted mb-1">Link Google Maps (opsional, auto-generate dari lat/lng kalau kosong)</label>
+          <input type="text" id="outlet-url" class="form-input" placeholder="https://maps.app.goo.gl/...">
+        </div>
+        <div class="col-12 text-end mt-2">
+           <button class="btn btn-light me-2" onclick="document.getElementById('outlet-form-area').remove()">Batal</button>
+           <button class="btn btn-dark px-4" id="submit-outlet-btn" onclick="saveNewOutlet()">Simpan Outlet</button>
+        </div>
+      </div>
+    </div>
+  `;
+  document.getElementById('outlets-view').insertBefore(createDiv(formHtml), document.getElementById('outlets-grid'));
+  document.getElementById('outlet-form-area').scrollIntoView({ behavior: 'smooth' });
+};
+
+// Kumpulin region yang udah pernah dipakai buat autocomplete <datalist>.
+function getOutletRegionOptions() {
+  const regions = [...new Set(outletsAdminData.map(o => o.region).filter(Boolean))];
+  return regions.map(r => `<option value="${r}"></option>`).join('');
+}
+
+// Validasi lat/lng, kembaliin angka atau null kalau gak valid.
+function parseCoord(value) {
+  const n = parseFloat(value);
+  return isNaN(n) ? null : n;
+}
+
+// Simpan outlet baru ke tabel outlets.
+window.saveNewOutlet = async () => {
+  const name = document.getElementById('outlet-name').value.trim();
+  const region = document.getElementById('outlet-region').value.trim();
+  const address = document.getElementById('outlet-address').value.trim();
+  const lat = parseCoord(document.getElementById('outlet-lat').value);
+  const lng = parseCoord(document.getElementById('outlet-lng').value);
+  const sortOrder = parseInt(document.getElementById('outlet-sort').value, 10) || 0;
+  let mapsUrl = document.getElementById('outlet-url').value.trim();
+
+  if (!name || !region || lat === null || lng === null) {
+    showToast('Nama, Region, Latitude & Longitude wajib diisi dengan benar!', 'error');
+    return;
+  }
+  if (!mapsUrl) mapsUrl = `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
+
+  const btn = document.getElementById('submit-outlet-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<i class="bi bi-arrow-repeat spin"></i> Menyimpan...';
+
+  try {
+    const { error } = await sb.from('outlets').insert({
+      id: `outlet_${Date.now()}`,
+      name, region, address, lat, lng,
+      maps_url: mapsUrl,
+      sort_order: sortOrder,
+      is_active: true,
+      updated_at: new Date().toISOString()
+    });
+    if (error) throw error;
+    showToast('Outlet berhasil ditambahkan!');
+    document.getElementById('outlet-form-area').remove();
+    loadOutletsAdmin();
+  } catch (err) {
+    showToast('Gagal: ' + err.message, 'error');
+  } finally {
+    if (btn) { btn.disabled = false; btn.innerHTML = 'Simpan Outlet'; }
+  }
+};
+
+// Form edit outlet (isi field dari data yang ada).
+window.editOutlet = (id) => {
+  const o = outletsAdminData.find(x => x.id === id);
+  if (!o) return;
+
+  const existingForm = document.getElementById('edit-outlet-form-area');
+  if (existingForm) existingForm.remove();
+
+  const formHtml = `
+    <div id="edit-outlet-form-area" class="drink-form-container fade-up mb-4" style="border: 2px solid var(--primary-color);">
+      <h4 class="mb-3">Edit Outlet</h4>
+      <div class="row g-3">
+        <div class="col-md-6">
+          <label class="form-label small text-muted mb-1">Nama Outlet</label>
+          <input type="text" id="edit-outlet-name" class="form-input" value="${o.name}">
+        </div>
+        <div class="col-md-6">
+          <label class="form-label small text-muted mb-1">Wilayah / Region</label>
+          <input type="text" id="edit-outlet-region" class="form-input" list="edit-outlet-region-list" value="${o.region}">
+          <datalist id="edit-outlet-region-list">${getOutletRegionOptions()}</datalist>
+        </div>
+        <div class="col-12">
+          <label class="form-label small text-muted mb-1">Alamat / Deskripsi Singkat</label>
+          <textarea id="edit-outlet-address" class="form-input" rows="2">${o.address || ''}</textarea>
+        </div>
+        <div class="col-md-4">
+          <label class="form-label small text-muted mb-1">Latitude</label>
+          <input type="text" id="edit-outlet-lat" class="form-input" value="${o.lat}">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label small text-muted mb-1">Longitude</label>
+          <input type="text" id="edit-outlet-lng" class="form-input" value="${o.lng}">
+        </div>
+        <div class="col-md-4">
+          <label class="form-label small text-muted mb-1">Urutan Tampil</label>
+          <input type="number" id="edit-outlet-sort" class="form-input" value="${o.sort_order || 0}">
+        </div>
+        <div class="col-12">
+          <label class="form-label small text-muted mb-1">Link Google Maps</label>
+          <input type="text" id="edit-outlet-url" class="form-input" value="${o.maps_url || ''}">
+        </div>
+        <div class="col-12 text-end mt-2">
+           <button class="btn btn-light me-2" onclick="document.getElementById('edit-outlet-form-area').remove()">Batal</button>
+           <button class="btn btn-dark px-4" id="submit-edit-outlet-btn" onclick="saveEditOutlet('${o.id}')">Update Outlet</button>
+        </div>
+      </div>
+    </div>
+  `;
+  document.getElementById('outlets-view').insertBefore(createDiv(formHtml), document.getElementById('outlets-grid'));
+  document.getElementById('edit-outlet-form-area').scrollIntoView({ behavior: 'smooth' });
+};
+
+// Simpan hasil edit outlet.
+window.saveEditOutlet = async (id) => {
+  const name = document.getElementById('edit-outlet-name').value.trim();
+  const region = document.getElementById('edit-outlet-region').value.trim();
+  const address = document.getElementById('edit-outlet-address').value.trim();
+  const lat = parseCoord(document.getElementById('edit-outlet-lat').value);
+  const lng = parseCoord(document.getElementById('edit-outlet-lng').value);
+  const sortOrder = parseInt(document.getElementById('edit-outlet-sort').value, 10) || 0;
+  const mapsUrl = document.getElementById('edit-outlet-url').value.trim();
+
+  if (!name || !region || lat === null || lng === null) {
+    showToast('Nama, Region, Latitude & Longitude wajib diisi dengan benar!', 'error');
+    return;
+  }
+
+  const btn = document.getElementById('submit-edit-outlet-btn');
+  btn.disabled = true;
+  btn.innerHTML = '<i class="bi bi-arrow-repeat spin"></i> Updating...';
+
+  try {
+    const { error } = await sb.from('outlets').update({
+      name, region, address, lat, lng,
+      maps_url: mapsUrl || `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`,
+      sort_order: sortOrder,
+      updated_at: new Date().toISOString()
+    }).eq('id', id);
+    if (error) throw error;
+    showToast('Outlet diperbarui!');
+    document.getElementById('edit-outlet-form-area').remove();
+    loadOutletsAdmin();
+  } catch (err) {
+    showToast('Gagal: ' + err.message, 'error');
+  } finally {
+    if (btn) { btn.disabled = false; btn.innerHTML = 'Update Outlet'; }
+  }
+};
+
+// Aktif/nonaktifin satu outlet (yang non-aktif gak tampil di outlet.html).
+window.toggleOutletActiveAdmin = async (id, state) => {
+  try {
+    const { error } = await sb.from('outlets').update({ is_active: state }).eq('id', id);
+    if (error) throw error;
+    showToast('Status outlet diperbarui.');
+    loadOutletsAdmin();
+  } catch (err) {
+    showToast('Gagal: ' + err.message, 'error');
+  }
+};
+
+// Hapus satu outlet secara permanen (pengurangan outlet).
+window.deleteOutletAdmin = async (id) => {
+  if (!confirm('Hapus outlet ini secara permanen?')) return;
+  try {
+    const { data, error } = await sb.from('outlets').delete().eq('id', id).select();
+    if (error) throw error;
+    if (!data || data.length === 0) {
+      throw new Error('0 baris terhapus. Periksa kebijakan RLS (Row Level Security) untuk izin DELETE di tabel outlets Supabase Anda.');
+    }
+    showToast('Outlet telah dihapus.');
+    loadOutletsAdmin();
+  } catch (err) {
+    showToast('Gagal: ' + err.message, 'error');
+  }
+};
+
 // Final Global Assignments
 window.loadEventsAdmin = loadEventsAdmin;
 window.loadFaqAdmin    = loadFaqAdmin;
 window.loadNewsAdmin   = loadNewsAdmin;
+window.loadOutletsAdmin = loadOutletsAdmin;
 window.toggleEventPrimary = toggleEventPrimary;
 
 // ===== INITIALIZATION =====
