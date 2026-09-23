@@ -3,7 +3,7 @@
    Fonts: Outfit (Headings) + Plus Jakarta Sans (Body & UI)
    ========================================================================== */
 
-@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Outfit:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap');
 
 /* Ensure Bootstrap Icons font loads with font-display: swap to fix Lighthouse font display warning */
 @font-face {
@@ -84,8 +84,8 @@ h1, h2, h3, h4, h5, h6,
 .promo-box-title, .promo-box-tag, .hero-product__review-author, .hero-product__review-role,
 .hero-product__footer-text, .fullwidth-banner-content h2, .fullwidth-banner-content p,
 .faq-hero h1, .feedback-hero h1 {
-  font-family: 'Fredoka', 'Rubik', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
-  letter-spacing: -0.01em;
+  font-family: 'Rubik', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+  letter-spacing: -0.02em;
 }
 
 /* ===== PRODUCT-CENTRIC HERO SECTION ===== */
@@ -504,7 +504,7 @@ img {
   border-radius: var(--radius-full);
   background: #174F3C;
   color: #FFFFFF;
-  font-family: 'Fredoka', sans-serif;
+  font-family: 'Rubik', sans-serif;
   font-size: 0.72rem;
   font-weight: 600;
   letter-spacing: 0.02em;
@@ -532,6 +532,103 @@ img {
   color: #FFFFFF;
   transform: translateY(-2px);
   box-shadow: 0 10px 24px rgba(0,0,0,0.15);
+}
+
+/* ===== WHY TEIKO (organic dark-green feature band, Broccoli-style "Top Categories") ===== */
+.why-teiko-section {
+  position: relative;
+  background: #174F3C;
+  padding: 5.5rem 1.5rem 4.5rem;
+  margin-top: 48px;
+  overflow: visible;
+  isolation: isolate;
+}
+
+/* Same organic blob technique as the hero curve — a soft hill rising
+   above the section's own rectangular edge, instead of a hard seam. */
+.why-teiko-section::before {
+  content: '';
+  position: absolute;
+  top: -54px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 150vw;
+  height: 110px;
+  background: #174F3C;
+  border-radius: 50% 50% 0 0 / 100% 100% 0 0;
+  z-index: 0;
+}
+
+.why-teiko-section::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 8% 20%, rgba(255,255,255,0.06) 0%, transparent 40%),
+    radial-gradient(circle at 94% 85%, rgba(255,255,255,0.05) 0%, transparent 45%);
+  pointer-events: none;
+}
+
+.why-teiko-inner {
+  position: relative;
+  z-index: 1;
+  max-width: 1180px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 2.25rem;
+}
+
+.why-teiko-item {
+  text-align: center;
+  color: #FFFFFF;
+}
+
+.why-teiko-icon {
+  width: 64px;
+  height: 64px;
+  margin: 0 auto 1.1rem;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.12);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.6rem;
+  color: #FFFFFF;
+  transition: transform 0.3s ease, background 0.3s ease;
+}
+
+.why-teiko-item:hover .why-teiko-icon {
+  transform: translateY(-4px) scale(1.05);
+  background: rgba(255, 255, 255, 0.18);
+}
+
+.why-teiko-item h4 {
+  font-size: 1.1rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: #FFFFFF;
+}
+
+.why-teiko-item p {
+  font-size: 0.9rem;
+  line-height: 1.6;
+  color: rgba(255, 255, 255, 0.75);
+  margin: 0;
+}
+
+@media (max-width: 767px) {
+  .why-teiko-inner {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 2.25rem 1.5rem;
+  }
+}
+
+@media (max-width: 420px) {
+  .why-teiko-inner {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* ===== FULL-WIDTH PROMOTIONAL BANNERS CAROUSEL ===== */
