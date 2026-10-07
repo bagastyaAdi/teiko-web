@@ -2084,23 +2084,62 @@ function renderFaqAdmin() {
     return;
   }
 
-  grid.innerHTML = faqAdminData.map(f => `
-    <div class="drink-admin-card section-card-v2">
-      <div class="drink-admin-body">
-        <div class="section-card-v2-name" style="text-transform:none;">${f.title}</div>
-        <p class="text-muted small line-clamp-2" style="margin:-6px 0 12px;">${f.subtitle || 'Tidak ada jawaban.'}</p>
-        <div class="section-card-v2-row">
-          <span class="section-card-v2-badge ${f.is_active ? 'is-active' : 'is-off'}">${f.is_active ? 'Aktif' : 'Off'}</span>
-          <button class="btn-icon" onclick="editFaq('${f.id}')" title="Edit"><i class="bi bi-pencil"></i></button>
-          <button class="btn-icon" onclick="toggleFaqActiveAdmin('${f.id}', ${!f.is_active})" title="${f.is_active ? 'Matikan' : 'Aktifkan'}">
-            <i class="bi ${f.is_active ? 'bi-eye-slash' : 'bi-eye'}"></i>
-          </button>
-          <button class="btn-icon btn-icon-danger" onclick="deleteFaqAdmin('${f.id}')" title="Hapus"><i class="bi bi-trash"></i></button>
-        </div>
+  // Urutan sama dengan halaman FAQ di website (id ascending).
+  faqAdminData.sort((a, b) => a.id.localeCompare(b.id));
+  const esc = s => String(s ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
+  const last = faqAdminData.length - 1;
+
+  // Editor inline: pertanyaan & jawaban langsung diedit di kartu, tersimpan otomatis saat kolom ditinggalkan.
+  grid.innerHTML = faqAdminData.map((f, i) => `
+    <div class="faq-edit-card ${f.is_active ? '' : 'is-off'}">
+      <div class="faq-edit-head">
+        <button class="btn-icon" onclick="moveFaq(${i}, -1)" title="Naikkan" ${i === 0 ? 'disabled' : ''}><i class="bi bi-caret-up-fill"></i></button>
+        <span class="faq-edit-num">#${i + 1}</span>
+        <button class="btn-icon" onclick="moveFaq(${i}, 1)" title="Turunkan" ${i === last ? 'disabled' : ''}><i class="bi bi-caret-down-fill"></i></button>
+        <span style="flex:1"></span>
+        <button class="btn-icon ${f.is_active ? '' : 'text-danger'}" onclick="toggleFaqActiveAdmin('${f.id}', ${!f.is_active})" title="${f.is_active ? 'Tampil di website — klik untuk sembunyikan' : 'Disembunyikan — klik untuk tampilkan'}">
+          <i class="bi ${f.is_active ? 'bi-eye' : 'bi-eye-slash'}"></i>
+        </button>
+        <button class="btn-icon btn-icon-danger" onclick="deleteFaqAdmin('${f.id}')" title="Hapus"><i class="bi bi-trash"></i></button>
       </div>
+      <label class="faq-edit-label">Pertanyaan</label>
+      <input type="text" class="form-input" value="${esc(f.title)}" onchange="saveFaqField('${f.id}', 'title', this.value)">
+      <label class="faq-edit-label">Jawaban</label>
+      <textarea class="form-input" rows="3" onchange="saveFaqField('${f.id}', 'subtitle', this.value)">${esc((f.subtitle || '').replace(/\\n/g, '\n'))}</textarea>
     </div>
   `).join('');
 }
+
+// Simpan satu kolom FAQ (dipanggil saat input/textarea berubah lalu ditinggalkan).
+window.saveFaqField = async (id, field, value) => {
+  try {
+    const { error } = await sb.from('site_content').update({ [field]: value, updated_at: new Date().toISOString() }).eq('id', id);
+    if (error) throw error;
+    const f = faqAdminData.find(x => x.id === id);
+    if (f) f[field] = value;
+    showToast('FAQ tersimpan.');
+  } catch (err) {
+    showToast('Gagal simpan: ' + err.message, 'error');
+  }
+};
+
+// Naik/turunkan FAQ: urutan ikut id, jadi isi dua baris yang bertetangga ditukar (id tetap).
+window.moveFaq = async (i, dir) => {
+  const a = faqAdminData[i], b = faqAdminData[i + dir];
+  if (!a || !b) return;
+  const pick = r => ({ title: r.title, subtitle: r.subtitle, is_active: r.is_active });
+  const now = new Date().toISOString();
+  try {
+    const { error } = await sb.from('site_content').upsert([
+      { id: a.id, ...pick(b), updated_at: now },
+      { id: b.id, ...pick(a), updated_at: now },
+    ]);
+    if (error) throw error;
+    loadContent();
+  } catch (err) {
+    showToast('Gagal pindah urutan: ' + err.message, 'error');
+  }
+};
 
 window.seedDefaultFaqs = async () => {
   const btn = document.getElementById('btn-seed-faq');
@@ -2345,22 +2384,26 @@ function renderOutletsAdmin() {
     return;
   }
 
-  grid.innerHTML = outletsAdminData.map(o => `
-    <div class="drink-admin-card section-card-v2">
-      <div class="drink-admin-body">
-        <div class="section-card-v2-name" style="text-transform:none;margin-bottom:2px;">${o.name}</div>
-        <p class="text-muted small line-clamp-2" style="margin:0 0 12px;">${o.region} · ${o.address || ''}</p>
-        <div class="section-card-v2-row">
-          <span class="section-card-v2-badge ${o.is_active ? 'is-active' : 'is-off'}">${o.is_active ? 'Aktif' : 'Off'}</span>
-          <button class="btn-icon" onclick="editOutlet('${o.id}')" title="Edit"><i class="bi bi-pencil"></i></button>
-          <button class="btn-icon" onclick="toggleOutletActiveAdmin('${o.id}', ${!o.is_active})" title="${o.is_active ? 'Matikan' : 'Aktifkan'}">
-            <i class="bi ${o.is_active ? 'bi-eye-slash' : 'bi-eye'}"></i>
-          </button>
-          <button class="btn-icon btn-icon-danger" onclick="deleteOutletAdmin('${o.id}')" title="Hapus"><i class="bi bi-trash"></i></button>
-        </div>
-      </div>
-    </div>
-  `).join('');
+  const rows = outletsAdminData.map(o => `
+    <tr>
+      <td><span class="admin-table-product" onclick="editOutlet('${o.id}')" title="Klik untuk edit">${o.name}</span></td>
+      <td><span class="admin-pill">${o.region || '-'}</span></td>
+      <td class="admin-table-sub"><span class="line-clamp-2">${o.address || '-'}</span></td>
+      <td><span class="admin-pill ${o.is_active ? 'is-on' : 'is-off'}">${o.is_active ? 'Aktif' : 'Off'}</span></td>
+      <td><div class="drink-admin-actions">
+        <button class="btn-icon" onclick="editOutlet('${o.id}')" title="Edit"><i class="bi bi-pencil"></i></button>
+        <button class="btn-icon" onclick="toggleOutletActiveAdmin('${o.id}', ${!o.is_active})" title="${o.is_active ? 'Matikan' : 'Aktifkan'}">
+          <i class="bi ${o.is_active ? 'bi-eye-slash' : 'bi-eye'}"></i>
+        </button>
+        <button class="btn-icon btn-icon-danger" onclick="deleteOutletAdmin('${o.id}')" title="Hapus"><i class="bi bi-trash"></i></button>
+      </div></td>
+    </tr>`).join('');
+
+  grid.innerHTML = `
+    <div class="admin-table-wrap"><table class="admin-table">
+      <thead><tr><th>Outlet</th><th>Wilayah</th><th>Alamat</th><th>Status</th><th>Aksi</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table></div>`;
 }
 
 window.seedDefaultOutlets = async () => {
