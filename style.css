@@ -1136,18 +1136,17 @@ img {
 /* ===== CTA BLOCKS (homepage) ===== */
 .cta-blocks {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
 }
 .cta-block {
   display: flex;
   flex-direction: column;
   align-items: center;
   text-align: center;
-  padding: 3rem 1.5rem 0;
+  padding: 3rem 1.5rem 2.5rem;
   text-decoration: none;
-  overflow: hidden;
 }
-.cta-block h2 { font-size: 1.9rem; font-weight: 800; margin-bottom: 0.4rem; color: inherit; }
+.cta-block h2 { font-size: clamp(1.5rem, 2.4vw, 1.9rem); font-weight: 800; margin-bottom: 0.4rem; color: inherit; }
 .cta-block p { font-size: 1rem; margin-bottom: 1.25rem; opacity: 0.85; }
 .cta-pill {
   display: inline-block;
@@ -1159,11 +1158,13 @@ img {
   transition: background 0.2s ease, color 0.2s ease;
 }
 .cta-block img {
-  width: 45%;
-  max-width: 190px;
-  height: auto;
-  margin-top: 1.75rem;
-  margin-bottom: -1.5rem;
+  /* Tinggi tetap & utuh: gelas tidak terpotong, ketiga blok sejajar */
+  height: clamp(220px, 24vw, 320px);
+  width: auto;
+  max-width: 100%;
+  object-fit: contain;
+  margin-top: auto;
+  padding-top: 1.75rem;
   display: block;
   transition: transform 0.4s ease;
 }
@@ -1192,7 +1193,7 @@ img {
   .cta-blocks { grid-template-columns: 1fr; }
   .cta-block { padding-top: 2.5rem; }
   .cta-block h2 { font-size: 1.75rem; }
-  .cta-block img { width: 42%; }
+  .cta-block img { height: 260px; }
 
   /* Berita terbaru: isi dipotong, lanjut di halaman detail */
   .news-section { padding: 40px 0; }
