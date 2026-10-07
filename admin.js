@@ -1834,6 +1834,11 @@ function renderNewsAdmin() {
       ${n.image_url ? `<div class="section-card-v2-imgwrap" onclick="editNews('${n.id}')" title="Klik untuk edit"><img src="${n.image_url}" class="drink-admin-img" alt="" loading="lazy" style="width:100%;height:auto;display:block;border-radius:10px;"></div>` : ''}
       <div class="drink-admin-body">
         <div class="section-card-v2-name">${n.title || '(Tanpa Judul)'}</div>
+        <label class="admin-switch" title="Headline = tampil lengkap (foto + isi) di homepage">
+          <input type="checkbox" ${n.button_text === 'HEADLINE' ? 'checked' : ''} onchange="toggleNewsHeadline('${n.id}', this.checked)">
+          <span class="admin-switch__track"></span>
+          <span>Headline di homepage</span>
+        </label>
         <div class="section-card-v2-row">
           <span class="section-card-v2-badge ${n.is_active !== false ? 'is-active' : 'is-off'}">${n.is_active !== false ? 'Aktif' : 'Off'}</span>
           <button class="btn-icon" onclick="editNews('${n.id}')" title="Edit"><i class="bi bi-pencil"></i></button>
@@ -1977,6 +1982,20 @@ window.saveNewNews = async () => {
 
 // Global expose
 window.toggleNewsActive = toggleNewsActive;
+// Switch Headline: berita yang di-ON tampil lengkap di homepage (boleh lebih dari satu).
+window.toggleNewsHeadline = async (id, on) => {
+  try {
+    const { error } = await sb.from('site_content').update({ button_text: on ? 'HEADLINE' : null }).eq('id', id);
+    if (error) throw error;
+    const n = newsAdminData.find(x => x.id === id);
+    if (n) n.button_text = on ? 'HEADLINE' : null;
+    showToast(on ? 'Dijadikan headline.' : 'Headline dimatikan.');
+  } catch (err) {
+    showToast('Gagal: ' + err.message, 'error');
+    renderNewsAdmin();
+  }
+};
+
 window.deleteNews = deleteNews;
 window.loadNewsAdmin = loadNewsAdmin;
 window.renderNewsAdmin = renderNewsAdmin;
