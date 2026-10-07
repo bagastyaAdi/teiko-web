@@ -24,7 +24,7 @@ function initDrawer() {
     document.body.style.overflow = '';
   }
 
-  hamburger.addEventListener('click', openDrawer);
+  hamburger.addEventListener('click', () => drawer.classList.contains('open') ? closeDrawer() : openDrawer());
   if (closeBtn) closeBtn.addEventListener('click', closeDrawer);
   overlay.addEventListener('click', closeDrawer);
 

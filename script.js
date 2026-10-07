@@ -408,7 +408,10 @@ async function loadContent() {
       }
     });
 
-    // Green arch display is controlled by loadDrinkSlides() slideshow
+    // Display Minuman (kubah hijau) bisa dimatikan dari admin (Kelola Konten).
+    // Kalau OFF, hero disembunyikan dan slider foto landscape (hero1, hero2, ...) jadi pembuka halaman.
+    const drinkHero = document.getElementById('hero1-section');
+    if (drinkHero) drinkHero.style.display = (foundDrinkDisplay && foundDrinkDisplay.is_active === false) ? 'none' : '';
 
     // Sort heroes by id (hero1, hero2, hero3, hero_...)
     heroSlides.sort((a, b) => a.id.localeCompare(b.id));
@@ -445,6 +448,25 @@ async function loadContent() {
     }
   }
 }
+
+// Banner promo di HP: geser otomatis ke kanan tiap 3.5 detik, balik ke awal setelah yang terakhir.
+// Berhenti sebentar kalau user sedang menggeser sendiri.
+function initPromoSlider() {
+  const track = document.querySelector('.promo-2box-grid');
+  if (!track) return;
+  let pausedUntil = 0;
+  ['touchstart', 'pointerdown', 'wheel'].forEach(ev =>
+    track.addEventListener(ev, () => { pausedUntil = Date.now() + 6000; }, { passive: true }));
+  setInterval(() => {
+    if (window.innerWidth > 767 || Date.now() < pausedUntil || document.hidden) return;
+    const cards = [...track.querySelectorAll('.promo-box-card')].filter(c => c.style.display !== 'none');
+    if (cards.length < 2) return;
+    const w = track.clientWidth;
+    const i = Math.round(track.scrollLeft / w);
+    track.scrollTo({ left: i + 1 >= cards.length ? 0 : (i + 1) * w, behavior: 'smooth' });
+  }, 3500);
+}
+document.addEventListener('DOMContentLoaded', initPromoSlider);
 
 // Render section News (lowongan kerja, pindah/buka outlet, dll) di homepage.
 // Section disembunyiin total kalau gak ada berita aktif - gak ada dummy/contoh.
