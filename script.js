@@ -470,6 +470,7 @@ function renderNewsSection() {
         <div class="news-featured__body">
           <h3 class="news-featured__title">${latest.title || ''}</h3>
           ${latest.subtitle ? `<p class="news-featured__text">${latest.subtitle.replace(/</g, '&lt;')}</p>` : ''}
+          <a class="news-featured__more" href="news.html?id=${encodeURIComponent(latest.id)}">Baca selengkapnya <i class="bi bi-arrow-right"></i></a>
         </div>
       </div>`;
   }
