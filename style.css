@@ -710,8 +710,8 @@ img {
 
 .news-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 1.5rem;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 2rem;
   align-items: stretch; /* semua kartu dalam satu baris tingginya sama */
 }
 
@@ -724,11 +724,12 @@ img {
   margin-bottom: 2rem;
 }
 .news-featured__img {
-  flex: 1 1 320px;
-  max-width: 460px;
+  flex: 1 1 420px;
+  max-width: 640px;
   width: 100%;
-  height: auto;
-  border-radius: 12px;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  border-radius: 16px;
   display: block;
 }
 .news-featured__body { flex: 1 1 320px; }
@@ -746,52 +747,55 @@ img {
   margin: 0;
 }
 
-/* Gaya bubble foto WhatsApp: flyer tampil utuh (rasio asli), bingkai tipis, caption di bawah. */
+/* Kartu berita landscape: foto 16:10 di atas, judul tebal, ringkasan 3 baris. */
 .news-card {
-  display: block;
-  padding: 4px;
+  display: flex;
+  flex-direction: column;
   background: var(--bg-surface);
-  border: 1px solid var(--border-color);
-  border-radius: 14px;
-  box-shadow: var(--shadow-sm);
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
   transition: var(--transition-smooth);
   text-decoration: none;
 }
 
 .news-card:hover {
-  box-shadow: var(--shadow-md);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.1);
   transform: translateY(-4px);
 }
 
 .news-card__img {
   width: 100%;
-  height: auto;
-  border-radius: 10px;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
   display: block;
 }
 
 .news-card__body {
-  padding: 0.6rem 0.6rem 0.5rem;
+  padding: 1.5rem 1.75rem 1.75rem;
 }
 
 .news-card__title {
-  font-size: 1.05rem;
-  font-weight: 700;
+  font-size: 1.3rem;
+  font-weight: 800;
   color: var(--text-main);
-  margin-bottom: 0.2rem;
+  margin-bottom: 0.6rem;
   transition: color 0.2s ease;
 }
 
 .news-card:hover .news-card__title {
   color: var(--accent-green);
-  text-decoration: underline;
 }
 
 .news-card__text {
-  font-size: 0.9rem;
+  font-size: 0.98rem;
   color: var(--text-muted);
-  line-height: 1.6;
+  line-height: 1.65;
   margin: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 /* Spacing between heroes */
