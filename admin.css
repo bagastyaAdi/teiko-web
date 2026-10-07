@@ -880,3 +880,8 @@ body {
 .faq-edit-label { display: block; font-size: 0.85rem; color: var(--muted); margin: 0.4rem 0 0.35rem; }
 .faq-edit-card .form-input { width: 100%; margin-bottom: 0.6rem; }
 .faq-edit-card textarea.form-input { resize: vertical; line-height: 1.5; }
+
+/* Slide Display: drag & drop urutan */
+#slides-tbody tr { cursor: grab; }
+#slides-tbody tr.is-dragging { opacity: 0.4; }
+.drag-handle { color: var(--muted); font-size: 1.1rem; cursor: grab; }

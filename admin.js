@@ -646,16 +646,16 @@ function renderSlidesAdmin() {
     grid.innerHTML = `<div class="col-12 text-center py-5 text-muted"><p>Belum ada slide. Klik "+ Tambah Slide Baru".</p></div>`;
     return;
   }
-  const rows = slidesAdminData.map(slide => {
+  const rows = slidesAdminData.map((slide, i) => {
     const hasImage = !!(slide.image_url && slide.image_url.trim());
     return `
-    <tr>
-      <td><div class="admin-table-product" onclick="editSlide('${slide.id}')" title="Klik untuk edit">
+    <tr draggable="true" data-idx="${i}">
+      <td><div class="admin-table-product"><span class="drag-handle" title="Tarik untuk ubah urutan"><i class="bi bi-grip-vertical"></i></span><span class="admin-table-product" onclick="editSlide('${slide.id}')" title="Klik untuk edit">
         ${hasImage ? `<img src="${slide.image_url}" alt="${slide.name || ''}" loading="lazy">` : `<span class="admin-table-noimg"><i class="bi bi-image"></i></span>`}
         <span>${slide.name || '(Tanpa Nama)'}</span>
-      </div></td>
+      </span></div></td>
       <td class="admin-table-sub">${slide.subtitle || '-'}</td>
-      <td>${slide.sort_order ?? 0}</td>
+      <td>${i + 1}</td>
       <td><span class="admin-pill ${slide.is_active ? 'is-on' : 'is-off'}">${slide.is_active ? 'Aktif' : 'Off'}</span></td>
       <td><div class="drink-admin-actions">
         <button class="btn-icon" onclick="editSlide('${slide.id}')" title="Edit"><i class="bi bi-pencil"></i></button>
@@ -670,8 +670,43 @@ function renderSlidesAdmin() {
   grid.innerHTML = `
     <div class="admin-table-wrap"><table class="admin-table">
       <thead><tr><th>Minuman</th><th>Tagline</th><th>Urutan</th><th>Status</th><th>Aksi</th></tr></thead>
-      <tbody>${rows}</tbody>
+      <tbody id="slides-tbody">${rows}</tbody>
     </table></div>`;
+  enableSlideDrag();
+}
+
+// Drag & drop baris tabel slide buat atur urutan; simpan sort_order 0..n-1 sesuai posisi baru.
+function enableSlideDrag() {
+  const tbody = document.getElementById('slides-tbody');
+  if (!tbody) return;
+  let dragging = null;
+  tbody.querySelectorAll('tr').forEach(tr => {
+    tr.addEventListener('dragstart', e => { dragging = tr; tr.classList.add('is-dragging'); e.dataTransfer.effectAllowed = 'move'; });
+    tr.addEventListener('dragend', () => { tr.classList.remove('is-dragging'); dragging = null; });
+    tr.addEventListener('dragover', e => {
+      e.preventDefault();
+      if (!dragging || dragging === tr) return;
+      const r = tr.getBoundingClientRect();
+      tbody.insertBefore(dragging, e.clientY > r.top + r.height / 2 ? tr.nextSibling : tr);
+    });
+  });
+  tbody.addEventListener('drop', async e => {
+    e.preventDefault();
+    const order = [...tbody.querySelectorAll('tr')].map(tr => slidesAdminData[+tr.dataset.idx]);
+    if (order.every((s, i) => s === slidesAdminData[i])) return;
+    slidesAdminData = order;
+    renderSlidesAdmin();
+    try {
+      const results = await Promise.all(order.map((s, i) => sb.from('hero_drink_slides').update({ sort_order: i }).eq('id', s.id)));
+      const failed = results.find(r => r.error);
+      if (failed) throw failed.error;
+      order.forEach((s, i) => { s.sort_order = i; });
+      showToast('Urutan slide tersimpan.');
+    } catch (err) {
+      showToast('Gagal simpan urutan: ' + err.message, 'error');
+      loadSlidesAdmin();
+    }
+  });
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -934,7 +969,7 @@ async function loadDrinks(isInitial = false) {
   }
 
   try {
-    const { data, error } = await sb.from('drinks').select('*').order('created_at', { ascending: false });
+    const { data, error } = await sb.from('drinks').select('*').order('category', { ascending: true }).order('name', { ascending: true });
     if (error) throw error;
 
     drinksData = data;
