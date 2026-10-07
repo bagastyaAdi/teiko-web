@@ -712,7 +712,7 @@ img {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   gap: 1.5rem;
-  align-items: start;
+  align-items: stretch; /* semua kartu dalam satu baris tingginya sama */
 }
 
 /* Berita terbaru: foto + isi lengkap langsung di homepage. */
@@ -1159,18 +1159,17 @@ img {
   transition: background 0.2s ease, color 0.2s ease;
 }
 .cta-block img {
-  width: 70%;
-  max-width: 260px;
+  width: 45%;
+  max-width: 190px;
   height: auto;
   margin-top: 1.75rem;
+  margin-bottom: -1.5rem;
   display: block;
   transition: transform 0.4s ease;
 }
 .cta-block:hover img { transform: translateY(-6px); }
 .cta-block--green { background: #0b6b45; color: #fff; }
 .cta-block--cream { background: #f6efe2; color: #1d1d1b; }
-/* Foto menu berlatar putih: multiply biar putihnya hilang di blok warna terang. */
-.cta-block--cream img, .cta-block--lime img { mix-blend-mode: multiply; }
 .cta-block--lime { background: #dff0b8; color: #1d1d1b; }
 .cta-block--green:hover .cta-pill { color: #0b6b45; background: #fff; }
 .cta-block--cream:hover .cta-pill, .cta-block--lime:hover .cta-pill { color: #fff; background: #1d1d1b; }
@@ -1193,7 +1192,7 @@ img {
   .cta-blocks { grid-template-columns: 1fr; }
   .cta-block { padding-top: 2.5rem; }
   .cta-block h2 { font-size: 1.75rem; }
-  .cta-block img { width: 55%; }
+  .cta-block img { width: 42%; }
 
   /* Berita terbaru: isi dipotong, lanjut di halaman detail */
   .news-section { padding: 40px 0; }
