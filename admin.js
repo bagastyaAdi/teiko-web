@@ -646,34 +646,32 @@ function renderSlidesAdmin() {
     grid.innerHTML = `<div class="col-12 text-center py-5 text-muted"><p>Belum ada slide. Klik "+ Tambah Slide Baru".</p></div>`;
     return;
   }
-  grid.innerHTML = slidesAdminData.map(slide => {
+  const rows = slidesAdminData.map(slide => {
     const hasImage = !!(slide.image_url && slide.image_url.trim());
-    const subtitle = slide.subtitle ? slide.subtitle.substring(0, 60) + (slide.subtitle.length > 60 ? '…' : '') : '';
     return `
-    <div class="drink-admin-card section-card-v2" id="slide-card-${slide.id}">
-      <div class="section-card-v2-imgwrap" onclick="editSlide('${slide.id}')" title="Klik untuk edit">
-        ${!hasImage ? `
-        <div class="drink-admin-img d-flex flex-column align-items-center justify-content-center text-muted"
-          style="aspect-ratio:1/1;width:100%;background:#eee;border-radius:12px;">
-          <i class="bi bi-image" style="font-size:2rem;"></i>
-          <small>Belum ada foto</small>
-        </div>` : `
-        <img src="${slide.image_url}" class="drink-admin-img" alt="Preview" style="width:100%;aspect-ratio:1/1;object-fit:contain;display:block;">`}
-      </div>
-      <div class="drink-admin-body">
-        <div class="section-card-v2-name">${slide.name || '(Tanpa Nama)'}</div>
-        ${subtitle ? `<div class="text-muted" style="font-size:0.8rem;margin:-6px 0 12px;">${subtitle}</div>` : ''}
-        <div class="section-card-v2-row">
-          <span class="section-card-v2-badge ${slide.is_active ? 'is-active' : 'is-off'}">${slide.is_active ? 'Aktif' : 'Off'}</span>
-          <button class="btn-icon" onclick="editSlide('${slide.id}')" title="Edit"><i class="bi bi-pencil"></i></button>
-          <button class="btn-icon" onclick="toggleSlide('${slide.id}', ${!slide.is_active})" title="${slide.is_active ? 'Matikan' : 'Aktifkan'}">
-            <i class="bi ${slide.is_active ? 'bi-eye-slash' : 'bi-eye'}"></i>
-          </button>
-          <button class="btn-icon btn-icon-danger" onclick="deleteSlide('${slide.id}')" title="Hapus"><i class="bi bi-trash"></i></button>
-        </div>
-      </div>
-    </div>`;
+    <tr>
+      <td><div class="admin-table-product" onclick="editSlide('${slide.id}')" title="Klik untuk edit">
+        ${hasImage ? `<img src="${slide.image_url}" alt="${slide.name || ''}" loading="lazy">` : `<span class="admin-table-noimg"><i class="bi bi-image"></i></span>`}
+        <span>${slide.name || '(Tanpa Nama)'}</span>
+      </div></td>
+      <td class="admin-table-sub">${slide.subtitle || '-'}</td>
+      <td>${slide.sort_order ?? 0}</td>
+      <td><span class="admin-pill ${slide.is_active ? 'is-on' : 'is-off'}">${slide.is_active ? 'Aktif' : 'Off'}</span></td>
+      <td><div class="drink-admin-actions">
+        <button class="btn-icon" onclick="editSlide('${slide.id}')" title="Edit"><i class="bi bi-pencil"></i></button>
+        <button class="btn-icon" onclick="toggleSlide('${slide.id}', ${!slide.is_active})" title="${slide.is_active ? 'Matikan' : 'Aktifkan'}">
+          <i class="bi ${slide.is_active ? 'bi-eye-slash' : 'bi-eye'}"></i>
+        </button>
+        <button class="btn-icon btn-icon-danger" onclick="deleteSlide('${slide.id}')" title="Hapus"><i class="bi bi-trash"></i></button>
+      </div></td>
+    </tr>`;
   }).join('');
+
+  grid.innerHTML = `
+    <div class="admin-table-wrap"><table class="admin-table">
+      <thead><tr><th>Minuman</th><th>Tagline</th><th>Urutan</th><th>Status</th><th>Aksi</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table></div>`;
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -1461,20 +1459,15 @@ function renderEventsAdmin() {
   }
 
   grid.innerHTML = eventsAdminData.map(ev => `
-    <div class="drink-admin-card" id="event-card-${ev.id}">
-      <img src="${ev.image_url || './asset/hero1.webp'}" class="drink-admin-img" alt="Event Banner" style="object-fit: contain; aspect-ratio: 5/4; background: #f0f0f0;">
+    <div class="drink-admin-card section-card-v2" id="event-card-${ev.id}">
+      <div class="section-card-v2-imgwrap" onclick="editEvent('${ev.id}')" title="Klik untuk edit"><img src="${ev.image_url || './asset/hero1.webp'}" class="drink-admin-img" alt="" loading="lazy" style="width:100%;height:auto;display:block;border-radius:10px;"></div>
       <div class="drink-admin-body">
-        <div class="drink-admin-name">${ev.title || 'Event Banner'}</div>
-        <div class="drink-admin-meta">
-          <span class="drink-admin-badge ${ev.is_active !== false ? 'bg-success text-white' : 'bg-danger text-white'}">${ev.is_active !== false ? 'Aktif' : 'Off'}</span>
-          <span class="small text-muted d-block mt-1" style="font-size:0.7rem">${ev.subtitle || ''}</span>
-        </div>
-        <div class="drink-admin-actions mt-3">
+        <div class="section-card-v2-name">${ev.title || 'Event Banner'}</div>
+        <div class="section-card-v2-row">
+          <span class="section-card-v2-badge ${ev.is_active !== false ? 'is-active' : 'is-off'}">${ev.is_active !== false ? 'Aktif' : 'Off'}</span>
           <button class="btn-icon" onclick="editEvent('${ev.id}')" title="Edit"><i class="bi bi-pencil"></i></button>
-          <button class="btn-icon ${ev.button_text === 'PRIMARY' ? 'text-warning' : ''}" onclick="toggleEventPrimary('${ev.id}', ${ev.button_text !== 'PRIMARY'})" title="${ev.button_text === 'PRIMARY' ? 'Jadikan Biasa' : 'Jadikan Landscape (Primary)'}">
-            <i class="bi ${ev.button_text === 'PRIMARY' ? 'bi-star-fill' : 'bi-star'}"></i>
-          </button>
-          <button class="btn-icon ${ev.is_active !== false ? '' : 'text-success'}" onclick="toggleEventActive('${ev.id}', ${ev.is_active === false})" title="${ev.is_active !== false ? 'Matikan' : 'Aktifkan'}">
+          <button class="btn-icon ${ev.button_text === 'PRIMARY' ? 'text-warning' : ''}" onclick="toggleEventPrimary('${ev.id}', ${ev.button_text !== 'PRIMARY'})" title="${ev.button_text === 'PRIMARY' ? 'Jadikan Biasa' : 'Jadikan Landscape (Primary)'}"><i class="bi ${ev.button_text === 'PRIMARY' ? 'bi-star-fill' : 'bi-star'}"></i></button>
+          <button class="btn-icon" onclick="toggleEventActive('${ev.id}', ${ev.is_active === false})" title="${ev.is_active !== false ? 'Matikan' : 'Aktifkan'}">
             <i class="bi ${ev.is_active !== false ? 'bi-eye-slash' : 'bi-eye'}"></i>
           </button>
           <button class="btn-icon btn-icon-danger" onclick="deleteEvent('${ev.id}')" title="Hapus"><i class="bi bi-trash"></i></button>
@@ -1802,17 +1795,14 @@ function renderNewsAdmin() {
   }
 
   grid.innerHTML = newsAdminData.map(n => `
-    <div class="drink-admin-card" id="news-card-${n.id}">
-      ${n.image_url ? `<img src="${n.image_url}" class="drink-admin-img" alt="News" style="object-fit: cover; aspect-ratio: 4/3;">` : ''}
+    <div class="drink-admin-card section-card-v2" id="news-card-${n.id}">
+      ${n.image_url ? `<div class="section-card-v2-imgwrap" onclick="editNews('${n.id}')" title="Klik untuk edit"><img src="${n.image_url}" class="drink-admin-img" alt="" loading="lazy" style="width:100%;height:auto;display:block;border-radius:10px;"></div>` : ''}
       <div class="drink-admin-body">
-        <div class="drink-admin-name">${n.title || '(Tanpa Judul)'}</div>
-        <div class="drink-admin-meta">
-          <span class="drink-admin-badge ${n.is_active !== false ? 'bg-success text-white' : 'bg-danger text-white'}">${n.is_active !== false ? 'Aktif' : 'Off'}</span>
-          <span class="small text-muted d-block mt-1" style="font-size:0.7rem">${(n.subtitle || '').substring(0, 80)}${(n.subtitle || '').length > 80 ? '…' : ''}</span>
-        </div>
-        <div class="drink-admin-actions mt-3">
+        <div class="section-card-v2-name">${n.title || '(Tanpa Judul)'}</div>
+        <div class="section-card-v2-row">
+          <span class="section-card-v2-badge ${n.is_active !== false ? 'is-active' : 'is-off'}">${n.is_active !== false ? 'Aktif' : 'Off'}</span>
           <button class="btn-icon" onclick="editNews('${n.id}')" title="Edit"><i class="bi bi-pencil"></i></button>
-          <button class="btn-icon ${n.is_active !== false ? '' : 'text-success'}" onclick="toggleNewsActive('${n.id}', ${n.is_active === false})" title="${n.is_active !== false ? 'Matikan' : 'Aktifkan'}">
+          <button class="btn-icon" onclick="toggleNewsActive('${n.id}', ${n.is_active === false})" title="${n.is_active !== false ? 'Matikan' : 'Aktifkan'}">
             <i class="bi ${n.is_active !== false ? 'bi-eye-slash' : 'bi-eye'}"></i>
           </button>
           <button class="btn-icon btn-icon-danger" onclick="deleteNews('${n.id}')" title="Hapus"><i class="bi bi-trash"></i></button>
@@ -2095,16 +2085,14 @@ function renderFaqAdmin() {
   }
 
   grid.innerHTML = faqAdminData.map(f => `
-    <div class="drink-admin-card">
+    <div class="drink-admin-card section-card-v2">
       <div class="drink-admin-body">
-        <div class="drink-admin-name" style="font-size:1rem; min-height:3em;">${f.title}</div>
-        <p class="text-muted small mt-1 line-clamp-2">${f.subtitle || 'Tidak ada jawaban.'}</p>
-        <div class="drink-admin-meta mt-2">
-          <span class="drink-admin-badge ${f.is_active ? 'bg-success text-white' : 'bg-danger text-white'}">${f.is_active ? 'Aktif' : 'Off'}</span>
-        </div>
-        <div class="drink-admin-actions mt-3">
+        <div class="section-card-v2-name" style="text-transform:none;">${f.title}</div>
+        <p class="text-muted small line-clamp-2" style="margin:-6px 0 12px;">${f.subtitle || 'Tidak ada jawaban.'}</p>
+        <div class="section-card-v2-row">
+          <span class="section-card-v2-badge ${f.is_active ? 'is-active' : 'is-off'}">${f.is_active ? 'Aktif' : 'Off'}</span>
           <button class="btn-icon" onclick="editFaq('${f.id}')" title="Edit"><i class="bi bi-pencil"></i></button>
-          <button class="btn-icon ${f.is_active ? '' : 'text-success'}" onclick="toggleFaqActiveAdmin('${f.id}', ${!f.is_active})" title="${f.is_active ? 'Matikan' : 'Aktifkan'}">
+          <button class="btn-icon" onclick="toggleFaqActiveAdmin('${f.id}', ${!f.is_active})" title="${f.is_active ? 'Matikan' : 'Aktifkan'}">
             <i class="bi ${f.is_active ? 'bi-eye-slash' : 'bi-eye'}"></i>
           </button>
           <button class="btn-icon btn-icon-danger" onclick="deleteFaqAdmin('${f.id}')" title="Hapus"><i class="bi bi-trash"></i></button>
@@ -2358,19 +2346,14 @@ function renderOutletsAdmin() {
   }
 
   grid.innerHTML = outletsAdminData.map(o => `
-    <div class="drink-admin-card">
+    <div class="drink-admin-card section-card-v2">
       <div class="drink-admin-body">
-        <div class="drink-admin-name" style="font-size:1rem;">${o.name}</div>
-        <div class="drink-admin-meta">
-          <span class="drink-admin-badge">${o.region}</span>
-        </div>
-        <p class="text-muted small line-clamp-2">${o.address || ''}</p>
-        <div class="drink-admin-meta">
-          <span class="drink-admin-badge ${o.is_active ? 'bg-success text-white' : 'bg-danger text-white'}">${o.is_active ? 'Aktif' : 'Off'}</span>
-        </div>
-        <div class="drink-admin-actions mt-3">
+        <div class="section-card-v2-name" style="text-transform:none;margin-bottom:2px;">${o.name}</div>
+        <p class="text-muted small line-clamp-2" style="margin:0 0 12px;">${o.region} · ${o.address || ''}</p>
+        <div class="section-card-v2-row">
+          <span class="section-card-v2-badge ${o.is_active ? 'is-active' : 'is-off'}">${o.is_active ? 'Aktif' : 'Off'}</span>
           <button class="btn-icon" onclick="editOutlet('${o.id}')" title="Edit"><i class="bi bi-pencil"></i></button>
-          <button class="btn-icon ${o.is_active ? '' : 'text-success'}" onclick="toggleOutletActiveAdmin('${o.id}', ${!o.is_active})" title="${o.is_active ? 'Matikan' : 'Aktifkan'}">
+          <button class="btn-icon" onclick="toggleOutletActiveAdmin('${o.id}', ${!o.is_active})" title="${o.is_active ? 'Matikan' : 'Aktifkan'}">
             <i class="bi ${o.is_active ? 'bi-eye-slash' : 'bi-eye'}"></i>
           </button>
           <button class="btn-icon btn-icon-danger" onclick="deleteOutletAdmin('${o.id}')" title="Hapus"><i class="bi bi-trash"></i></button>
