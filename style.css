@@ -1214,9 +1214,14 @@ img {
 }
 
 @media (max-width: 575px) {
-  /* Info outlet & sosial media ditumpuk, tidak sempit */
-  .hero-product__footer-bar { flex-direction: column; align-items: center; gap: 1rem; }
-  .hero-product__review { justify-content: center; }
-  .hero-product__social { align-items: center; text-align: center; }
+  /* Info outlet & sosial media: semua rata tengah, ditumpuk rapi */
+  .hero-product__footer-bar { flex-direction: column; align-items: center; gap: 1.1rem; padding: 0.25rem 1.25rem 2rem; text-align: center; }
+  .hero-product__review { flex-direction: column; align-items: center; gap: 0.5rem; margin-top: 0; }
+  .hero-product__review-info { text-align: center; }
+  .hero-product__review-info strong { font-size: 1.05rem; }
+  .hero-product__review-info small { font-size: 0.8rem; }
+  .hero-product__social { align-items: center; text-align: center; gap: 8px; padding-top: 1.1rem; border-top: 1px solid rgba(255,255,255,0.18); width: 100%; max-width: 260px; }
+  .hero-product__social-icons { justify-content: center; }
+  .hero-product__quote { padding-bottom: 0.5rem; }
   .btn-chobani-subscribe { padding: 0.8rem 1.1rem; }
 }
