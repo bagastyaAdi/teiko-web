@@ -143,6 +143,39 @@
       opacity: 1;
       transform: translateY(0);
     }
+
+    /* ===== FAQ SHOWCASE ===== */
+    .faq-show { max-width: 1240px; margin: 0 auto; padding: 1rem 1.5rem 5rem; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); gap: 3.5rem; align-items: start; }
+    .faq-tab { display: grid; grid-template-columns: 4.5rem minmax(0, 1fr); gap: 1rem; width: 100%; text-align: left; background: transparent; border: none; border-bottom: 1px solid #ececec; padding: 1.75rem 1.5rem; border-radius: 0; cursor: pointer; transition: background 0.25s ease, border-radius 0.25s ease; color: inherit; font: inherit; }
+    .faq-tab.is-active { background: #e6f2eb; border-radius: 18px; border-bottom-color: transparent; }
+    .faq-tab__num { font-family: 'Rubik', sans-serif; font-size: 2.6rem; font-weight: 800; line-height: 1; color: transparent; -webkit-text-stroke: 1.5px #0b6b45; transition: color 0.25s ease; }
+    .faq-tab.is-active .faq-tab__num { color: #0b6b45; }
+    .faq-tab__title { display: block; font-family: 'Outfit', sans-serif; font-size: 1.3rem; font-weight: 700; color: #111; margin-bottom: 0.4rem; line-height: 1.3; transition: color 0.25s ease; }
+    .faq-tab.is-active .faq-tab__title { color: #0b6b45; }
+    .faq-tab__teaser { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; color: #555; font-size: 0.98rem; line-height: 1.6; }
+    .faq-tab__detail { display: none; }
+
+    .faq-show__panel { position: sticky; top: 110px; }
+    .faq-panel__title { font-family: 'Rubik', sans-serif; font-size: clamp(1.8rem, 3.2vw, 2.8rem); font-weight: 900; text-transform: uppercase; line-height: 1.08; margin-bottom: 1.5rem; color: #111; }
+    .faq-media { width: 100%; aspect-ratio: 16 / 10; border-radius: 22px; overflow: hidden; background: #0b6b45; box-shadow: 0 18px 40px rgba(0,0,0,0.1); display: flex; align-items: flex-end; justify-content: center; }
+    .faq-media img { width: 100%; height: 100%; object-fit: cover; display: block; }
+    .faq-media--cups img { width: 30%; height: 86%; object-fit: contain; object-position: bottom; margin: 0 -0.5rem; }
+    .faq-panel__answer { margin-top: 1.5rem; font-size: 1.05rem; line-height: 1.75; color: #333; }
+    .faq-panel__answer a { color: #054E34; font-weight: 600; }
+    .faq-fade { animation: faqFade 0.35s ease; }
+    @keyframes faqFade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+    @media (max-width: 991px) {
+      .faq-show { grid-template-columns: 1fr; gap: 0; padding-bottom: 3.5rem; }
+      .faq-show__panel { display: none; }
+      .faq-tab { grid-template-columns: 3.25rem minmax(0, 1fr); padding: 1.25rem 1rem; }
+      .faq-tab__num { font-size: 2rem; }
+      .faq-tab__title { font-size: 1.1rem; }
+      .faq-tab.is-active .faq-tab__teaser { display: none; }
+      .faq-tab.is-active .faq-tab__detail { display: block; }
+      .faq-tab__detail .faq-media { margin-top: 0.75rem; border-radius: 16px; }
+      .faq-tab__detail .faq-panel__answer { margin-top: 1rem; font-size: 0.98rem; }
+    }
   </style>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
@@ -160,45 +193,10 @@
     <p>Temukan jawaban lengkap mengenai produk Teiko, sistem kemitraan, lowongan kerja, dan layanan pelanggan kami.</p>
   </div>
 
-  <!-- FAQ Section -->
-  <section class="faq-section">
-    <div id="faq-dynamic-container">
-      <div class="faq-item anim-item">
-        <button class="faq-question" onclick="toggleFaq(this)">
-          Apakah Teiko membuka kemitraan atau franchise? <i class="bi bi-plus-lg faq-icon"></i>
-        </button>
-        <div class="faq-answer">
-          Saat ini kami <strong>belum membuka sistem kemitraan (franchise)</strong>. Seluruh outlet Teiko dikelola langsung oleh tim manajemen pusat untuk menjaga kualitas dan cita rasa terbaik. Informasi resmi mengenai pembukaan kemitraan di masa mendatang hanya akan diumumkan melalui kanal resmi Teiko.
-        </div>
-      </div>
-      <div class="faq-item anim-item">
-        <button class="faq-question" onclick="toggleFaq(this)">
-          Bagaimana cara melamar pekerjaan atau bergabung dengan tim Teiko? <i class="bi bi-plus-lg faq-icon"></i>
-        </button>
-        <div class="faq-answer">
-          Kami terus mencari talenta dan pekerja bersemangat untuk bergabung bersama keluarga besar Teiko! Kamu bisa mengirimkan <strong>CV dan surat lamaran terbaru kamu</strong> melalui email resmi kami ke <a href="https://mail.google.com/mail/?view=cm&fs=1&to=support@teiko.co.id&su=Lamaran%20Kerja%20-%20Teiko" target="_blank" style="color: #054E34; font-weight: 600;">support@teiko.co.id</a> dengan subjek lamaran kerja.
-        </div>
-      </div>
-      <div class="faq-item anim-item">
-        <button class="faq-question" onclick="toggleFaq(this)">
-          Apakah seluruh minuman di Teiko menggunakan bahan segar dan berkualitas? <i class="bi bi-plus-lg faq-icon"></i>
-        </button>
-        <div class="faq-answer">
-          Tentu! Setiap minuman teh, kopi, dan krim spesial di Teiko diracik menggunakan daun teh asli pilihan, biji kopi premium, serta susu dan bahan alami berkualitas tinggi.
-        </div>
-      </div>
-      <div class="faq-item anim-item">
-        <button class="faq-question" onclick="toggleFaq(this)">
-          Bagaimana cara menghubungi kontak resmi email Teiko sesuai keperluan? <i class="bi bi-plus-lg faq-icon"></i>
-        </button>
-        <div class="faq-answer">
-          Kami memiliki 3 alamat email resmi sesuai fungsinya:<br>
-          • <a href="https://mail.google.com/mail/?view=cm&fs=1&to=info@teiko.co.id&su=Halo%20Teiko%20-%20Broadcast%20%26%20Media" target="_blank" style="color: #054E34; font-weight: 600;">info@teiko.co.id</a> : untuk informasi Broadcast &amp; Media.<br>
-          • <a href="https://mail.google.com/mail/?view=cm&fs=1&to=support@teiko.co.id&su=Halo%20Teiko%20-%20Karir%20%26%20Hiring" target="_blank" style="color: #054E34; font-weight: 600;">support@teiko.co.id</a> : untuk proses Hiring, lowongan kerja &amp; pengiriman CV.<br>
-          • <a href="https://mail.google.com/mail/?view=cm&fs=1&to=sales@teiko.co.id&su=Halo%20Teiko%20-%20Distributor%20%26%20Reseller" target="_blank" style="color: #054E34; font-weight: 600;">sales@teiko.co.id</a> : untuk komunikasi dengan distributor/reseller terkait stok, harga, atau promo.
-        </div>
-      </div>
-    </div>
+  <!-- FAQ Section: daftar bernomor (kiri) + panel jawaban bergambar (kanan) -->
+  <section class="faq-show">
+    <div class="faq-show__list" id="faq-list" role="tablist"></div>
+    <aside class="faq-show__panel" id="faq-panel" aria-live="polite"></aside>
   </section>
 
   <footer id="footer-placeholder"></footer>
@@ -209,13 +207,84 @@
   <script src="footer.js" defer></script>
 
   <script>
-    // toggleFaq, staggerAnimate, loadFaqFrontend ada di script.js (dipakai bareng feedback.html)
+    // staggerAnimate ada di script.js.
+
+    // Fallback kalau DB kosong/gagal: FAQ bawaan website.
+    const FAQ_DEFAULT = [
+      { title: 'Apakah Teiko membuka kemitraan atau franchise?', subtitle: 'Saat ini kami belum membuka sistem kemitraan (franchise). Seluruh outlet Teiko dikelola langsung oleh tim manajemen pusat untuk menjaga kualitas dan cita rasa terbaik. Informasi resmi mengenai pembukaan kemitraan di masa mendatang hanya akan diumumkan melalui kanal resmi Teiko.' },
+      { title: 'Bagaimana cara melamar pekerjaan atau bergabung dengan tim Teiko?', subtitle: 'Kami terus mencari talenta dan pekerja bersemangat untuk bergabung bersama keluarga besar Teiko! Kamu bisa mengirimkan CV dan surat lamaran terbaru kamu melalui email resmi kami ke support@teiko.co.id dengan subjek lamaran kerja.' },
+      { title: 'Apakah seluruh minuman di Teiko menggunakan bahan segar dan berkualitas?', subtitle: 'Tentu! Setiap minuman teh, kopi, dan krim spesial di Teiko diracik menggunakan daun teh asli pilihan, biji kopi premium, serta susu dan bahan alami berkualitas tinggi.' },
+      { title: 'Bagaimana cara menghubungi kontak resmi email Teiko sesuai keperluan?', subtitle: 'Kami memiliki 3 alamat email resmi sesuai fungsinya:\n• info@teiko.co.id : untuk informasi Broadcast & Media.\n• support@teiko.co.id : untuk proses Hiring, lowongan kerja & pengiriman CV.\n• sales@teiko.co.id : untuk komunikasi dengan distributor/reseller terkait stok, harga, atau promo.' },
+    ];
+    // Foto cadangan (gelas dari Slide Display) kalau FAQ belum punya foto sendiri.
+    const FAQ_CUPS = ['./asset/cta-greenthai.webp', './asset/cta-strawberry.webp', './asset/cta-taro.webp'];
+
+    const esc = t => String(t ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    // Jawaban: escape, "\n" tertulis jadi baris baru, email jadi tautan.
+    const fmtAnswer = t => esc(String(t || '').replace(/\\n/g, '\n'))
+      .replace(/([\w.+-]+@[\w-]+\.[\w.]+)/g, '<a href="mailto:$1">$1</a>')
+      .replace(/\n/g, '<br>');
+    const media = (f, i) => f.image_url
+      ? `<div class="faq-media"><img src="${esc(f.image_url)}" alt="${esc(f.title)}" loading="lazy"></div>`
+      : `<div class="faq-media faq-media--cups">${[0, 1, 2].map(k => `<img src="${FAQ_CUPS[(i + k) % 3]}" alt="" loading="lazy">`).join('')}</div>`;
+
+    let faqData = [];
+    let faqActive = -1;
+    const isDesktop = () => window.matchMedia('(min-width: 992px)').matches;
+
+    function showFaq(i) {
+      if (i === faqActive) return;
+      faqActive = i;
+      document.querySelectorAll('.faq-tab').forEach((t, k) => {
+        t.classList.toggle('is-active', k === i);
+        t.setAttribute('aria-selected', k === i);
+      });
+      const f = faqData[i];
+      document.getElementById('faq-panel').innerHTML = `
+        <div class="faq-fade">
+          <h2 class="faq-panel__title">${esc(f.title)}</h2>
+          ${media(f, i)}
+          <div class="faq-panel__answer">${fmtAnswer(f.subtitle)}</div>
+        </div>`;
+    }
+
+    function renderFaq() {
+      const list = document.getElementById('faq-list');
+      list.innerHTML = faqData.map((f, i) => `
+        <button class="faq-tab" role="tab" data-i="${i}">
+          <span class="faq-tab__num">${String(i + 1).padStart(2, '0')}</span>
+          <span>
+            <span class="faq-tab__title">${esc(f.title)}</span>
+            <span class="faq-tab__teaser">${esc(String(f.subtitle || '').replace(/\\n/g, ' '))}</span>
+            <span class="faq-tab__detail">${media(f, i)}<span class="faq-panel__answer d-block">${fmtAnswer(f.subtitle)}</span></span>
+          </span>
+        </button>`).join('');
+      list.querySelectorAll('.faq-tab').forEach(t => {
+        const i = +t.dataset.i;
+        // Desktop: hover langsung ganti panel. HP: tap buka/ganti item.
+        t.addEventListener('mouseenter', () => { if (isDesktop()) showFaq(i); });
+        t.addEventListener('focus', () => showFaq(i));
+        t.addEventListener('click', () => showFaq(i));
+      });
+      showFaq(0);
+    }
+
+    async function loadFaqShowcase() {
+      try {
+        const { data, error } = await sb.from('site_content').select('*').eq('is_active', true).like('id', 'faq_%');
+        if (error) throw error;
+        faqData = (data && data.length) ? data.sort((a, b) => a.id.localeCompare(b.id)) : FAQ_DEFAULT;
+      } catch (err) {
+        console.error('Error loading FAQ:', err);
+        faqData = FAQ_DEFAULT;
+      }
+      renderFaq();
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
       requestAnimationFrame(() => document.body.classList.add('page-loaded'));
-      setTimeout(() => {
-        staggerAnimate('.faq-hero, .faq-item', 80, 100);
-      }, 50);
-      loadFaqFrontend('faq-dynamic-container', 150, 80);
+      setTimeout(() => staggerAnimate('.faq-hero', 80, 100), 50);
+      loadFaqShowcase();
     });
   </script>
 </body>

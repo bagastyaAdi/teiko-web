@@ -894,3 +894,7 @@ body {
 .admin-switch input:checked + .admin-switch__track { background: #1a7a4c; }
 .admin-switch input:checked + .admin-switch__track::after { transform: translateX(18px); }
 .admin-switch input:focus-visible + .admin-switch__track { outline: 2px solid #1a7a4c; outline-offset: 2px; }
+
+.faq-edit-photo { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
+.faq-edit-photo img { width: 160px; aspect-ratio: 16 / 10; object-fit: cover; border-radius: 8px; }
+.faq-edit-nophoto { font-size: 0.85rem; color: var(--muted); }
