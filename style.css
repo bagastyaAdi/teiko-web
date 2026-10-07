@@ -715,6 +715,37 @@ img {
   align-items: start;
 }
 
+/* Berita terbaru: foto + isi lengkap langsung di homepage. */
+.news-featured {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2rem;
+  align-items: flex-start;
+  margin-bottom: 2rem;
+}
+.news-featured__img {
+  flex: 1 1 320px;
+  max-width: 460px;
+  width: 100%;
+  height: auto;
+  border-radius: 12px;
+  display: block;
+}
+.news-featured__body { flex: 1 1 320px; }
+.news-featured__title {
+  font-size: 1.6rem;
+  font-weight: 800;
+  color: var(--text-main);
+  margin-bottom: 1rem;
+}
+.news-featured__text {
+  font-size: 1.05rem;
+  line-height: 1.7;
+  color: var(--text-muted);
+  white-space: pre-line;
+  margin: 0;
+}
+
 /* Gaya bubble foto WhatsApp: flyer tampil utuh (rasio asli), bingkai tipis, caption di bawah. */
 .news-card {
   display: block;

@@ -459,7 +459,22 @@ function renderNewsSection() {
   }
 
   section.style.display = '';
-  grid.innerHTML = newsItems.map(n => {
+
+  // Berita terbaru tampil lengkap (foto + isi) langsung di homepage, tanpa perlu diklik.
+  const [latest, ...rest] = newsItems;
+  const featured = document.getElementById('news-featured');
+  if (featured) {
+    featured.innerHTML = `
+      <div class="news-featured">
+        ${latest.image_url ? `<img src="${latest.image_url}" alt="${latest.title || ''}" class="news-featured__img">` : ''}
+        <div class="news-featured__body">
+          <h3 class="news-featured__title">${latest.title || ''}</h3>
+          ${latest.subtitle ? `<p class="news-featured__text">${latest.subtitle.replace(/</g, '&lt;')}</p>` : ''}
+        </div>
+      </div>`;
+  }
+
+  grid.innerHTML = rest.map(n => {
     // Cuma tampilin 1 kalimat pertama di card - isi lengkap ada di halaman detail.
     const firstSentence = (n.subtitle || '').trim().split(/(?<=[.!?])\s+/)[0] || '';
     return `
