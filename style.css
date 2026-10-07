@@ -1133,3 +1133,86 @@ img {
     padding: 1.75rem;
   }
 }
+/* ===== CTA BLOCKS (homepage) ===== */
+.cta-blocks {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+}
+.cta-block {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  padding: 3rem 1.5rem 0;
+  text-decoration: none;
+  overflow: hidden;
+}
+.cta-block h2 { font-size: 1.9rem; font-weight: 800; margin-bottom: 0.4rem; color: inherit; }
+.cta-block p { font-size: 1rem; margin-bottom: 1.25rem; opacity: 0.85; }
+.cta-pill {
+  display: inline-block;
+  padding: 0.6rem 1.6rem;
+  border: 1.5px solid currentColor;
+  border-radius: 999px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+.cta-block img {
+  width: 70%;
+  max-width: 260px;
+  height: auto;
+  margin-top: 1.75rem;
+  display: block;
+  transition: transform 0.4s ease;
+}
+.cta-block:hover img { transform: translateY(-6px); }
+.cta-block--green { background: #0b6b45; color: #fff; }
+.cta-block--cream { background: #f6efe2; color: #1d1d1b; }
+/* Foto menu berlatar putih: multiply biar putihnya hilang di blok warna terang. */
+.cta-block--cream img, .cta-block--lime img { mix-blend-mode: multiply; }
+.cta-block--lime { background: #dff0b8; color: #1d1d1b; }
+.cta-block--green:hover .cta-pill { color: #0b6b45; background: #fff; }
+.cta-block--cream:hover .cta-pill, .cta-block--lime:hover .cta-pill { color: #fff; background: #1d1d1b; }
+
+.news-featured__more {
+  display: none;
+  margin-top: 0.75rem;
+  font-weight: 700;
+  color: var(--accent-green, #0b6b45);
+  text-decoration: none;
+}
+
+/* ===== MOBILE: tampilan simpel & rapi ===== */
+@media (max-width: 767px) {
+  /* Banner promo tampil utuh, tidak terpotong */
+  .promo-box-card { height: auto; }
+  .promo-box-img-wrap { height: auto; }
+  .promo-box-img { height: auto; object-fit: contain; }
+
+  .cta-blocks { grid-template-columns: 1fr; }
+  .cta-block { padding-top: 2.5rem; }
+  .cta-block h2 { font-size: 1.75rem; }
+  .cta-block img { width: 55%; }
+
+  /* Berita terbaru: isi dipotong, lanjut di halaman detail */
+  .news-section { padding: 40px 0; }
+  .news-featured { gap: 1.25rem; }
+  .news-featured__title { font-size: 1.35rem; margin-bottom: 0.6rem; }
+  .news-featured__text {
+    display: -webkit-box;
+    -webkit-line-clamp: 5;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    font-size: 0.98rem;
+  }
+  .news-featured__more { display: inline-block; }
+}
+
+@media (max-width: 575px) {
+  /* Info outlet & sosial media ditumpuk, tidak sempit */
+  .hero-product__footer-bar { flex-direction: column; align-items: center; gap: 1rem; }
+  .hero-product__review { justify-content: center; }
+  .hero-product__social { align-items: center; text-align: center; }
+  .btn-chobani-subscribe { padding: 0.8rem 1.1rem; }
+}
