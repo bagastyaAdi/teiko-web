@@ -602,6 +602,7 @@ body {
 .drinks-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  align-items: start;
   gap: 1.5rem;
 }
 
@@ -629,11 +630,14 @@ body {
 
 /* ===== Section card v2 (Kelola Konten): padded square image, big title, flat action row ===== */
 .section-card-v2-imgwrap {
-  padding: 16px 16px 0;
+  padding: 4px 4px 0;
   cursor: pointer;
 }
+/* Foto tampil rasio asli, tanpa kotak abu persegi di sekelilingnya (sama kayak kartu News di web). */
 .section-card-v2-imgwrap .drink-admin-img {
   border-bottom: none;
+  aspect-ratio: auto;
+  background: none;
 }
 .section-card-v2-name {
   font-weight: 800;
