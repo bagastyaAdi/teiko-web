@@ -703,6 +703,43 @@ body {
   border-top: 1px solid var(--border);
 }
 
+/* Kelola Menu: tampilan tabel (produk, kategori, ukuran, harga, status, aksi). */
+#drinks-grid { display: block; }
+.admin-table-wrap {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-soft);
+  overflow-x: auto;
+}
+.admin-table { width: 100%; border-collapse: collapse; min-width: 720px; }
+.admin-table th {
+  text-align: left;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--muted);
+  background: var(--input-bg);
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid var(--border);
+}
+.admin-table td {
+  padding: 0.6rem 1rem;
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+  font-size: 0.9rem;
+  color: var(--text);
+}
+.admin-table tr:last-child td { border-bottom: none; }
+.admin-table tbody tr:hover { background: var(--input-bg); }
+.admin-table-product { display: flex; align-items: center; gap: 0.75rem; font-weight: 600; cursor: pointer; }
+.admin-table-product img { width: 44px; height: 44px; object-fit: contain; border-radius: 8px; background: var(--input-bg); flex-shrink: 0; }
+.admin-pill { display: inline-block; padding: 4px 10px; border-radius: 6px; font-size: 0.8rem; background: var(--input-bg); color: var(--muted); }
+.admin-pill.is-on { background: #e6f6ee; color: #1a7a4c; font-weight: 600; }
+.admin-pill.is-off { background: #fdecea; color: #c0392b; font-weight: 600; }
+.admin-table .drink-admin-actions { margin: 0; padding: 0; border: none; }
+
 .btn-icon {
   width: 36px;
   height: 36px;

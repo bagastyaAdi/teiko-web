@@ -955,41 +955,32 @@ function renderDrinks() {
     return;
   }
 
-  grid.innerHTML = drinksData.map(drink => {
+  const rows = drinksData.map(drink => {
     const imgSrc = (drink.image_url && drink.image_url.trim() !== '') ? drink.image_url : './asset/hero1.webp';
     return `
-    <div class="drink-admin-card" id="drink-card-${drink.id}">
-      <div class="drink-admin-img-wrapper" style="position:relative;cursor:pointer;" onclick="editDrink('${drink.id}')" title="Klik untuk edit">
-        <img src="${imgSrc}" class="drink-admin-img" alt="${drink.name}" style="width:100%;display:block;">
-        <div style="position:absolute;inset:0;background:rgba(0,0,0,0.35);display:flex;align-items:center;justify-content:center;opacity:0;transition:opacity .2s;border-radius:var(--radius) var(--radius) 0 0;" class="drink-img-hover-overlay">
-          <i class="bi bi-pencil" style="color:#fff;font-size:1.5rem;"></i>
-        </div>
-      </div>
-      <div class="drink-admin-body">
-        <div class="drink-admin-name">${drink.name}</div>
-        <div class="drink-admin-meta">
-          <span class="drink-admin-badge">${drink.category || 'No Cat'}</span>
-          <span class="drink-admin-badge">${drink.oz_size || '-'}</span>
-          <span class="drink-admin-badge">${drink.price || '-'}</span>
-          <span class="drink-admin-badge ${drink.is_active ? 'bg-success text-white' : 'bg-danger text-white'}">${drink.is_active ? 'Aktif' : 'Off'}</span>
-        </div>
-        <div class="drink-admin-actions">
-          <button class="btn-icon" onclick="editDrink('${drink.id}')" title="Edit"><i class="bi bi-pencil"></i></button>
-          <button class="btn-icon ${drink.is_active ? '' : 'text-success'}" onclick="toggleDrinkActive('${drink.id}', ${!drink.is_active})" title="${drink.is_active ? 'Matikan' : 'Aktifkan'}">
-            <i class="bi ${drink.is_active ? 'bi-eye-slash' : 'bi-eye'}"></i>
-          </button>
-          <button class="btn-icon btn-icon-danger" onclick="deleteDrink('${drink.id}')" title="Hapus"><i class="bi bi-trash"></i></button>
-        </div>
-      </div>
-    </div>`;
+    <tr>
+      <td><div class="admin-table-product" onclick="editDrink('${drink.id}')" title="Klik untuk edit">
+        <img src="${imgSrc}" alt="${drink.name}" loading="lazy"><span>${drink.name}</span>
+      </div></td>
+      <td><span class="admin-pill">${drink.category || '-'}</span></td>
+      <td>${drink.oz_size || '-'}</td>
+      <td>${drink.price || '-'}</td>
+      <td><span class="admin-pill ${drink.is_active ? 'is-on' : 'is-off'}">${drink.is_active ? 'Aktif' : 'Off'}</span></td>
+      <td><div class="drink-admin-actions">
+        <button class="btn-icon" onclick="editDrink('${drink.id}')" title="Edit"><i class="bi bi-pencil"></i></button>
+        <button class="btn-icon ${drink.is_active ? '' : 'text-success'}" onclick="toggleDrinkActive('${drink.id}', ${!drink.is_active})" title="${drink.is_active ? 'Matikan' : 'Aktifkan'}">
+          <i class="bi ${drink.is_active ? 'bi-eye-slash' : 'bi-eye'}"></i>
+        </button>
+        <button class="btn-icon btn-icon-danger" onclick="deleteDrink('${drink.id}')" title="Hapus"><i class="bi bi-trash"></i></button>
+      </div></td>
+    </tr>`;
   }).join('');
 
-  // Hover effect for image overlay
-  document.querySelectorAll('.drink-img-hover-overlay').forEach(overlay => {
-    const wrapper = overlay.parentElement;
-    wrapper.addEventListener('mouseenter', () => overlay.style.opacity = '1');
-    wrapper.addEventListener('mouseleave', () => overlay.style.opacity = '0');
-  });
+  grid.innerHTML = `
+    <div class="admin-table-wrap"><table class="admin-table">
+      <thead><tr><th>Produk</th><th>Kategori</th><th>Ukuran</th><th>Harga</th><th>Status</th><th>Aksi</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table></div>`;
 }
 
 // Import 8 menu minuman default Teiko ke tabel drinks (buat DB yang masih kosong).
