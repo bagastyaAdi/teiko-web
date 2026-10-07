@@ -2160,11 +2160,36 @@ function renderFaqAdmin() {
       <input type="text" class="form-input" value="${esc(f.title)}" onchange="saveFaqField('${f.id}', 'title', this.value)">
       <label class="faq-edit-label">Jawaban</label>
       <textarea class="form-input" rows="3" onchange="saveFaqField('${f.id}', 'subtitle', this.value)">${esc((f.subtitle || '').replace(/\\n/g, '\n'))}</textarea>
+      <label class="faq-edit-label">Foto (opsional, landscape 1600x1000px)</label>
+      <div class="faq-edit-photo">
+        ${f.image_url ? `<img src="${esc(f.image_url)}" alt="">` : `<span class="faq-edit-nophoto">Belum ada foto, di website pakai gambar gelas bawaan.</span>`}
+        <label class="btn btn-light btn-sm mb-0">${f.image_url ? 'Ganti foto' : 'Pilih foto'}<input type="file" accept="image/*" hidden onchange="uploadFaqImage('${f.id}', this)"></label>
+        ${f.image_url ? `<button class="btn btn-light btn-sm" onclick="removeFaqImage('${f.id}')">Hapus foto</button>` : ''}
+      </div>
     </div>
   `).join('');
 }
 
 // Simpan satu kolom FAQ (dipanggil saat input/textarea berubah lalu ditinggalkan).
+// Upload / hapus foto FAQ (tampil di panel kanan halaman FAQ).
+window.uploadFaqImage = async (id, input) => {
+  const file = input.files && input.files[0];
+  if (!file) return;
+  showToast('Mengunggah foto...', 'info');
+  try {
+    const url = await uploadAndOptimizeImage(file, 'faq', 1600);
+    await saveFaqField(id, 'image_url', url);
+    renderFaqAdmin();
+  } catch (err) {
+    showToast('Gagal unggah: ' + err.message, 'error');
+  }
+};
+window.removeFaqImage = async (id) => {
+  if (!confirm('Hapus foto FAQ ini?')) return;
+  await saveFaqField(id, 'image_url', null);
+  renderFaqAdmin();
+};
+
 window.saveFaqField = async (id, field, value) => {
   try {
     const { error } = await sb.from('site_content').update({ [field]: value, updated_at: new Date().toISOString() }).eq('id', id);
