@@ -460,11 +460,12 @@ function renderNewsSection() {
 
   section.style.display = '';
 
-  // Berita terbaru tampil lengkap (foto + isi) langsung di homepage, tanpa perlu diklik.
-  const [latest, ...rest] = newsItems;
+  // Berita yang di-switch "Headline" di admin tampil lengkap (foto + isi) tanpa perlu diklik.
+  const headlines = newsItems.filter(n => n.button_text === 'HEADLINE');
+  const rest = newsItems.filter(n => n.button_text !== 'HEADLINE');
   const featured = document.getElementById('news-featured');
   if (featured) {
-    featured.innerHTML = `
+    featured.innerHTML = headlines.map(latest => `
       <div class="news-featured">
         ${latest.image_url ? `<img src="${latest.image_url}" alt="${latest.title || ''}" class="news-featured__img">` : ''}
         <div class="news-featured__body">
@@ -472,7 +473,7 @@ function renderNewsSection() {
           ${latest.subtitle ? `<p class="news-featured__text">${latest.subtitle.replace(/</g, '&lt;')}</p>` : ''}
           <a class="news-featured__more" href="news.html?id=${encodeURIComponent(latest.id)}">Baca selengkapnya <i class="bi bi-arrow-right"></i></a>
         </div>
-      </div>`;
+      </div>`).join('');
   }
 
   grid.innerHTML = rest.map(n => {
