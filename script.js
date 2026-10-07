@@ -477,14 +477,14 @@ function renderNewsSection() {
   }
 
   grid.innerHTML = rest.map(n => {
-    // Cuma tampilin 1 kalimat pertama di card - isi lengkap ada di halaman detail.
-    const firstSentence = (n.subtitle || '').trim().split(/(?<=[.!?])\s+/)[0] || '';
+    // Ringkasan: paragraf pertama, dipotong 3 baris lewat CSS.
+    const summary = (n.subtitle || '').trim().split(/\n\s*\n/)[0].replace(/</g, '&lt;');
     return `
     <a class="news-card" href="news.html?id=${encodeURIComponent(n.id)}">
       ${n.image_url ? `<img src="${n.image_url}" alt="${n.title || ''}" class="news-card__img">` : ''}
       <div class="news-card__body">
         <h3 class="news-card__title">${n.title || ''}</h3>
-        <p class="news-card__text">${firstSentence}</p>
+        <p class="news-card__text">${summary}</p>
       </div>
     </a>
   `;
