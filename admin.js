@@ -267,7 +267,7 @@ function createSectionCard(section) {
           <small>Belum ada foto</small>
         </div>` : `
         <img src="${data.image_url}" class="drink-admin-img" alt="Preview"
-          style="object-fit:contain;background:#f5f5f5;aspect-ratio:${aspectRatio};width:100%;display:block;border-radius:12px;">`}
+          style="width:100%;height:auto;display:block;border-radius:10px;">`}
       </div>
       <div class="drink-admin-body">
         <div class="section-card-v2-name">${section.label}</div>
@@ -658,7 +658,7 @@ function renderSlidesAdmin() {
           <i class="bi bi-image" style="font-size:2rem;"></i>
           <small>Belum ada foto</small>
         </div>` : `
-        <img src="${slide.image_url}" class="drink-admin-img" alt="Preview" style="object-fit:contain;background:#f5f5f5;aspect-ratio:1/1;width:100%;display:block;border-radius:12px;">`}
+        <img src="${slide.image_url}" class="drink-admin-img" alt="Preview" style="width:100%;aspect-ratio:1/1;object-fit:contain;display:block;">`}
       </div>
       <div class="drink-admin-body">
         <div class="section-card-v2-name">${slide.name || '(Tanpa Nama)'}</div>
