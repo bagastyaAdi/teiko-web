@@ -1140,6 +1140,7 @@ img {
 }
 /* ===== CTA BLOCKS (homepage) ===== */
 .cta-blocks {
+  margin-top: 0.5rem; /* jarak putih tipis dari banner promo, sama seperti antar-banner di atasnya */
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
 }
