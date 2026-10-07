@@ -1246,3 +1246,14 @@ img {
 .hero-product__review-avatars { display: none !important; }
 .hero-product__image-wrap .hero-carousel-dots { bottom: -46px; }
 .hero-product__image-wrap { margin-bottom: 22px; }
+
+/* ===== DISPLAY KATALOG (banner penuh 16:9, slide dari tabel catalog_slides) ===== */
+.catalog-display { position: relative; width: 100%; background: #fff; }
+.catalog-display[hidden] { display: none; }
+.catalog-display__stage { position: relative; width: 100%; aspect-ratio: 16 / 9; overflow: hidden; }
+.catalog-display__slide { position: absolute; inset: 0; opacity: 0; transition: opacity .8s ease; display: block; }
+.catalog-display__slide.active { opacity: 1; z-index: 1; }
+.catalog-display__slide img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.catalog-display__dots { position: absolute; left: 0; right: 0; bottom: 14px; z-index: 2; display: flex; justify-content: center; gap: 8px; }
+.catalog-display__dots button { width: 10px; height: 10px; border-radius: 50%; border: 0; padding: 0; cursor: pointer; background: rgba(0,0,0,.25); }
+.catalog-display__dots button.active { background: var(--accent-green); }

@@ -65,6 +65,9 @@
         <a class="nav-item" href="javascript:void(0)" id="nav-slides">
           <i class="bi bi-images"></i> Slide Display Minuman (Atas)
         </a>
+        <a class="nav-item" href="javascript:void(0)" id="nav-catalog">
+          <i class="bi bi-image"></i> Display Katalog
+        </a>
         <a class="nav-item" href="javascript:void(0)" id="nav-drinks">
           <i class="bi bi-cup-straw"></i> Kelola Menu
         </a>
@@ -117,6 +120,25 @@
         </div>
       </div>
 
+      <!-- ===== CATALOG DISPLAY VIEW ===== -->
+      <div id="catalog-view" style="display:none">
+        <div class="page-header d-flex justify-content-between align-items-center">
+          <div>
+            <h2>Display Katalog</h2>
+            <p>Slide gambar penuh yang tampil di landing page, tepat di bawah display minuman. Teks &amp; tombol ditaruh langsung di gambar. (Rekomendasi ukuran: 1920x1080px, landscape 16:9). Matikan semua slide untuk menyembunyikan section ini.</p>
+          </div>
+          <button class="btn btn-dark px-4 py-2" id="add-catalog-btn" style="white-space:nowrap;">
+            <i class="bi bi-plus-lg me-2"></i>Tambah Slide Katalog
+          </button>
+        </div>
+        <div id="catalog-grid" class="drinks-grid mt-4">
+          <div class="loading-state">
+            <div class="spinner"></div>
+            <p>Memuat katalog...</p>
+          </div>
+        </div>
+      </div>
+
       <!-- ===== CONTENT MANAGEMENT VIEW ===== -->
       <div id="content-view">
         <div class="page-header d-flex justify-content-between align-items-center">
@@ -127,6 +149,9 @@
           <div class="d-flex gap-2">
             <button class="btn btn-outline-dark px-4 py-2 fw-bold" onclick="document.getElementById('nav-slides').click();">
               <i class="bi bi-cup-straw me-2"></i>Display Minuman
+            </button>
+            <button class="btn btn-outline-dark px-4 py-2 fw-bold" onclick="document.getElementById('nav-catalog').click();">
+              <i class="bi bi-image me-2"></i>Display Katalog
             </button>
             <button class="btn btn-dark px-4 py-2" onclick="addNewHero()">
               <i class="bi bi-plus-lg me-2"></i> Tambah Hero Baru

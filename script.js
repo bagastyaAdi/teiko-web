@@ -582,3 +582,56 @@ document.addEventListener('DOMContentLoaded', () => {
   loadContent();
   loadDrinkSlides();
 });
+
+// 6. Display Katalog: slide penuh 16:9 dari tabel catalog_slides (section tersembunyi kalau gak ada slide aktif).
+async function loadCatalogSlides() {
+  const section = document.getElementById('catalog-section');
+  if (!section || typeof sb === 'undefined') return;
+  let slides = [];
+  try {
+    const { data, error } = await sb.from('catalog_slides').select('*').eq('is_active', true).order('sort_order', { ascending: true });
+    if (error) throw error;
+    slides = data || [];
+  } catch (err) {
+    console.warn('catalog_slides tidak bisa dimuat:', err.message);
+  }
+  if (slides.length === 0) return;
+
+  const stage = document.getElementById('catalog-stage');
+  const dots = document.getElementById('catalog-dots');
+  const els = slides.map((s, i) => {
+    const safeLink = s.link_url && !/^\s*javascript:/i.test(s.link_url) ? s.link_url : null;
+    const el = document.createElement(safeLink ? 'a' : 'div');
+    if (safeLink) el.href = safeLink;
+    el.className = 'catalog-display__slide' + (i === 0 ? ' active' : '');
+    const img = document.createElement('img');
+    img.src = s.image_url;
+    img.alt = 'Katalog Teiko';
+    img.width = 1920; img.height = 1080;
+    img.decoding = 'async';
+    if (i > 0) img.loading = 'lazy';
+    el.appendChild(img);
+    stage.appendChild(el);
+    return el;
+  });
+  section.hidden = false;
+
+  let idx = 0, timer = null;
+  const show = (n) => {
+    idx = n % els.length;
+    els.forEach((e, i) => e.classList.toggle('active', i === idx));
+    dots.querySelectorAll('button').forEach((d, i) => d.classList.toggle('active', i === idx));
+  };
+  const start = () => { clearInterval(timer); if (els.length > 1) timer = setInterval(() => show(idx + 1), 5000); };
+  if (els.length > 1) {
+    els.forEach((_, i) => {
+      const b = document.createElement('button');
+      b.setAttribute('aria-label', 'Slide katalog ' + (i + 1));
+      if (i === 0) b.className = 'active';
+      b.addEventListener('click', () => { show(i); start(); });
+      dots.appendChild(b);
+    });
+  }
+  start();
+}
+document.addEventListener('DOMContentLoaded', loadCatalogSlides);
