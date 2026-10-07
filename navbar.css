@@ -60,7 +60,7 @@ body.modal-open .navbar-custom {
   transform: scale(1.04);
 }
 
-/* ===== DESKTOP LINKS (Editorial Pill Hover & Active) ===== */
+/* ===== DESKTOP LINKS (pill hijau hanya untuk halaman aktif, tanpa efek hover) ===== */
 .nav-desktop-links {
   list-style: none;
   display: flex;
@@ -84,25 +84,12 @@ body.modal-open .navbar-custom {
   position: relative;
 }
 
-/* Hover: brand green pill */
-.nav-desktop-link:hover {
-  background-color: #174F3C;
-  color: #FFFFFF;
-  transform: translateY(-1px);
-  box-shadow: none !important;
-}
 
 /* Active Page: brand green pill */
 .nav-desktop-link.active {
   background-color: #174F3C;
   color: #FFFFFF;
   font-weight: 600;
-  box-shadow: none !important;
-}
-
-.nav-desktop-link.active:hover {
-  background-color: #0f3a2b;
-  color: #FFFFFF;
   box-shadow: none !important;
 }
 
