@@ -565,9 +565,7 @@ img {
 
 .fullwidth-banner-img {
   width: 100%;
-  height: auto;
-  max-height: 550px;
-  object-fit: cover;
+  height: auto; /* foto landscape tampil utuh, tidak dipotong */
   display: block;
   transform-origin: center center;
   will-change: transform, opacity;
@@ -1042,7 +1040,10 @@ img {
 
 /* ===== CLEAN NAVBAR SPACER ===== */
 #navbar-spacer {
-  height: 80px;
+  height: 72px;
+}
+@media (max-width: 1199px) {
+  #navbar-spacer { height: 64px; }
 }
 
 /* ===== EDITORIAL FOOTER ===== */
@@ -1176,8 +1177,8 @@ img {
 .cta-block--green { background: #0b6b45; color: #fff; }
 .cta-block--cream { background: #f6efe2; color: #1d1d1b; }
 .cta-block--lime { background: #dff0b8; color: #1d1d1b; }
-.cta-block--green:hover .cta-pill { color: #0b6b45; background: #fff; }
-.cta-block--cream:hover .cta-pill, .cta-block--lime:hover .cta-pill { color: #fff; background: #1d1d1b; }
+.cta-block--green:hover .cta-pill { color: #0b6b45; background: #fff; border-color: #fff; }
+.cta-block--cream:hover .cta-pill, .cta-block--lime:hover .cta-pill { color: #fff; background: #1d1d1b; border-color: #1d1d1b; } /* tanpa garis putih */
 
 .news-featured__more {
   display: none;
@@ -1225,3 +1226,22 @@ img {
   .hero-product__quote { padding-bottom: 0.5rem; }
   .btn-chobani-subscribe { padding: 0.8rem 1.1rem; }
 }
+
+/* ===== Banner promo di HP: slider menyamping (geser otomatis lewat script.js) ===== */
+@media (max-width: 767px) {
+  .promo-2box-grid {
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .promo-2box-grid::-webkit-scrollbar { display: none; }
+  .promo-box-card { flex: 0 0 100%; width: 100%; scroll-snap-align: start; }
+  .promo-box-card:hover .promo-box-img { transform: none; }
+}
+
+/* Hero: tanpa lingkaran T-E-I, titik slider diberi jarak dari gelas */
+.hero-product__review-avatars { display: none !important; }
+.hero-product__image-wrap .hero-carousel-dots { bottom: -46px; }
+.hero-product__image-wrap { margin-bottom: 22px; }

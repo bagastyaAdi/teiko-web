@@ -898,3 +898,6 @@ body {
 .faq-edit-photo { display: flex; align-items: center; gap: 0.75rem; flex-wrap: wrap; }
 .faq-edit-photo img { width: 160px; aspect-ratio: 16 / 10; object-fit: cover; border-radius: 8px; }
 .faq-edit-nophoto { font-size: 0.85rem; color: var(--muted); }
+
+.admin-display-toggle { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1rem 1.25rem; margin-bottom: 1rem; }
+.admin-display-toggle p { margin: 0.5rem 0 0; font-size: 0.85rem; color: var(--muted); }

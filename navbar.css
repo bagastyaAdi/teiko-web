@@ -37,7 +37,7 @@ body.modal-open .navbar-custom {
   align-items: center;
   justify-content: space-between;
   padding: 0 2rem;
-  height: 80px;
+  height: 72px;
   max-width: 1280px;
   margin: 0 auto;
   position: relative;
@@ -50,7 +50,7 @@ body.modal-open .navbar-custom {
 }
 
 .logo-nav {
-  height: 44px;
+  height: 40px;
   width: auto;
   object-fit: contain;
   transition: transform 0.3s ease;
@@ -294,5 +294,50 @@ body:not(.drawer-open) > *:not(#navbar-placeholder):not(.nav-drawer):not(.drawer
 }
 
 #navbar-spacer {
-  height: 80px;
+  height: 72px;
+}
+/* ===== NAVBAR HP: lebih ramping + menu dropdown penuh (gaya referensi) ===== */
+@media (max-width: 1199px) {
+  .navbar-inner { height: 64px; padding: 0 1.25rem; }
+  .logo-nav { height: 34px; }
+  #navbar-spacer { height: 64px; }
+  .hamburger { right: 1rem; }
+
+  /* Drawer jadi panel turun dari bawah navbar, selebar layar */
+  .nav-drawer {
+    top: 64px;
+    right: 0;
+    left: 0;
+    width: 100%;
+    height: auto;
+    max-height: calc(100vh - 64px);
+    overflow-y: auto;
+    background: #0b6b45;
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+    z-index: 9998;
+    transform: translateY(-8px);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.25s ease, transform 0.25s ease, visibility 0.25s;
+  }
+  .nav-drawer.open { right: 0; transform: none; opacity: 1; visibility: visible; }
+  .drawer-header { display: none; }
+  .drawer-overlay { top: 64px; z-index: 9997; }
+  body.drawer-open > *:not(#navbar-placeholder):not(.nav-drawer):not(.drawer-overlay) { filter: none; }
+
+  .drawer-nav-links { padding: 0; }
+  .drawer-nav-links li { margin: 0; border-bottom: 1px solid rgba(255, 255, 255, 0.14); }
+  .drawer-nav-links li:last-child { border-bottom: none; }
+  .drawer-nav-links a {
+    border-radius: 0;
+    padding: 1.15rem 1.75rem;
+    color: #fff;
+    font-weight: 700;
+    font-size: 0.95rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+  .drawer-nav-links a i { display: none; }
+  .drawer-nav-links a:hover,
+  .drawer-nav-links a.active { background: rgba(255, 255, 255, 0.1); color: #fff; }
 }

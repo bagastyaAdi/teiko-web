@@ -667,13 +667,36 @@ function renderSlidesAdmin() {
     </tr>`;
   }).join('');
 
+  const displayOn = (contentData['hero_drink_display'] || {}).is_active !== false;
   grid.innerHTML = `
+    <div class="admin-display-toggle">
+      <label class="admin-switch" style="margin:0;">
+        <input type="checkbox" ${displayOn ? 'checked' : ''} onchange="toggleDrinkDisplay(this.checked)">
+        <span class="admin-switch__track"></span>
+        <span><strong>Tampilkan Display Minuman di homepage</strong></span>
+      </label>
+      <p>Kalau dimatikan, homepage langsung dibuka dengan <strong>slider foto landscape</strong> (Kelola Konten &rarr; Tambah Hero Baru). Ukuran foto: <strong>1920 x 1080 px (16:9)</strong>, semua slide ukurannya sama, teks penting di tengah supaya jelas di HP. Foto tampil utuh, tidak dipotong.</p>
+    </div>
     <div class="admin-table-wrap"><table class="admin-table">
       <thead><tr><th>Minuman</th><th>Tagline</th><th>Urutan</th><th>Status</th><th>Aksi</th></tr></thead>
       <tbody id="slides-tbody">${rows}</tbody>
     </table></div>`;
   enableSlideDrag();
 }
+
+// Saklar Display Minuman (kubah hijau) di homepage: disimpan di site_content id 'hero_drink_display'.
+window.toggleDrinkDisplay = async (on) => {
+  try {
+    const row = { ...(contentData['hero_drink_display'] || {}), id: 'hero_drink_display', is_active: on };
+    const { error } = await sb.from('site_content').upsert(row);
+    if (error) throw error;
+    contentData['hero_drink_display'] = row;
+    showToast(on ? 'Display Minuman ditampilkan.' : 'Display Minuman dimatikan. Homepage pakai slider foto.');
+  } catch (err) {
+    showToast('Gagal: ' + err.message, 'error');
+    renderSlidesAdmin();
+  }
+};
 
 // Drag & drop baris tabel slide buat atur urutan; simpan sort_order 0..n-1 sesuai posisi baru.
 function enableSlideDrag() {
