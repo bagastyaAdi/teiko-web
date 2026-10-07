@@ -593,8 +593,11 @@ const newsView     = document.getElementById('news-view');
 const feedbackView = document.getElementById('feedback-view');
 const faqView      = document.getElementById('faq-view');
 
-const allNavs  = [contentNav, slidesNav, drinksNav, outletsNav, eventsNav, newsNav, feedbackNav, faqNav];
-const allViews = [contentView, slidesView, drinksView, outletsView, eventsView, newsView, feedbackView, faqView];
+const catalogNav   = document.getElementById('nav-catalog');
+const catalogView  = document.getElementById('catalog-view');
+
+const allNavs  = [contentNav, slidesNav, catalogNav, drinksNav, outletsNav, eventsNav, newsNav, feedbackNav, faqNav];
+const allViews = [contentView, slidesView, catalogView, drinksView, outletsView, eventsView, newsView, feedbackView, faqView];
 
 // Pindah tab sidebar: aktifin nav+view yang dipilih, sembunyiin sisanya,
 // terus jalanin loaderCallback (fetch data) kalau ada.
@@ -613,6 +616,7 @@ function activateView(navId, viewId, loaderCallback) {
 // Sambungin tiap link sidebar ke tab-nya masing-masing.
 if (contentNav)  contentNav.addEventListener('click',  () => activateView('nav-content',  'content-view'));
 if (slidesNav)   slidesNav.addEventListener('click',   () => { activateView('nav-slides',  'slides-view');  loadSlidesAdmin(); });
+if (catalogNav)  catalogNav.addEventListener('click',  () => { activateView('nav-catalog', 'catalog-view'); loadCatalogAdmin(); });
 if (drinksNav)   drinksNav.addEventListener('click',   () => { activateView('nav-drinks',  'drinks-view');  loadDrinks(); });
 if (outletsNav)  outletsNav.addEventListener('click',  () => { activateView('nav-outlets', 'outlets-view'); loadOutletsAdmin(); });
 if (eventsNav)   eventsNav.addEventListener('click',   () => { activateView('nav-events',  'events-view');  loadEventsAdmin(); });
@@ -915,6 +919,157 @@ window.deleteSlide = async (id) => {
   } catch (err) {
     showToast('Gagal: ' + err.message, 'error');
   }
+};
+
+// ===== DISPLAY KATALOG (banner penuh 1920x1080, tabel catalog_slides) =====
+let catalogAdminData = [];
+
+// Ambil semua slide katalog (aktif & off) buat ditampilin di admin.
+async function loadCatalogAdmin() {
+  const grid = document.getElementById('catalog-grid');
+  if (!grid) return;
+  grid.innerHTML = `<div class="loading-state"><div class="spinner"></div><p>Memuat katalog...</p></div>`;
+  try {
+    const { data, error } = await sb.from('catalog_slides').select('*').order('sort_order', { ascending: true });
+    if (error) throw error;
+    catalogAdminData = data;
+    renderCatalogAdmin();
+  } catch (err) {
+    grid.innerHTML = `<div class="loading-state" style="color:#e74c3c;"><p>Gagal memuat: ${err.message}. Pastikan supabase-catalog-slides.sql sudah dijalankan.</p></div>`;
+  }
+}
+
+// Render kartu slide katalog (preview 16:9, badge status, tombol edit/matikan/hapus).
+function renderCatalogAdmin() {
+  const grid = document.getElementById('catalog-grid');
+  if (catalogAdminData.length === 0) {
+    grid.innerHTML = `<div class="col-12 text-center py-5 text-muted"><p>Belum ada slide katalog. Klik "Tambah Slide Katalog".</p></div>`;
+    return;
+  }
+  grid.innerHTML = catalogAdminData.map(s => `
+    <div class="drink-admin-card section-card-v2">
+      <div class="section-card-v2-imgwrap" onclick="editCatalogSlide('${s.id}')" title="Klik untuk edit">
+        <img src="${s.image_url}" class="drink-admin-img" alt="Preview" style="object-fit:cover;background:#f5f5f5;aspect-ratio:16/9;width:100%;display:block;border-radius:12px;">
+      </div>
+      <div class="drink-admin-body">
+        <div class="section-card-v2-name">Urutan ${s.sort_order}</div>
+        ${s.link_url ? `<div class="text-muted" style="font-size:0.8rem;margin:-6px 0 12px;word-break:break-all;">${s.link_url.replace(/</g, '&lt;')}</div>` : ''}
+        <div class="section-card-v2-row">
+          <span class="section-card-v2-badge ${s.is_active ? 'is-active' : 'is-off'}">${s.is_active ? 'Aktif' : 'Off'}</span>
+          <button class="btn-icon" onclick="editCatalogSlide('${s.id}')" title="Edit"><i class="bi bi-pencil"></i></button>
+          <button class="btn-icon" onclick="toggleCatalogSlide('${s.id}', ${!s.is_active})" title="${s.is_active ? 'Matikan' : 'Aktifkan'}">
+            <i class="hgi hgi-stroke ${s.is_active ? 'hgi-view-off-slash' : 'hgi-view'}"></i>
+          </button>
+          <button class="btn-icon btn-icon-danger" onclick="deleteCatalogSlide('${s.id}')" title="Hapus"><i class="bi bi-trash"></i></button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const btn = document.getElementById('add-catalog-btn');
+  if (btn) btn.addEventListener('click', () => editCatalogSlide(null));
+});
+
+// Form tambah (id = null) atau edit slide katalog. Satu form buat dua mode.
+window.editCatalogSlide = (id) => {
+  const existing = document.getElementById('catalog-form-area');
+  if (existing) existing.remove();
+  const s = id ? catalogAdminData.find(x => x.id === id) : null;
+  if (id && !s) return;
+  const form = createDiv(`
+    <div id="catalog-form-area" class="drink-form-container fade-up">
+      <h4 class="mb-3">${s ? 'Edit Slide Katalog' : 'Tambah Slide Katalog Baru'}</h4>
+      <div class="row g-3">
+        <div class="col-md-6">
+          <div class="upload-area" id="catalog-upload-area">
+            <img id="catalog-preview" src="${s ? s.image_url : ''}" class="img-preview" style="display:${s ? 'block' : 'none'};aspect-ratio:16/9;object-fit:cover;">
+            <div class="upload-placeholder" id="catalog-placeholder" style="display:${s ? 'none' : 'flex'}"><i class="bi bi-plus-circle"></i><p>Gambar 1920x1080</p></div>
+          </div>
+          <input type="file" id="catalog-file-input" accept="image/*" style="display:none">
+        </div>
+        <div class="col-md-6">
+          <div class="row g-2">
+            <div class="col-12"><input type="text" id="catalog-link" class="form-input" value="${s && s.link_url ? s.link_url.replace(/"/g, '&quot;') : ''}" placeholder="Link saat gambar diklik (opsional, contoh: drinks.html)"></div>
+            <div class="col-md-6"><input type="number" id="catalog-order" class="form-input" value="${s ? s.sort_order : 0}" placeholder="Urutan (0, 1, 2…)" min="0"></div>
+            <div class="col-12 text-end mt-2">
+              <button class="btn btn-light me-2" onclick="document.getElementById('catalog-form-area').remove()">Batal</button>
+              <button class="btn btn-dark px-4" id="submit-catalog-btn" onclick="saveCatalogSlide(${s ? `'${s.id}'` : 'null'})">Simpan Slide</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>`);
+  document.getElementById('catalog-view').insertBefore(form, document.getElementById('catalog-grid'));
+  const input = document.getElementById('catalog-file-input');
+  document.getElementById('catalog-upload-area').onclick = () => input.click();
+  input.onchange = async (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+    const opt = await optimizeImage(file, 1920, 0.85);
+    pendingUploads['catalog_slide'] = opt;
+    const reader = new FileReader();
+    reader.onload = re => {
+      const prev = document.getElementById('catalog-preview');
+      prev.src = re.target.result;
+      prev.style.display = 'block';
+      document.getElementById('catalog-placeholder').style.display = 'none';
+    };
+    reader.readAsDataURL(opt);
+  };
+  form.scrollIntoView({ behavior: 'smooth' });
+};
+
+// Simpan slide katalog (insert kalau id null, update kalau ada).
+window.saveCatalogSlide = async (id) => {
+  const link_url   = document.getElementById('catalog-link').value.trim() || null;
+  const sort_order = parseInt(document.getElementById('catalog-order').value) || 0;
+  const btn = document.getElementById('submit-catalog-btn');
+  const old = id ? catalogAdminData.find(x => x.id === id) : null;
+  if (!old && !pendingUploads['catalog_slide']) { showToast('Gambar wajib diupload', 'error'); return; }
+  btn.disabled = true;
+  btn.innerHTML = '<i class="bi bi-arrow-repeat spin"></i> Menyimpan...';
+  try {
+    let image_url = old ? old.image_url : null;
+    if (pendingUploads['catalog_slide']) {
+      image_url = await uploadAndOptimizeImage(pendingUploads['catalog_slide'], 'catalog', 1920, 0.85);
+      delete pendingUploads['catalog_slide'];
+    }
+    const row = { image_url, link_url, sort_order };
+    const { error } = id
+      ? await sb.from('catalog_slides').update(row).eq('id', id)
+      : await sb.from('catalog_slides').insert({ ...row, is_active: true });
+    if (error) throw error;
+    showToast(id ? 'Slide katalog diperbarui!' : 'Slide katalog ditambahkan!');
+    document.getElementById('catalog-form-area').remove();
+    loadCatalogAdmin();
+  } catch (err) {
+    showToast('Gagal: ' + err.message, 'error');
+  } finally {
+    if (btn) { btn.disabled = false; btn.innerHTML = 'Simpan Slide'; }
+  }
+};
+
+// Aktif/matikan satu slide katalog. Semua off = section katalog hilang dari website.
+window.toggleCatalogSlide = async (id, state) => {
+  try {
+    const { error } = await sb.from('catalog_slides').update({ is_active: state }).eq('id', id);
+    if (error) throw error;
+    showToast(state ? 'Slide diaktifkan.' : 'Slide dimatikan.');
+    loadCatalogAdmin();
+  } catch (err) { showToast('Gagal: ' + err.message, 'error'); }
+};
+
+// Hapus permanen satu slide katalog.
+window.deleteCatalogSlide = async (id) => {
+  if (!confirm('Hapus slide katalog ini secara permanen?')) return;
+  try {
+    const { data, error } = await sb.from('catalog_slides').delete().eq('id', id).select();
+    if (error) throw error;
+    if (!data || data.length === 0) throw new Error('0 baris terhapus. Periksa kebijakan RLS DELETE di tabel catalog_slides.');
+    showToast('Slide katalog dihapus.');
+    loadCatalogAdmin();
+  } catch (err) { showToast('Gagal: ' + err.message, 'error'); }
 };
 
 // ===== FEEDBACK MANAGEMENT =====
