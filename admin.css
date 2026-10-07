@@ -708,7 +708,9 @@ body {
 }
 
 /* Kelola Menu: tampilan tabel (produk, kategori, ukuran, harga, status, aksi). */
-#drinks-grid { display: block; }
+#drinks-grid, #slides-grid { display: block; }
+.admin-table-sub { color: var(--muted); font-size: 0.85rem; max-width: 420px; }
+.admin-table-noimg { width: 44px; height: 44px; border-radius: 8px; background: var(--input-bg); display: flex; align-items: center; justify-content: center; color: var(--muted); flex-shrink: 0; }
 .admin-table-wrap {
   background: var(--surface);
   border: 1px solid var(--border);
@@ -852,3 +854,5 @@ body {
   margin: 0;
   white-space: pre-line;
 }
+
+.line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
