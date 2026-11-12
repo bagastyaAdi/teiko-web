@@ -10,7 +10,6 @@
   <link rel="icon" type="image/png" href="asset/favicon.png?v=2" />
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
   <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Rubik:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
   <link rel="stylesheet" href="style.css?v=45">
   <link rel="stylesheet" href="navbar.css?v=39">
@@ -22,70 +21,41 @@
   <script src="https://unpkg.com/lenis@1.1.9/dist/lenis.min.js"></script>
 
   <style>
-    /* ===== PAGE TRANSITION ===== */
-    body {
-      background-color: #fcfcfc;
-      opacity: 0;
-      transition: opacity 0.4s ease;
-    }
+    body { background: #fff; opacity: 0; transition: opacity 0.4s ease; }
     body.page-loaded { opacity: 1; }
 
-    .news-detail-back {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      color: #666;
-      font-weight: 600;
-      font-size: 0.9rem;
-      text-decoration: none;
-      margin-bottom: 24px;
-    }
-    .news-detail-back:hover { color: #111; }
+    /* Bar judul dengan tombol kembali (gaya "< All Beverages") */
+    .news-back { display: inline-flex; align-items: center; gap: .75rem; text-decoration: none; color: rgba(0,0,0,.87); }
+    .news-back i { width: 28px; height: 28px; display: inline-flex; align-items: center; justify-content: center; background: #F2F0EB; border-radius: 4px; font-size: .9rem; }
+    .news-back:hover i { background: #D4E9E2; color: #006241; }
 
-    .news-detail-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 32px;
-      align-items: flex-start;
-    }
+    /* Artikel: poster kiri (sticky), teks kanan */
+    .news-article { display: grid; grid-template-columns: minmax(0, 420px) minmax(0, 1fr); gap: 3.5rem; align-items: start; padding: 3rem 0 4rem; }
+    .news-article__img { position: sticky; top: 130px; }
+    .news-article__img img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; border-radius: 12px; display: block; box-shadow: 0 0 .5px rgba(0,0,0,.14), 0 1px 1px rgba(0,0,0,.24); }
+    .news-label { display: block; font-size: .875rem; font-weight: 600; text-transform: uppercase; color: rgba(38, 35, 32, 0.56); margin-bottom: .75rem; }
+    .news-article h1 { font-size: clamp(1.75rem, 3vw, 2.5rem); font-weight: 600; line-height: 1.2; color: rgba(0,0,0,.87); margin-bottom: 1.5rem; }
+    .news-article__text { font-size: 1.1rem; line-height: 1.75; color: rgba(0,0,0,.7); white-space: pre-line; margin-bottom: 2rem; }
+    .news-article__actions { display: flex; flex-wrap: wrap; gap: .75rem; }
 
-    .news-detail-imgwrap {
-      flex: 1 1 380px;
-      max-width: 460px;
-    }
+    /* Informasi lainnya */
+    .news-more { background: #F9F9F9; padding: 3rem 0 4rem; }
+    .news-more__grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1.25rem; }
+    .news-more__card { display: block; background: #fff; border-radius: 12px; overflow: hidden; text-decoration: none; color: rgba(0,0,0,.87); box-shadow: 0 0 .5px rgba(0,0,0,.14), 0 1px 1px rgba(0,0,0,.24); transition: box-shadow .2s; }
+    .news-more__card:hover { box-shadow: 0 0 6px rgba(0,0,0,.14), 0 8px 12px rgba(0,0,0,.14); }
+    .news-more__card img { width: 100%; aspect-ratio: 4 / 5; object-fit: cover; display: block; }
+    .news-more__card span { display: block; padding: .85rem 1rem 1rem; font-weight: 600; font-size: .95rem; line-height: 1.35; }
 
-    .news-detail-img {
-      width: 100%;
-      height: auto;
-      border-radius: 12px;
-      display: block;
-    }
-
-    .news-detail-body {
-      flex: 1 1 320px;
-    }
-
-    .news-detail-title {
-      font-weight: 800;
-      margin-bottom: 20px;
-    }
-
-    .news-detail-text {
-      font-size: 1.05rem;
-      line-height: 1.7;
-      color: #333;
-      white-space: pre-line;
-    }
-
-    .skeleton {
-      background: linear-gradient(90deg, #eee 25%, #f5f5f5 50%, #eee 75%);
-      background-size: 200% 100%;
-      animation: loading 1.5s infinite;
-      border-radius: 16px;
-      height: 300px;
-      width: 100%;
-    }
+    .skeleton { background: linear-gradient(90deg, #eee 25%, #f5f5f5 50%, #eee 75%); background-size: 200% 100%; animation: loading 1.5s infinite; border-radius: 12px; height: 420px; margin: 3rem 0; }
     @keyframes loading { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+
+    @media (max-width: 767px) {
+      .news-article { grid-template-columns: 1fr; gap: 1.75rem; padding: 1.5rem 0 3rem; }
+      .news-article__img { position: static; max-width: 420px; }
+      .news-article__text { font-size: 1rem; }
+      .news-more__grid { grid-template-columns: repeat(2, 1fr); gap: .75rem; }
+      .news-more__card span { font-size: .85rem; padding: .65rem .75rem .8rem; }
+    }
   </style>
 
   <!-- Supabase -->
@@ -98,14 +68,20 @@
   <header id="navbar-placeholder"></header>
   <div id="navbar-spacer"></div>
 
-  <main class="container mb-5" style="max-width: 980px; padding-top: 40px;">
-    <a href="index.html#news-section" class="news-detail-back">
-      <i class="bi bi-arrow-left"></i> Kembali ke Beranda
-    </a>
-
-    <div id="news-detail-content">
-      <div class="skeleton"></div>
+  <div class="page-subhead">
+    <div class="page-subhead__inner">
+      <a href="/#news-section" class="news-back"><i class="bi bi-chevron-left"></i><span class="page-subhead__title">Informasi Terbaru</span></a>
     </div>
+  </div>
+
+  <main>
+    <div class="sb-wrap" id="news-detail-content"><div class="skeleton"></div></div>
+    <section class="news-more" id="news-more" hidden>
+      <div class="sb-wrap">
+        <h2 class="news-label" style="margin-bottom:1.25rem;">Informasi lainnya</h2>
+        <div class="news-more__grid" id="news-more-grid"></div>
+      </div>
+    </section>
   </main>
 
   <!-- Footer Placeholder -->
@@ -118,36 +94,49 @@
   <script src="footer.js?v=36" defer></script>
 
   <script>
+    const esc = t => String(t ?? '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+
     async function loadNewsDetail() {
       const container = document.getElementById('news-detail-content');
       const id = new URLSearchParams(window.location.search).get('id');
-
-      if (!id) {
-        container.innerHTML = `<p class="text-muted">Berita tidak ditemukan.</p>`;
-        return;
-      }
+      const notFound = msg => { container.innerHTML = `<p class="py-5" style="color:rgba(0,0,0,.58);">${msg}</p>`; };
+      if (!id) return notFound('Informasi tidak ditemukan.');
 
       try {
         const { data, error } = await sb.from('site_content').select('*').eq('id', id).single();
         if (error || !data) throw error || new Error('not found');
 
-        document.title = `${data.title || 'Berita'} - Teiko`;
-        const body = `
-          <h1 class="news-detail-title h2">${data.title || ''}</h1>
-          ${data.subtitle ? `<p class="news-detail-text">${data.subtitle.replace(/</g, '&lt;')}</p>` : ''}
-        `;
-        container.innerHTML = data.image_url ? `
-          <div class="news-detail-row">
-            <div class="news-detail-imgwrap">
-              <img src="${data.image_url}" alt="${data.title || ''}" class="news-detail-img">
+        document.title = `${data.title || 'Informasi'} - Teiko`;
+        container.innerHTML = `
+          <article class="news-article"${data.image_url ? '' : ' style="grid-template-columns:1fr;max-width:760px;"'}>
+            ${data.image_url ? `<div class="news-article__img"><img src="${esc(data.image_url)}" alt="${esc(data.title)}"></div>` : ''}
+            <div>
+              <span class="news-label">Informasi</span>
+              <h1>${esc(data.title)}</h1>
+              ${data.subtitle ? `<p class="news-article__text">${esc(data.subtitle)}</p>` : ''}
+              <div class="news-article__actions">
+                <a class="sb-btn sb-btn--filled" href="outlet">Cari Outlet</a>
+                <a class="sb-btn" style="color:#00754A;" href="https://api.whatsapp.com/send/?phone=6282111312779" target="_blank" rel="noopener">Tanya via WhatsApp</a>
+              </div>
             </div>
-            <div class="news-detail-body">${body}</div>
-          </div>
-        ` : body;
+          </article>`;
       } catch (err) {
-        console.error('Gagal memuat berita:', err);
-        container.innerHTML = `<p class="text-muted">Berita tidak ditemukan atau sudah dihapus.</p>`;
+        console.error('Gagal memuat informasi:', err);
+        return notFound('Informasi tidak ditemukan atau sudah dihapus.');
       }
+
+      // Informasi lainnya: berita aktif selain yang sedang dibuka
+      try {
+        const { data } = await sb.from('site_content').select('id,title,image_url,is_active').like('id', 'news_%');
+        const others = (data || []).filter(n => n.id !== id && n.is_active !== false).sort((a, b) => b.id.localeCompare(a.id));
+        if (!others.length) return;
+        document.getElementById('news-more-grid').innerHTML = others.map(n => `
+          <a class="news-more__card" href="news?id=${encodeURIComponent(n.id)}">
+            ${n.image_url ? `<img src="${esc(n.image_url)}" alt="" loading="lazy">` : ''}
+            <span>${esc(n.title)}</span>
+          </a>`).join('');
+        document.getElementById('news-more').hidden = false;
+      } catch (e) { /* bagian tambahan, abaikan kalau gagal */ }
     }
 
     document.addEventListener('DOMContentLoaded', () => {
