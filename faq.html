@@ -20,7 +20,8 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
 
   <link rel="stylesheet" href="style.css" />
-  <link rel="stylesheet" href="navbar.css?v=37" />
+  <link rel="stylesheet" href="navbar.css?v=38" />
+  <link rel="stylesheet" href="theme.css?v=4">
 
   <style>
     body {
@@ -78,8 +79,8 @@
     }
 
     .faq-item:hover {
-      border-color: rgba(5, 78, 52, 0.3);
-      box-shadow: 0 6px 22px rgba(5, 78, 52, 0.05);
+      border-color: rgba(30, 57, 50, 0.3);
+      box-shadow: 0 6px 22px rgba(30, 57, 50, 0.05);
     }
 
     .faq-question {
@@ -103,7 +104,7 @@
     }
 
     .faq-question.open {
-      color: #054E34;
+      color: #1E3932;
       background: #f8faf9;
     }
 
@@ -111,7 +112,7 @@
       font-size: 1.15rem;
       transition: transform 0.3s ease;
       flex-shrink: 0;
-      color: #054E34;
+      color: #1E3932;
     }
 
     .faq-question.open .faq-icon {
@@ -148,20 +149,20 @@
     .faq-show { max-width: 1240px; margin: 0 auto; padding: 1rem 1.5rem 5rem; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); gap: 3.5rem; align-items: start; }
     .faq-tab { display: grid; grid-template-columns: 4.5rem minmax(0, 1fr); gap: 1rem; width: 100%; text-align: left; background: transparent; border: none; border-bottom: 1px solid #ececec; padding: 1.75rem 1.5rem; border-radius: 0; cursor: pointer; transition: background 0.25s ease, border-radius 0.25s ease; color: inherit; font: inherit; }
     .faq-tab.is-active { background: #e6f2eb; border-radius: 18px; border-bottom-color: transparent; }
-    .faq-tab__num { font-family: 'Rubik', sans-serif; font-size: 2.6rem; font-weight: 800; line-height: 1; color: transparent; -webkit-text-stroke: 1.5px #0b6b45; transition: color 0.25s ease; }
-    .faq-tab.is-active .faq-tab__num { color: #0b6b45; }
+    .faq-tab__num { font-family: 'Rubik', sans-serif; font-size: 2.6rem; font-weight: 800; line-height: 1; color: transparent; -webkit-text-stroke: 1.5px #006241; transition: color 0.25s ease; }
+    .faq-tab.is-active .faq-tab__num { color: #006241; }
     .faq-tab__title { display: block; font-family: 'Outfit', sans-serif; font-size: 1.3rem; font-weight: 700; color: #111; margin-bottom: 0.4rem; line-height: 1.3; transition: color 0.25s ease; }
-    .faq-tab.is-active .faq-tab__title { color: #0b6b45; }
+    .faq-tab.is-active .faq-tab__title { color: #006241; }
     .faq-tab__teaser { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; color: #555; font-size: 0.98rem; line-height: 1.6; }
     .faq-tab__detail { display: none; }
 
     .faq-show__panel { position: sticky; top: 110px; }
     .faq-panel__title { font-family: 'Rubik', sans-serif; font-size: clamp(1.8rem, 3.2vw, 2.8rem); font-weight: 900; text-transform: uppercase; line-height: 1.08; margin-bottom: 1.5rem; color: #111; }
-    .faq-media { width: 100%; aspect-ratio: 16 / 10; border-radius: 22px; overflow: hidden; background: #0b6b45; box-shadow: 0 18px 40px rgba(0,0,0,0.1); display: flex; align-items: flex-end; justify-content: center; }
+    .faq-media { width: 100%; aspect-ratio: 16 / 10; border-radius: 22px; overflow: hidden; background: #006241; box-shadow: 0 18px 40px rgba(0,0,0,0.1); display: flex; align-items: flex-end; justify-content: center; }
     .faq-media img { width: 100%; height: 100%; object-fit: cover; display: block; }
     .faq-media--cups img { width: 30%; height: 86%; object-fit: contain; object-position: bottom; margin: 0 -0.5rem; }
     .faq-panel__answer { margin-top: 1.5rem; font-size: 1.05rem; line-height: 1.75; color: #333; }
-    .faq-panel__answer a { color: #054E34; font-weight: 600; }
+    .faq-panel__answer a { color: #1E3932; font-weight: 600; }
     .faq-fade { animation: faqFade 0.35s ease; }
     @keyframes faqFade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 

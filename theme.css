@@ -1,0 +1,226 @@
+/* ==========================================================================
+   TEIKO THEME - gaya "coffeehouse" (terinspirasi tata letak starbucks.com.sg)
+   Dimuat paling akhir; hanya override tampilan, tidak mengubah hook JS/CMS.
+   ========================================================================== */
+@import url('https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --sb-green: #00754A;       /* hijau utama tombol/link */
+  --sb-green-accent: #006241;
+  --sb-house: #1E3932;       /* hijau tua (header blok, footer) */
+  --sb-light: #D4E9E2;       /* hijau muda */
+  --sb-warm: #F2F0EB;        /* krem netral */
+  --sb-text: rgba(0, 0, 0, 0.87);
+  --sb-soft: rgba(0, 0, 0, 0.58);
+  --sb-shadow: 0 0 0.5px rgba(0,0,0,.14), 0 1px 1px rgba(0,0,0,.24);
+  --sb-shadow-nav: 0 1px 3px rgba(0,0,0,.1), 0 2px 2px rgba(0,0,0,.06), 0 0 2px rgba(0,0,0,.07);
+
+  --accent-green: var(--sb-green);
+  --accent-green-hover: var(--sb-green-accent);
+  --bg-dark: var(--sb-house);
+  --text-main: var(--sb-text);
+}
+
+body { font-family: 'Figtree', 'Helvetica Neue', Arial, sans-serif; color: var(--sb-text); letter-spacing: -0.01em; }
+h1, h2, h3, h4, h5, h6,
+.hero h1, .minuman-box h3, .drink-name, .card-title, .page-title-section h1,
+.section-title, .section-subtitle, .section-header h1, .section-header h2, .section-header h3,
+.promo-box-title, .faq-hero h1, .feedback-hero h1, .hero-product__title, .news-section__heading {
+  font-family: 'Figtree', 'Helvetica Neue', Arial, sans-serif !important;
+  letter-spacing: -0.01em;
+}
+
+/* ===== TOMBOL PILL (outline & filled) ===== */
+.cta-pill, .btn-editorial, .btn-editorial-outline, .sb-btn {
+  display: inline-block;
+  border-radius: 50px;
+  border: 1px solid currentColor;
+  padding: 7px 16px;
+  font-size: 1rem;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  text-decoration: none;
+  transition: background .2s ease, color .2s ease, transform .1s ease;
+}
+.cta-pill:active, .sb-btn:active { transform: scale(.95); }
+.btn-editorial, .sb-btn--filled { background: var(--sb-green); border-color: var(--sb-green); color: #fff; }
+.btn-editorial:hover, .sb-btn--filled:hover { background: var(--sb-green-accent); color: #fff; }
+
+/* ===== NAVBAR: putih, logo kiri, menu uppercase tebal, aksi di kanan ===== */
+.navbar-custom {
+  background: #fff !important;
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+  border-bottom: 0;
+  box-shadow: var(--sb-shadow-nav);
+}
+.navbar-inner { max-width: none; height: 99px; padding: 0 40px; justify-content: flex-start; gap: 2.5rem; }
+#navbar-spacer { height: 99px; }
+.logo-nav { height: 46px; }
+.nav-desktop-links { gap: 0.25rem; }
+.nav-desktop-link {
+  font-family: 'Figtree', sans-serif;
+  color: var(--sb-text);
+  font-size: 0.875rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 0 0.9rem;
+  height: 99px;
+  border-radius: 0;
+}
+.nav-desktop-link:hover { color: var(--sb-green); }
+.nav-desktop-link.active {
+  background: none;
+  color: var(--sb-text);
+  font-weight: 700;
+  box-shadow: inset 0 -6px 0 var(--sb-green) !important;
+}
+.nav-actions { margin-left: auto; display: flex; align-items: center; gap: 1.5rem; }
+.nav-find-store {
+  color: var(--sb-text);
+  font-weight: 600;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+.nav-find-store i { font-size: 1.25rem; }
+.nav-find-store:hover { color: var(--sb-green); }
+.nav-actions .sb-btn { background: #000; border-color: #000; color: #fff; }
+.nav-actions .sb-btn:hover { background: rgba(0,0,0,.7); }
+
+@media (max-width: 1199px) {
+  .navbar-inner { height: 72px; padding: 0 1.25rem; }
+  #navbar-spacer { height: 72px; }
+  .logo-nav { height: 38px; }
+  .nav-actions { display: none; }
+  .hamburger span { background: var(--sb-text); }
+  .nav-drawer { top: 72px; max-height: calc(100vh - 72px); background: #fff; }
+  .drawer-overlay { top: 72px; }
+  .drawer-nav-links li { border-bottom: 1px solid rgba(0,0,0,.08); }
+  .drawer-nav-links a { color: var(--sb-text); font-size: 1rem; letter-spacing: 0.06em; padding: 1.15rem 1.5rem; }
+  .drawer-nav-links a:hover,
+  .drawer-nav-links a.active { background: var(--sb-light); color: var(--sb-house); }
+  .drawer-nav-links .drawer-cta { background: var(--sb-green); color: #fff; }
+}
+
+/* ===== HERO: blok hijau tua penuh, judul putih tebal ===== */
+.hero-product, .hero-product__body { background: var(--sb-house) !important; }
+.hero-product { border-bottom: 0; }
+.hero-product__title { color: #fff; font-weight: 800; text-transform: uppercase; letter-spacing: 0.01em; }
+.hero-product__body::before { display: none; }
+
+/* ===== BANNER & KARTU PROMO: sudut halus + bayangan tipis ala kartu ===== */
+.promo-2box-section { background: #fff; }
+.promo-box-card { border-radius: 12px; box-shadow: var(--sb-shadow); overflow: hidden; }
+
+/* ===== CTA: blok split penuh lebar, gambar & teks berselang-seling ===== */
+.cta-blocks { display: flex; flex-direction: column; gap: 0; margin-top: 2rem; }
+.cta-block {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  align-items: center;
+  min-height: 420px;
+  padding: 0;
+  text-align: center;
+}
+.cta-block__text { padding: 3rem 2.5rem; max-width: 520px; justify-self: center; }
+.cta-block h2 { font-size: clamp(1.75rem, 3vw, 3rem); font-weight: 600; line-height: 1.2; margin-bottom: 1rem; }
+.cta-block p { font-size: clamp(1rem, 1.4vw, 1.25rem); line-height: 1.5; opacity: 1; margin-bottom: 1.75rem; }
+.cta-block img { order: -1; height: clamp(260px, 30vw, 400px); margin: 0 auto; padding: 1.5rem 0; justify-self: center; }
+.cta-block:nth-child(even) img { order: 1; }
+.cta-block:hover img { transform: translateY(-6px); }
+.cta-block--green { background: var(--sb-green-accent); color: #fff; }
+.cta-block--cream { background: var(--sb-warm); color: var(--sb-text); }
+.cta-block--lime  { background: var(--sb-light); color: var(--sb-house); }
+.cta-block--green .cta-pill { border-color: #fff; }
+.cta-block--green:hover .cta-pill { background: #fff; color: var(--sb-green-accent); border-color: #fff; }
+.cta-block--cream .cta-pill, .cta-block--lime .cta-pill { color: var(--sb-green); border-color: var(--sb-green); }
+.cta-block--cream:hover .cta-pill, .cta-block--lime:hover .cta-pill { background: var(--sb-green); color: #fff; border-color: var(--sb-green); }
+
+@media (max-width: 767px) {
+  .cta-block { grid-template-columns: 1fr; min-height: 0; }
+  .cta-block img, .cta-block:nth-child(even) img { order: -1; height: 240px; padding-bottom: 0; }
+  .cta-block__text { padding: 1.5rem 1.5rem 2.75rem; }
+}
+
+/* ===== BERITA ===== */
+.news-section { background: var(--sb-warm); }
+.news-section__heading { font-weight: 600; color: var(--sb-text); }
+.news-card { border-radius: 12px; box-shadow: var(--sb-shadow); border: 0; }
+
+/* ===== HALAMAN LAIN: aksen hijau seragam ===== */
+.page-title-section h6 { color: var(--sb-green); letter-spacing: 0.1em; text-transform: uppercase; }
+
+/* ===== FOOTER: putih, kolom berjudul, garis pemisah ===== */
+.sb-footer { background: #fff; color: var(--sb-text); border-top: 1px solid rgba(0,0,0,.1); padding: 3rem 0 2rem; margin-top: 0; }
+.sb-footer__inner { max-width: 1280px; margin: 0 auto; padding: 0 40px; }
+.sb-footer__cols { display: grid; grid-template-columns: repeat(3, 1fr) 1.4fr; gap: 2rem; }
+.sb-footer h3 { font-size: 1.1rem; font-weight: 600; margin-bottom: 1.25rem; }
+.sb-footer__cols a { display: block; color: var(--sb-soft); text-decoration: none; margin-bottom: 0.9rem; font-size: 1rem; }
+.sb-footer__cols a:hover { color: var(--sb-text); }
+.sb-footer hr { margin: 2.5rem 0 1.75rem; border: 0; border-top: 1px solid rgba(0,0,0,.1); opacity: 1; }
+.sb-footer__social { display: flex; gap: 0.75rem; margin-bottom: 1.5rem; }
+.sb-footer__social a {
+  width: 40px; height: 40px; border-radius: 50%; background: #000; color: #fff;
+  display: inline-flex; align-items: center; justify-content: center; font-size: 1.1rem; text-decoration: none;
+}
+.sb-footer__social a:hover { background: var(--sb-green); }
+.sb-footer__legal { display: flex; flex-wrap: wrap; gap: 0.5rem 1.25rem; font-size: 0.875rem; }
+.sb-footer__legal a { color: var(--sb-text); font-weight: 600; text-decoration: none; }
+.sb-footer__legal a:hover { text-decoration: underline; }
+.sb-footer__copy { color: var(--sb-soft); font-size: 0.875rem; margin: 1.25rem 0 0; }
+.sb-footer__news p { color: var(--sb-soft); font-size: 0.95rem; }
+.sb-footer__form { display: flex; gap: 0.5rem; }
+.sb-footer__form input[type=email] {
+  flex: 1; min-width: 0; border: 1px solid rgba(0,0,0,.38); border-radius: 50px; padding: 7px 16px; font: inherit; outline: none;
+}
+.sb-footer__form input[type=email]:focus { border-color: var(--sb-green); box-shadow: 0 0 0 1px var(--sb-green); }
+.sb-footer__agree { display: flex; gap: 0.5rem; align-items: flex-start; margin-top: 0.75rem; font-size: 0.8rem; color: var(--sb-soft); }
+.sb-footer__agree input { margin-top: 3px; accent-color: var(--sb-green); }
+
+@media (max-width: 991px) {
+  .sb-footer__cols { grid-template-columns: 1fr 1fr; }
+  .sb-footer__news { grid-column: 1 / -1; }
+}
+@media (max-width: 575px) {
+  .sb-footer__inner { padding: 0 1.25rem; }
+  .sb-footer__cols { grid-template-columns: 1fr; gap: 1rem; }
+}
+
+/* ===== KARTU: gaya seragam (putih, sudut 12px, bayangan tipis, judul semibold) ===== */
+.news-card, .outlet-card, .event-card, .form-card {
+  border-radius: 12px !important;
+  border: 0 !important;
+  box-shadow: var(--sb-shadow) !important;
+}
+.news-card:hover, .outlet-card:hover, .event-card:hover { transform: none; box-shadow: 0 0 6px rgba(0,0,0,.14), 0 8px 12px rgba(0,0,0,.14) !important; }
+.news-card__title, .news-featured__title { font-weight: 600; color: var(--sb-text); }
+.news-card:hover .news-card__title { color: var(--sb-green); }
+.news-card__text, .news-featured__text { color: var(--sb-soft); }
+.news-featured__img, .news-card__img { border-radius: 12px; }
+.news-card__img { border-radius: 12px 12px 0 0; }
+.flagship-card { border-radius: 12px !important; }
+
+/* ===== UKURAN GAMBAR TETAP (sama di desktop & HP, upload sesuai rasio = tidak terpotong) =====
+   Banner promo lebar (hero1-3) : 1920 x 800 px  (12:5)
+   Kotak foto promo (4 kotak)  : 1200 x 500 px  (12:5)
+   News                        : 1600 x 1000 px (16:10) */
+.fullwidth-banner-track, .fullwidth-banner-link { aspect-ratio: 12 / 5; }
+.fullwidth-banner-img { width: 100%; height: 100%; object-fit: cover; }
+.promo-2box-section { margin-top: 0; padding: 1.5rem 40px 0; overflow: visible; }
+.promo-2box-grid { gap: 1.5rem; flex-wrap: wrap; max-width: 1280px; margin: 0 auto; }
+.promo-box-card, .promo-box-img-wrap { height: auto !important; aspect-ratio: 12 / 5; background: var(--sb-warm); }
+.promo-box-card { flex: 0 0 calc(50% - 0.75rem); width: auto; }
+.promo-box-img { height: 100% !important; object-fit: cover !important; }
+.promo-box-card:hover .promo-box-img { transform: none; }
+@media (max-width: 767px) {
+  .promo-2box-section { padding: 1rem 16px 0; }
+  .promo-2box-grid { flex-wrap: nowrap; gap: 0.75rem; }
+  .promo-box-card { flex: 0 0 100%; }
+}
+
+/* overflow clip (bukan hidden) supaya position: sticky tetap jalan */
+html, body { overflow-x: clip !important; }

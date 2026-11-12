@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap');
 
 :root {
   /* Big Sur-inspired: soft neutral surfaces, translucent panels, big radii */
@@ -901,3 +901,48 @@ body {
 
 .admin-display-toggle { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 1rem 1.25rem; margin-bottom: 1rem; }
 .admin-display-toggle p { margin: 0.5rem 0 0; font-size: 0.85rem; color: var(--muted); }
+
+/* ===== TEMA BARU (selaras website: hijau coffeehouse, Figtree, tombol pill) ===== */
+:root {
+  --bg: #F2F0EB;
+  --text: rgba(0, 0, 0, 0.87);
+  --muted: rgba(0, 0, 0, 0.58);
+  --accent: #00754A;
+  --accent-light: #006241;
+  --accent-glow: rgba(0, 117, 74, 0.12);
+  --radius-lg: 12px;
+  --radius-md: 12px;
+  --shadow-soft: 0 0 0.5px rgba(0,0,0,.14), 0 1px 1px rgba(0,0,0,.24);
+  --shadow-float: 0 0 6px rgba(0,0,0,.12), 0 8px 12px rgba(0,0,0,.12);
+}
+body { font-family: 'Figtree', 'Helvetica Neue', Arial, sans-serif; }
+#login-screen { background: var(--bg); }
+.sidebar { background: #1E3932 !important; border-right: 0 !important; }
+.sidebar, .sidebar .brand, .sidebar-logo .brand-sub, .sidebar .nav-label, .sidebar #admin-email-display { color: #fff !important; }
+.sidebar .nav-label, .sidebar-logo .brand-sub, .sidebar #admin-email-display { opacity: .65; }
+.nav-item { color: rgba(255,255,255,.82) !important; border-radius: 50px !important; font-weight: 600; }
+.nav-item:hover { background: rgba(255,255,255,.1) !important; color: #fff !important; }
+.nav-item.active { background: #fff !important; color: #1E3932 !important; box-shadow: none !important; }
+.nav-item.active i { color: #00754A !important; }
+.btn-logout { border-radius: 50px !important; }
+
+.btn, .btn-save, .btn-login { border-radius: 50px !important; font-weight: 600; }
+.btn-dark, .btn-primary, .btn-save, .btn-login { background: #00754A !important; border-color: #00754A !important; color: #fff !important; }
+.btn-dark:hover, .btn-primary:hover, .btn-save:hover, .btn-login:hover { background: #006241 !important; border-color: #006241 !important; }
+.btn-outline-dark { color: #00754A !important; border-color: #00754A !important; background: transparent !important; }
+.btn-outline-dark:hover { background: #00754A !important; color: #fff !important; }
+
+.page-header h2, .section-card-v2-name { font-weight: 700; letter-spacing: -0.01em; text-transform: none; }
+.drink-admin-card, .section-card, .stat-chip, .drink-form-container { border-radius: 12px !important; box-shadow: var(--shadow-soft) !important; border: 0 !important; }
+.form-input:focus { border-color: #00754A; box-shadow: 0 0 0 2px var(--accent-glow); }
+
+.size-guide {
+  background: #D4E9E2; color: #1E3932; border-radius: 12px; padding: 1rem 1.25rem; margin: 0 0 1.5rem;
+}
+.size-guide ul { margin: .5rem 0 .4rem 1.1rem; padding: 0; list-style: disc; }
+.size-guide li { margin-bottom: .2rem; }
+.size-guide small { opacity: .8; }
+.size-hint {
+  display: inline-flex; align-items: center; gap: .35rem; margin: -4px 0 12px;
+  font-size: .8rem; font-weight: 700; color: #00754A; background: #D4E9E2; padding: 3px 10px; border-radius: 50px;
+}
