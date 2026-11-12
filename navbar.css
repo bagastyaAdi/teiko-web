@@ -21,11 +21,6 @@
   transition: all 0.35s ease;
 }
 
-.navbar-selector {
-  -webkit-transform: translateZ(0);
-  transform: translateZ(0);
-}
-
 /* Sembunyikan navbar saat modal (detail) terbuka */
 body.modal-open .navbar-custom {
   opacity: 0;
@@ -83,7 +78,6 @@ body.modal-open .navbar-custom {
   align-items: center;
   position: relative;
 }
-
 
 /* Active Page: brand green pill */
 .nav-desktop-link.active {

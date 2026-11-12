@@ -482,35 +482,39 @@ function renderNewsSection() {
 
   section.style.display = '';
 
-  // Berita yang di-switch "Headline" di admin tampil lengkap (foto + isi) tanpa perlu diklik.
-  const headlines = newsItems.filter(n => n.button_text === 'HEADLINE');
-  const rest = newsItems.filter(n => n.button_text !== 'HEADLINE');
-  const featured = document.getElementById('news-featured');
-  if (featured) {
-    featured.innerHTML = headlines.map(latest => `
-      <div class="news-featured">
-        ${latest.image_url ? `<img src="${latest.image_url}" alt="${latest.title || ''}" class="news-featured__img">` : ''}
-        <div class="news-featured__body">
-          <h3 class="news-featured__title">${latest.title || ''}</h3>
-          ${latest.subtitle ? `<p class="news-featured__text">${latest.subtitle.replace(/</g, '&lt;')}</p>` : ''}
-          <a class="news-featured__more" href="news.html?id=${encodeURIComponent(latest.id)}">Baca selengkapnya <i class="bi bi-arrow-right"></i></a>
-        </div>
-      </div>`).join('');
-  }
+  const esc = t => String(t || '').replace(/</g, '&lt;');
+  // Ringkasan singkat: paragraf pertama (dipotong lewat CSS).
+  const lead = n => esc((n.subtitle || '').trim().split(/\n\s*\n/)[0]);
+  // Headline duluan, lalu sisanya; semua jadi satu carousel blok split hijau.
+  const items = [...newsItems.filter(n => n.button_text === 'HEADLINE'), ...newsItems.filter(n => n.button_text !== 'HEADLINE')];
 
-  grid.innerHTML = rest.map(n => {
-    // Ringkasan: paragraf pertama, dipotong 3 baris lewat CSS.
-    const summary = (n.subtitle || '').trim().split(/\n\s*\n/)[0].replace(/</g, '&lt;');
-    return `
-    <a class="news-card" href="news.html?id=${encodeURIComponent(n.id)}">
-      ${n.image_url ? `<img src="${n.image_url}" alt="${n.title || ''}" class="news-card__img">` : ''}
-      <div class="news-card__body">
-        <h3 class="news-card__title">${n.title || ''}</h3>
-        <p class="news-card__text">${summary}</p>
+  grid.innerHTML = items.map(n => `
+    <a class="info-feature" href="news.html?id=${encodeURIComponent(n.id)}">
+      ${n.image_url ? `<div class="info-feature__img"><img src="${n.image_url}" alt="${esc(n.title)}" loading="lazy"></div>` : ''}
+      <div class="info-feature__body">
+        <span class="info-label">Informasi</span>
+        <h3>${esc(n.title)}</h3>
+        <p>${lead(n)}</p>
+        <span class="info-pill info-pill--light">Baca selengkapnya</span>
       </div>
-    </a>
-  `;
-  }).join('');
+    </a>`).join('');
+
+  const dots = document.getElementById('news-dots');
+  if (items.length < 2) { dots.innerHTML = ''; return; }
+  dots.innerHTML = items.map((_, i) => `<button aria-label="Informasi ${i + 1}"${i ? '' : ' class="active"'}></button>`).join('');
+  const go = i => grid.scrollTo({ left: grid.clientWidth * i, behavior: 'smooth' });
+  const current = () => Math.round(grid.scrollLeft / grid.clientWidth);
+  dots.querySelectorAll('button').forEach((d, i) => d.addEventListener('click', () => { go(i); restart(); }));
+  grid.addEventListener('scroll', () => {
+    const c = current();
+    dots.querySelectorAll('button').forEach((d, i) => d.classList.toggle('active', i === c));
+  }, { passive: true });
+  // Geser otomatis tiap 6 detik; berhenti sementara saat disentuh/di-hover.
+  let timer;
+  const restart = () => { clearInterval(timer); timer = setInterval(() => go((current() + 1) % items.length), 6000); };
+  ['pointerenter', 'touchstart'].forEach(e => grid.addEventListener(e, () => clearInterval(timer), { passive: true }));
+  ['pointerleave', 'touchend'].forEach(e => grid.addEventListener(e, restart, { passive: true }));
+  restart();
 }
 
 // 4. Shared page helpers

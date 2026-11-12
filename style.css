@@ -79,11 +79,8 @@ body {
 }
 
 h1, h2, h3, h4, h5, h6,
-.hero h1, .minuman-box h3, .drink-name, .card-title, .navbar-brand-logo, .page-title-section h1,
-.section-title, .section-subtitle, .section-header h1, .section-header h2, .section-header h3,
-.promo-box-title, .promo-box-tag, .hero-product__review-author, .hero-product__review-role,
-.hero-product__footer-text, .fullwidth-banner-content h2, .fullwidth-banner-content p,
-.faq-hero h1, .feedback-hero h1 {
+.hero h1, .drink-name, .card-title, .navbar-brand-logo, .page-title-section h1,
+.section-title{
   font-family: 'Rubik', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
   letter-spacing: -0.02em;
 }
@@ -279,24 +276,6 @@ img {
   transform: scale(1.04) translateY(-6px);
 }
 
-/* Full-Width Hero Banner Below Marquee (No L/R margin, slight top gap) */
-.hero-banner-wrap {
-  width: 100%;
-  margin: 1.25rem 0 0 0;
-  padding: 0;
-  display: block;
-  overflow: hidden;
-}
-
-.hero-banner__image {
-  width: 100%;
-  max-width: 100%;
-  height: auto;
-  display: block;
-  object-fit: cover;
-  transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
 /* Tags (right side) */
 .hero-product__tags {
   position: relative;
@@ -329,29 +308,6 @@ img {
   color: #FFFFFF;
   border-color: #00754A;
   transform: translateX(4px);
-}
-
-.hero-product__tag--filled {
-  background: #00754A;
-  color: #FFFFFF;
-  border-color: #00754A;
-}
-
-.hero-product__tag--filled:hover {
-  background: #1E3932;
-  border-color: #1E3932;
-}
-
-.hero-product__tag-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #00754A;
-  flex-shrink: 0;
-}
-
-.hero-product__tag--filled .hero-product__tag-dot {
-  background: #FFFFFF;
 }
 
 /* Social links (right bottom) */
@@ -489,26 +445,6 @@ img {
 
 .btn-editorial:active {
   transform: translateY(0) scale(0.98);
-}
-
-/* Small pill badge for card/photo corners (e.g. "Baru", "Promo") —
-   reusable accent so product-style cards don't read as bare template grids. */
-.corner-badge {
-  position: absolute;
-  top: 14px;
-  right: 14px;
-  z-index: 3;
-  display: inline-flex;
-  align-items: center;
-  padding: 5px 14px;
-  border-radius: var(--radius-full);
-  background: #00754A;
-  color: #FFFFFF;
-  font-family: 'Rubik', sans-serif;
-  font-size: 0.72rem;
-  font-weight: 600;
-  letter-spacing: 0.02em;
-  box-shadow: 0 6px 16px rgba(23, 79, 60, 0.3);
 }
 
 .btn-editorial-outline {
@@ -666,10 +602,6 @@ img {
   transform: scale(1.06);
 }
 
-.promo-box-overlay {
-  display: none !important;
-}
-
 @media (max-width: 991px) {
   .promo-box-card {
     width: 50vw;
@@ -692,20 +624,6 @@ img {
   padding: 60px 0;
 }
 
-.news-section__inner {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 1.5rem;
-}
-
-.news-section__heading {
-  font-size: 1.75rem;
-  font-weight: 800;
-  color: var(--text-main);
-  margin-bottom: 1.75rem;
-  text-align: center;
-}
-
 .news-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -720,29 +638,6 @@ img {
   gap: 2rem;
   align-items: flex-start;
   margin-bottom: 2rem;
-}
-.news-featured__img {
-  flex: 1 1 420px;
-  max-width: 640px;
-  width: 100%;
-  aspect-ratio: 16 / 10;
-  object-fit: cover;
-  border-radius: 16px;
-  display: block;
-}
-.news-featured__body { flex: 1 1 320px; }
-.news-featured__title {
-  font-size: 1.6rem;
-  font-weight: 800;
-  color: var(--text-main);
-  margin-bottom: 1rem;
-}
-.news-featured__text {
-  font-size: 1.05rem;
-  line-height: 1.7;
-  color: var(--text-muted);
-  white-space: pre-line;
-  margin: 0;
 }
 
 /* Kartu berita landscape: foto 16:10 di atas, judul tebal, ringkasan 3 baris. */
@@ -760,40 +655,6 @@ img {
 .news-card:hover {
   box-shadow: 0 16px 40px rgba(0, 0, 0, 0.1);
   transform: translateY(-4px);
-}
-
-.news-card__img {
-  width: 100%;
-  aspect-ratio: 16 / 10;
-  object-fit: cover;
-  display: block;
-}
-
-.news-card__body {
-  padding: 1.5rem 1.75rem 1.75rem;
-}
-
-.news-card__title {
-  font-size: 1.3rem;
-  font-weight: 800;
-  color: var(--text-main);
-  margin-bottom: 0.6rem;
-  transition: color 0.2s ease;
-}
-
-.news-card:hover .news-card__title {
-  color: var(--accent-green);
-}
-
-.news-card__text {
-  font-size: 0.98rem;
-  color: var(--text-muted);
-  line-height: 1.65;
-  margin: 0;
-  display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
 }
 
 /* Spacing between heroes */
@@ -928,74 +789,8 @@ img {
   }
 }
 
-/* ===== BEVERAGES & EDITORIAL BOX SECTION ===== */
-.section-minuman {
-  max-width: 1320px;
-  margin: 3.5rem auto 0;
-  padding: 0 1.5rem;
-}
-
-.minuman-box {
-  position: relative;
-  min-height: 520px;
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  background-size: cover;
-  background-position: center;
-  display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  padding: 2.8rem;
-  margin: 0.75rem;
-  box-shadow: var(--shadow-md);
-  transition: transform var(--transition-smooth), box-shadow var(--transition-smooth);
-  isolation: isolate;
-  border: 1px solid rgba(255, 255, 255, 0.15);
-}
-
-.minuman-box::before {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(
-    180deg,
-    rgba(30, 57, 50, 0.02) 0%,
-    rgba(30, 57, 50, 0.35) 50%,
-    rgba(30, 57, 50, 0.85) 100%
-  );
-  z-index: 1;
-  transition: opacity var(--transition-smooth);
-}
-
-.minuman-box:hover {
-  transform: translateY(-6px);
-  box-shadow: var(--shadow-lg);
-}
-
-.minuman-box h3 {
-  position: relative;
-  z-index: 2;
-  font-size: clamp(1.8rem, 2.4vw, 2.4rem);
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  color: #FFFFFF;
-  margin-bottom: 0.6rem;
-}
-
-.minuman-box p {
-  position: relative;
-  z-index: 2;
-  font-size: 1.05rem;
-  line-height: 1.65;
-  color: rgba(255, 255, 255, 0.9);
-  max-width: 480px;
-  margin-bottom: 0;
-}
-
 /* ===== PAGE HEADER & SECTION SPACING (Memberi Ruang Lega / Tidak Mepet) ===== */
-.page-title-section,
-.faq-hero,
-.feedback-hero {
+.page-title-section{
   position: relative;
   padding: 70px 0 35px;
   text-align: center;
@@ -1046,29 +841,6 @@ img {
   #navbar-spacer { height: 64px; }
 }
 
-/* ===== EDITORIAL FOOTER ===== */
-.footer-clean {
-  background-color: var(--bg-surface);
-  color: var(--text-main);
-  border-top: 1px solid var(--border-color);
-  padding: 5rem 0 3rem;
-  margin-top: 6rem;
-}
-
-.footer-link {
-  color: var(--text-muted);
-  text-decoration: none;
-  font-weight: 500;
-  font-size: 0.98rem;
-  transition: color 0.2s ease, transform 0.2s ease;
-  display: inline-block;
-}
-
-.footer-link:hover {
-  color: var(--accent-green);
-  transform: translateX(4px);
-}
-
 .social-icons {
   display: flex;
   align-items: center;
@@ -1076,66 +848,12 @@ img {
   gap: 1.25rem;
 }
 
-.social-link {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 46px;
-  height: 46px;
-  border-radius: 50%;
-  background-color: var(--bg-subtle);
-  color: var(--text-main);
-  text-decoration: none;
-  transition: all var(--transition-smooth);
-  border: 1px solid var(--border-color);
-}
-
-.social-link .bi {
-  font-size: 1.25rem;
-  transition: transform 0.3s ease;
-}
-
-.social-link:hover {
-  background-color: var(--accent-green);
-  color: #FFFFFF;
-  border-color: var(--accent-green);
-  transform: translateY(-3px);
-  box-shadow: 0 8px 18px rgba(30, 57, 50, 0.2);
-}
-
-.social-link:hover .bi {
-  transform: scale(1.1);
-}
-
-.copyright-text {
-  color: var(--text-light);
-  font-size: 0.9rem;
-  letter-spacing: 0.01em;
-}
-
-.footer-divider {
-  border-top: 1px solid var(--border-color);
-  margin-top: 4rem;
-  padding-top: 2.5rem;
-}
-
 /* ===== RESPONSIVE TWEAKS ===== */
 @media (max-width: 991px) {
-  .minuman-box {
-    min-height: 420px;
-    margin: 0.5rem 0;
-    padding: 2.2rem;
-  }
+  
 
   .page-title-section {
     padding: 50px 0 25px;
-  }
-}
-
-@media (max-width: 575px) {
-  .minuman-box {
-    min-height: 380px;
-    padding: 1.75rem;
   }
 }
 /* ===== CTA BLOCKS (homepage) ===== */
@@ -1179,15 +897,7 @@ img {
 .cta-block--cream { background: #f6efe2; color: #1d1d1b; }
 .cta-block--lime { background: #dff0b8; color: #1d1d1b; }
 .cta-block--green:hover .cta-pill { color: #006241; background: #fff; border-color: #fff; }
-.cta-block--cream:hover .cta-pill, .cta-block--lime:hover .cta-pill { color: #fff; background: #1d1d1b; border-color: #1d1d1b; } /* tanpa garis putih */
-
-.news-featured__more {
-  display: none;
-  margin-top: 0.75rem;
-  font-weight: 700;
-  color: var(--accent-green, #006241);
-  text-decoration: none;
-}
+.cta-block--cream:hover .cta-pill, .cta-block--lime:hover .cta-pill { color: #fff; background: #1d1d1b; border-color: #1d1d1b; } 
 
 /* ===== MOBILE: tampilan simpel & rapi ===== */
 @media (max-width: 767px) {
@@ -1204,15 +914,9 @@ img {
   /* Berita terbaru: isi dipotong, lanjut di halaman detail */
   .news-section { padding: 40px 0; }
   .news-featured { gap: 1.25rem; }
-  .news-featured__title { font-size: 1.35rem; margin-bottom: 0.6rem; }
-  .news-featured__text {
-    display: -webkit-box;
-    -webkit-line-clamp: 5;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    font-size: 0.98rem;
-  }
-  .news-featured__more { display: inline-block; }
+  
+  
+  
 }
 
 @media (max-width: 575px) {
@@ -1225,7 +929,7 @@ img {
   .hero-product__social { align-items: center; text-align: center; gap: 8px; padding-top: 1.1rem; border-top: 1px solid rgba(255,255,255,0.18); width: 100%; max-width: 260px; }
   .hero-product__social-icons { justify-content: center; }
   .hero-product__quote { padding-bottom: 0.5rem; }
-  .btn-chobani-subscribe { padding: 0.8rem 1.1rem; }
+  
 }
 
 /* ===== Banner promo di HP: slider menyamping (geser otomatis lewat script.js) ===== */
