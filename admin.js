@@ -1860,10 +1860,10 @@ function renderNewsAdmin() {
       ${n.image_url ? `<div class="section-card-v2-imgwrap" onclick="editNews('${n.id}')" title="Klik untuk edit"><img src="${n.image_url}" class="drink-admin-img" alt="" loading="lazy" style="width:100%;height:auto;display:block;border-radius:10px;"></div>` : ''}
       <div class="drink-admin-body">
         <div class="section-card-v2-name">${n.title || '(Tanpa Judul)'}</div>
-        <label class="admin-switch" title="Headline = tampil lengkap (foto + isi) di homepage">
+        <label class="admin-switch" title="Headline = tampil paling depan di carousel Informasi Terbaru">
           <input type="checkbox" ${n.button_text === 'HEADLINE' ? 'checked' : ''} onchange="toggleNewsHeadline('${n.id}', this.checked)">
           <span class="admin-switch__track"></span>
-          <span>Headline di homepage</span>
+          <span>Tampil paling depan</span>
         </label>
         <div class="section-card-v2-row">
           <span class="section-card-v2-badge ${n.is_active !== false ? 'is-active' : 'is-off'}">${n.is_active !== false ? 'Aktif' : 'Off'}</span>
