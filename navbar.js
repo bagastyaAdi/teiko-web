@@ -62,22 +62,15 @@ function highlightActiveNav() {
 }
 
 // ===== LOAD NAVBAR =====
-// Pasang navbar.html ke placeholder. Kalau ada versi ke-cache di localStorage,
-// tampilin itu dulu (instan, gak nunggu network) lalu tetep fetch ulang buat
-// refresh cache-nya di background.
+// Pasang navbar.html ke placeholder. Sengaja tanpa cache localStorage:
+// cache itu bikin navbar versi lama muncul duluan setelah deploy.
 const navbarPlaceholder = document.getElementById('navbar-placeholder');
+try { localStorage.removeItem('navbarHTML'); } catch (e) {}
 
-if (localStorage.getItem('navbarHTML')) {
-  navbarPlaceholder.innerHTML = localStorage.getItem('navbarHTML');
-  initDrawer();
-  highlightActiveNav();
-}
-
-fetch('/navbar.html')
+fetch('/navbar.html', { cache: 'no-cache' })
   .then(res => res.text())
   .then(data => {
     navbarPlaceholder.innerHTML = data;
-    localStorage.setItem('navbarHTML', data);
     initDrawer();
     updateNavbarSpacer();
     highlightActiveNav();
