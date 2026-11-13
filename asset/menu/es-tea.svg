@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 520" width="400" height="520">
+<defs>
+  <linearGradient id="liq" x1="0" y1="0" x2="0" y2="1">
+    <stop offset="0" stop-color="#c8712a"/><stop offset=".35" stop-color="#c8712a"/><stop offset="1" stop-color="#9a4a18"/>
+  </linearGradient>
+  <clipPath id="cup"><path d="M70 70 L330 70 L302 470 Q300 488 282 488 L118 488 Q100 488 98 470 Z"/></clipPath>
+</defs>
+<ellipse cx="200" cy="500" rx="118" ry="12" fill="#000" opacity=".12"/>
+<g clip-path="url(#cup)">
+  <rect x="0" y="60" width="400" height="440" fill="url(#liq)"/>
+  <g fill="#fff" opacity=".45">
+    <rect x="92" y="82" width="58" height="50" rx="10" transform="rotate(-8 121 107)"/>
+    <rect x="160" y="78" width="62" height="54" rx="10" transform="rotate(6 191 105)"/>
+    <rect x="232" y="84" width="60" height="50" rx="10" transform="rotate(-4 262 109)"/>
+    <rect x="120" y="128" width="54" height="46" rx="10" transform="rotate(10 147 151)"/>
+    <rect x="206" y="130" width="56" height="46" rx="10" transform="rotate(-10 234 153)"/>
+  </g>
+  <!-- printed label band (sky, clouds, sun, hills); drink shows above and below -->
+  <clipPath id="band"><path d="M0 222 Q100 204 200 218 T400 210 V418 Q300 438 200 426 T0 430 Z"/></clipPath>
+  <g clip-path="url(#band)">
+    <rect x="0" y="200" width="400" height="250" fill="#9fd3e8"/>
+    <circle cx="292" cy="262" r="20" fill="#f08a3c"/>
+    <g fill="#fff">
+      <ellipse cx="112" cy="262" rx="30" ry="13"/><ellipse cx="132" cy="252" rx="20" ry="13"/>
+      <ellipse cx="290" cy="318" rx="24" ry="10"/><ellipse cx="306" cy="310" rx="15" ry="10"/>
+    </g>
+    <path d="M0 372 Q70 346 140 366 T280 358 T400 362 V450 H0 Z" fill="#f4b98a"/>
+    <path d="M0 402 Q90 386 180 400 T400 394 V450 H0 Z" fill="#e8945f"/>
+  </g>
+  <!-- glass highlight -->
+  <path d="M84 80 L98 80 L118 470 L108 470 Z" fill="#fff" opacity=".35"/>
+</g>
+<path d="M70 70 L330 70 L302 470 Q300 488 282 488 L118 488 Q100 488 98 470 Z" fill="none" stroke="#fff" stroke-opacity=".7" stroke-width="3"/>
+<rect x="60" y="56" width="280" height="18" rx="9" fill="#f7f7f5" stroke="#d9d9d4" stroke-width="2"/>
+<!-- Teiko leaf logo -->
+<g transform="translate(200 298)">
+  <path d="M0 -78 C34 -44 54 -10 54 18 A54 54 0 0 1 -54 18 C-54 -10 -34 -44 0 -78 Z" fill="#fff" stroke="#1E5B45" stroke-width="9" stroke-linejoin="round"/>
+  <g stroke="#1E5B45" stroke-width="7" stroke-linecap="round" fill="none">
+    <path d="M0 -50 V62"/>
+    <path d="M0 -20 L-22 -40 M0 -20 L22 -40 M0 6 L-30 -16 M0 6 L30 -16 M0 32 L-34 12 M0 32 L34 12"/>
+  </g>
+  <text x="0" y="100" text-anchor="middle" font-family="Figtree, Arial, sans-serif" font-weight="800" font-size="30" fill="#1E5B45">teiKo</text>
+</g>
+</svg>
