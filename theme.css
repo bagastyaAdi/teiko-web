@@ -266,13 +266,13 @@ html, body { overflow-x: clip !important; }
 }
 
 /* ===== CUSTOMER CARE: blok split + 2 kolom di latar abu ===== */
-.care-split { display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; align-items: center; padding: 3.5rem 0; }
+.care-split { display: grid; grid-template-columns: 1fr 1fr; gap: 2.5rem; align-items: center; padding-block: 3.5rem; }
 .care-split__img { display: flex; justify-content: center; align-items: flex-end; }
 .care-split__img img { height: clamp(180px, 22vw, 280px); width: auto; margin: 0 -1rem; }
 .care-split__img img:nth-child(2) { height: clamp(210px, 26vw, 320px); position: relative; z-index: 1; }
 .care-h2 { font-size: clamp(1.4rem, 2.2vw, 1.75rem); font-weight: 600; color: var(--sb-green-accent); margin-bottom: 1rem; }
 .care-p { color: var(--sb-text); line-height: 1.6; }
-.care-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; padding: 3.5rem 0 4rem; }
+.care-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 3rem; padding-block: 3.5rem 4rem; }
 .care-form label { display: block; font-weight: 600; font-size: .9rem; margin-bottom: .35rem; }
 .care-form input, .care-form textarea {
   width: 100%; border: 1px solid rgba(0,0,0,.38); border-radius: 4px; padding: .75rem .9rem; font: inherit; background: #fff; outline: 0;
@@ -288,12 +288,12 @@ html, body { overflow-x: clip !important; }
 .care-contact:hover strong { color: var(--sb-green); }
 @media (max-width: 767px) {
   .care-split, .care-cols { grid-template-columns: 1fr; gap: 2rem; }
-  .care-split { padding: 2.5rem 0; text-align: center; }
-  .care-cols { padding: 2.5rem 0 3rem; }
+  .care-split { padding-block: 2.5rem; text-align: center; }
+  .care-cols { padding-block: 2.5rem 3rem; }
 }
 
 /* ===== FAQ: akordeon sederhana (details/summary) ===== */
-.faq-acc { padding: 2.5rem 0 4.5rem; }
+.faq-acc { padding-block: 2.5rem 4.5rem; }
 .faq-acc details { border-bottom: 1px solid rgba(0,0,0,.1); }
 .faq-acc details:first-child { border-top: 1px solid rgba(0,0,0,.1); }
 .faq-acc summary {
@@ -307,7 +307,7 @@ html, body { overflow-x: clip !important; }
 .faq-acc__body { padding: 0 0 1.5rem; color: rgba(0,0,0,.7); line-height: 1.7; max-width: 760px; }
 .faq-acc__body img { width: 100%; max-width: 560px; border-radius: 12px; margin-bottom: 1rem; display: block; }
 .faq-acc__body a { color: var(--sb-green); font-weight: 600; }
-.faq-more { text-align: center; padding: 0 0 4rem; }
+.faq-more { text-align: center; padding-bottom: 4rem; }
 
 /* ===== INFORMASI TERBARU (homepage): carousel blok split hijau ===== */
 .news-section { background: #fff !important; padding: 3.5rem 0 3rem !important; }
