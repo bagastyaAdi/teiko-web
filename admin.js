@@ -1528,6 +1528,8 @@ function renderEventsAdmin() {
           <span class="section-card-v2-badge ${ev.is_active !== false ? 'is-active' : 'is-off'}">${ev.is_active !== false ? 'Aktif' : 'Off'}</span>
           <button class="btn-icon" onclick="editEvent('${ev.id}')" title="Edit"><i class="bi bi-pencil"></i></button>
           <button class="btn-icon ${ev.button_text === 'PRIMARY' ? 'text-warning' : ''}" onclick="toggleEventPrimary('${ev.id}', ${ev.button_text !== 'PRIMARY'})" title="${ev.button_text === 'PRIMARY' ? 'Jadikan Biasa' : 'Jadikan Landscape (Primary)'}"><i class="bi ${ev.button_text === 'PRIMARY' ? 'bi-star-fill' : 'bi-star'}"></i></button>
+          <button class="btn-icon ${ev.giveaway ? 'text-success' : ''}" onclick="toggleEventGiveaway('${ev.id}', ${!ev.giveaway})" title="${ev.giveaway ? 'Tutup pendaftaran giveaway' : 'Buka pendaftaran giveaway'}"><i class="bi ${ev.giveaway ? 'bi-gift-fill' : 'bi-gift'}"></i></button>
+          <button class="btn-icon" onclick="openGiveaway('${ev.id}')" title="Peserta & spin undian"><i class="bi bi-people"></i></button>
           <button class="btn-icon" onclick="toggleEventActive('${ev.id}', ${ev.is_active === false})" title="${ev.is_active !== false ? 'Matikan' : 'Aktifkan'}">
             <i class="bi ${ev.is_active !== false ? 'bi-eye-slash' : 'bi-eye'}"></i>
           </button>
@@ -1582,6 +1584,133 @@ async function deleteEvent(id) {
   }
 }
 
+
+// ===== GIVEAWAY (tabel giveaway_entries, lihat supabase/giveaway.sql) =====
+
+// Buka/tutup pendaftaran giveaway di halaman event.
+window.toggleEventGiveaway = async (id, on) => {
+  try {
+    const { error } = await sb.from('site_content').update({ giveaway: on }).eq('id', id);
+    if (error) throw error;
+    showToast(on ? 'Pendaftaran giveaway dibuka.' : 'Pendaftaran giveaway ditutup.');
+    loadContent();
+  } catch (err) {
+    showToast('Gagal: ' + err.message + ' (sudah jalankan supabase/giveaway.sql?)', 'error');
+  }
+};
+
+// Data peserta datang dari form publik: wajib di-escape sebelum masuk innerHTML.
+const escHtml = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+
+let gaEventId = null;
+let gaEntries = [];
+let gaWheel = null;
+
+window.openGiveaway = async (id) => {
+  gaEventId = id;
+  const ev = eventsAdminData.find(e => e.id === id) || {};
+  document.getElementById('giveaway-panel')?.remove();
+  document.getElementById('events-view').insertBefore(createDiv(`
+    <div id="giveaway-panel" class="drink-form-container fade-up mt-4" style="border: 2px solid var(--primary-color);">
+      <div class="d-flex justify-content-between align-items-start mb-3 gap-3">
+        <div>
+          <h4 class="mb-1">Giveaway: ${escHtml(ev.title || 'Event')}</h4>
+          <p class="text-muted mb-0" style="font-size:.85rem;">Pendaftaran ${ev.giveaway ? '<strong class="text-success">dibuka</strong>' : '<strong>ditutup</strong> (klik ikon kado di kartu event untuk membuka)'}. Pemenang tidak ikut putaran berikutnya.</p>
+        </div>
+        <button class="btn btn-light" onclick="document.getElementById('giveaway-panel').remove()">Tutup</button>
+      </div>
+      <div class="row g-4">
+        <div class="col-lg-5 text-center">
+          <div style="position:relative; max-width:360px; margin:0 auto;">
+            <div style="position:absolute; left:50%; top:-6px; transform:translateX(-50%); width:0; height:0; border-left:14px solid transparent; border-right:14px solid transparent; border-top:26px solid #111; z-index:1;"></div>
+            <canvas id="ga-wheel" width="720" height="720" style="width:100%; height:auto; display:block;"></canvas>
+          </div>
+          <button class="btn btn-dark px-5 mt-3" id="ga-spin-btn" onclick="spinGiveaway()"><i class="bi bi-arrow-repeat me-1"></i> Spin</button>
+          <div id="ga-winner" class="mt-3"></div>
+        </div>
+        <div class="col-lg-7">
+          <div class="d-flex justify-content-between align-items-center mb-2">
+            <strong id="ga-count">Memuat peserta...</strong>
+            <button class="btn btn-light btn-sm" onclick="loadGiveawayEntries()"><i class="bi bi-arrow-clockwise"></i> Refresh</button>
+          </div>
+          <div class="admin-table-wrap" style="max-height:420px; overflow:auto;"><table class="admin-table">
+            <thead><tr><th>#</th><th>Nama</th><th>No. Telp</th><th>Instagram</th><th>Daftar</th><th></th></tr></thead>
+            <tbody id="ga-tbody"></tbody>
+          </table></div>
+        </div>
+      </div>
+    </div>`), document.getElementById('events-grid'));
+  gaWheel = GiveawayWheel(document.getElementById('ga-wheel'));
+  document.getElementById('giveaway-panel').scrollIntoView({ behavior: 'smooth' });
+  await loadGiveawayEntries();
+};
+
+window.loadGiveawayEntries = async () => {
+  try {
+    const { data, error } = await sb.from('giveaway_entries').select('*').eq('event_id', gaEventId).order('created_at');
+    if (error) throw error;
+    gaEntries = data;
+  } catch (err) {
+    document.getElementById('ga-count').textContent = 'Gagal memuat: ' + err.message;
+    return;
+  }
+  const pool = gaEntries.filter(e => !e.is_winner);
+  document.getElementById('ga-count').textContent = `${gaEntries.length} peserta, ${pool.length} ikut spin`;
+  document.getElementById('ga-tbody').innerHTML = gaEntries.map((e, i) => `
+    <tr${e.is_winner ? ' style="background:#FFF6DD;"' : ''}>
+      <td>${i + 1}</td>
+      <td>${escHtml(e.name)}${e.is_winner ? ' <span class="badge bg-warning text-dark">Pemenang</span>' : ''}</td>
+      <td><a href="https://wa.me/${escHtml(e.phone.replace(/^\+/, '').replace(/^0/, '62'))}" target="_blank" rel="noopener">${escHtml(e.phone)}</a></td>
+      <td><a href="https://instagram.com/${escHtml(e.instagram)}" target="_blank" rel="noopener">@${escHtml(e.instagram)}</a></td>
+      <td style="white-space:nowrap; font-size:.8rem;">${new Date(e.created_at).toLocaleString('id-ID', { dateStyle: 'short', timeStyle: 'short' })}</td>
+      <td style="white-space:nowrap;">
+        ${e.is_winner ? `<button class="btn-icon" onclick="setGiveawayWinner('${e.id}', false)" title="Batalkan pemenang"><i class="bi bi-arrow-counterclockwise"></i></button>` : ''}
+        <button class="btn-icon btn-icon-danger" onclick="deleteGiveawayEntry('${e.id}')" title="Hapus peserta"><i class="bi bi-trash"></i></button>
+      </td>
+    </tr>`).join('') || '<tr><td colspan="6" class="text-center text-muted py-4">Belum ada peserta.</td></tr>';
+  gaWheel.set(gaEntries, true);
+};
+
+window.spinGiveaway = () => {
+  const btn = document.getElementById('ga-spin-btn');
+  const started = gaWheel.spin(winner => { btn.disabled = false; announceGiveawayWinner(winner); });
+  if (!started) { if (!gaWheel.spinning) showToast('Belum ada peserta yang bisa di-spin.', 'error'); return; }
+  btn.disabled = true;
+  document.getElementById('ga-winner').innerHTML = '';
+};
+
+async function announceGiveawayWinner(e) {
+  document.getElementById('ga-winner').innerHTML = `
+    <div class="p-3 rounded-3" style="background:#FFF6DD; border:1px solid #CBA258;">
+      <div style="font-size:.8rem; letter-spacing:.08em; text-transform:uppercase; color:#8a6d1f;">Pemenang</div>
+      <div style="font-size:1.5rem; font-weight:700;">${escHtml(e.name)}</div>
+      <div>${escHtml(e.phone)} &middot; @${escHtml(e.instagram)}</div>
+    </div>`;
+  await setGiveawayWinner(e.id, true, true);
+}
+
+window.setGiveawayWinner = async (id, on, silent) => {
+  try {
+    const { error } = await sb.from('giveaway_entries').update({ is_winner: on }).eq('id', id);
+    if (error) throw error;
+    if (!silent) showToast(on ? 'Ditandai pemenang.' : 'Status pemenang dibatalkan.');
+    await loadGiveawayEntries();
+  } catch (err) {
+    showToast('Gagal simpan pemenang: ' + err.message, 'error');
+  }
+};
+
+window.deleteGiveawayEntry = async (id) => {
+  if (!confirm('Hapus peserta ini?')) return;
+  try {
+    const { error } = await sb.from('giveaway_entries').delete().eq('id', id);
+    if (error) throw error;
+    showToast('Peserta dihapus.');
+    await loadGiveawayEntries();
+  } catch (err) {
+    showToast('Gagal menghapus: ' + err.message, 'error');
+  }
+};
 
 // Tambah Event Banner UI & Logic
 window.showAddEventForm = () => {
