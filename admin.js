@@ -583,6 +583,7 @@ const slidesNav    = document.getElementById('nav-slides');
 const drinksNav    = document.getElementById('nav-drinks');
 const outletsNav   = document.getElementById('nav-outlets');
 const eventsNav    = document.getElementById('nav-events');
+const giveawayNav  = document.getElementById('nav-giveaway');
 const newsNav      = document.getElementById('nav-news');
 const feedbackNav  = document.getElementById('nav-feedback');
 const faqNav       = document.getElementById('nav-faq');
@@ -591,13 +592,14 @@ const slidesView   = document.getElementById('slides-view');
 const drinksView   = document.getElementById('drinks-view');
 const outletsView  = document.getElementById('outlets-view');
 const eventsView   = document.getElementById('events-view');
+const giveawayView = document.getElementById('giveaway-view');
 const newsView     = document.getElementById('news-view');
 const feedbackView = document.getElementById('feedback-view');
 const faqView      = document.getElementById('faq-view');
 
 
-const allNavs  = [contentNav, slidesNav, drinksNav, outletsNav, eventsNav, newsNav, feedbackNav, faqNav];
-const allViews = [contentView, slidesView, drinksView, outletsView, eventsView, newsView, feedbackView, faqView];
+const allNavs  = [contentNav, slidesNav, drinksNav, outletsNav, eventsNav, giveawayNav, newsNav, feedbackNav, faqNav];
+const allViews = [contentView, slidesView, drinksView, outletsView, eventsView, giveawayView, newsView, feedbackView, faqView];
 
 // Pindah tab sidebar: aktifin nav+view yang dipilih, sembunyiin sisanya,
 // terus jalanin loaderCallback (fetch data) kalau ada.
@@ -619,6 +621,7 @@ if (slidesNav)   slidesNav.addEventListener('click',   () => { activateView('nav
 if (drinksNav)   drinksNav.addEventListener('click',   () => { activateView('nav-drinks',  'drinks-view');  loadDrinks(); });
 if (outletsNav)  outletsNav.addEventListener('click',  () => { activateView('nav-outlets', 'outlets-view'); loadOutletsAdmin(); });
 if (eventsNav)   eventsNav.addEventListener('click',   () => { activateView('nav-events',  'events-view');  loadEventsAdmin(); });
+if (giveawayNav) giveawayNav.addEventListener('click', () => activateView('nav-giveaway', 'giveaway-view', renderGiveawayView));
 if (newsNav)     newsNav.addEventListener('click',     () => { activateView('nav-news',    'news-view');    loadNewsAdmin(); });
 if (feedbackNav) feedbackNav.addEventListener('click', () => activateView('nav-feedback', 'feedback-view', loadFeedback));
 if (faqNav)      faqNav.addEventListener('click',      () => { activateView('nav-faq',     'faq-view');     loadFaqAdmin(); });
@@ -1593,7 +1596,8 @@ window.toggleEventGiveaway = async (id, on) => {
     const { error } = await sb.from('site_content').update({ giveaway: on }).eq('id', id);
     if (error) throw error;
     showToast(on ? 'Pendaftaran giveaway dibuka.' : 'Pendaftaran giveaway ditutup.');
-    loadContent();
+    await loadContent();
+    renderGiveawayView();
   } catch (err) {
     showToast('Gagal: ' + err.message + ' (sudah jalankan supabase/giveaway.sql?)', 'error');
   }
@@ -1606,11 +1610,31 @@ let gaEventId = null;
 let gaEntries = [];
 let gaWheel = null;
 
+// Daftar event + tombol giveaway di menu "Giveaway".
+window.renderGiveawayView = () => {
+  const box = document.getElementById('giveaway-events');
+  if (!box) return;
+  if (!eventsAdminData.length) {
+    box.innerHTML = `<div class="text-center py-5 text-muted"><p>Belum ada event. Giveaway butuh event dulu (judul, foto, periode).</p>
+      <button class="btn btn-dark px-4" onclick="document.getElementById('nav-events').click(); showAddEventForm();"><i class="bi bi-plus-lg me-2"></i>Tambah Event</button></div>`;
+    return;
+  }
+  box.innerHTML = `<div class="admin-table-wrap"><table class="admin-table">
+    <thead><tr><th>Event</th><th>Status event</th><th>Pendaftaran giveaway</th><th></th></tr></thead>
+    <tbody>${eventsAdminData.map(ev => `<tr>
+      <td><strong>${escHtml(ev.title || 'Event tanpa judul')}</strong><div class="text-muted" style="font-size:.8rem;">${escHtml(ev.subtitle || '')}</div></td>
+      <td><span class="section-card-v2-badge ${ev.is_active !== false ? 'is-active' : 'is-off'}">${ev.is_active !== false ? 'Aktif' : 'Off'}</span></td>
+      <td><button class="btn btn-sm ${ev.giveaway ? 'btn-success' : 'btn-outline-secondary'}" onclick="toggleEventGiveaway('${ev.id}', ${!ev.giveaway})"><i class="bi ${ev.giveaway ? 'bi-gift-fill' : 'bi-gift'} me-1"></i>${ev.giveaway ? 'Dibuka (klik untuk tutup)' : 'Ditutup (klik untuk buka)'}</button></td>
+      <td class="text-end"><button class="btn btn-dark btn-sm" onclick="openGiveaway('${ev.id}')"><i class="bi bi-people me-1"></i>Peserta &amp; Spin</button></td>
+    </tr>`).join('')}</tbody></table></div>`;
+};
+
 window.openGiveaway = async (id) => {
+  if (giveawayView.style.display === 'none') activateView('nav-giveaway', 'giveaway-view', renderGiveawayView);
   gaEventId = id;
   const ev = eventsAdminData.find(e => e.id === id) || {};
   document.getElementById('giveaway-panel')?.remove();
-  document.getElementById('events-view').insertBefore(createDiv(`
+  document.getElementById('giveaway-view').appendChild(createDiv(`
     <div id="giveaway-panel" class="drink-form-container fade-up mt-4" style="border: 2px solid var(--primary-color);">
       <div class="d-flex justify-content-between align-items-start mb-3 gap-3">
         <div>
@@ -1639,7 +1663,7 @@ window.openGiveaway = async (id) => {
           </table></div>
         </div>
       </div>
-    </div>`), document.getElementById('events-grid'));
+    </div>`));
   gaWheel = GiveawayWheel(document.getElementById('ga-wheel'));
   document.getElementById('giveaway-panel').scrollIntoView({ behavior: 'smooth' });
   await loadGiveawayEntries();
