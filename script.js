@@ -140,6 +140,12 @@ async function loadDrinkSlides() {
         .order('sort_order', { ascending: true });
       if (!error && data && data.length > 0) {
         drinkSlides = data;
+      } else if (!error) {
+        // Semua slide OFF/dihapus: kubah hijau ikut hilang, bukan balik ke minuman default.
+        const drinkHero = document.getElementById('hero1-section');
+        if (drinkHero) { drinkHero.dataset.empty = '1'; drinkHero.style.display = 'none'; }
+        if (typeof ScrollTrigger !== 'undefined') setTimeout(() => ScrollTrigger.refresh(), 100);
+        return;
       } else {
         drinkSlides = defaultDrinkSlides;
       }
@@ -411,7 +417,7 @@ async function loadContent() {
     // Display Minuman (kubah hijau) bisa dimatikan dari admin (Kelola Konten).
     // Kalau OFF, hero disembunyikan dan slider foto landscape (hero1, hero2, ...) jadi pembuka halaman.
     const drinkHero = document.getElementById('hero1-section');
-    if (drinkHero) drinkHero.style.display = (foundDrinkDisplay && foundDrinkDisplay.is_active === false) ? 'none' : '';
+    if (drinkHero) drinkHero.style.display = ((foundDrinkDisplay && foundDrinkDisplay.is_active === false) || drinkHero.dataset.empty) ? 'none' : '';
 
     // Sort heroes by id (hero1, hero2, hero3, hero_...)
     heroSlides.sort((a, b) => a.id.localeCompare(b.id));
