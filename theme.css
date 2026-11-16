@@ -462,3 +462,10 @@ html, body { overflow-x: clip !important; }
 .ga-home__closed strong { color: #111; font-size: 1rem; }
 .ga-home__closed a { color: var(--sb-green-accent); font-weight: 600; }
 @media (max-width: 767px) { .ga-home__closed { margin: 0 auto; } }
+/* Tombol "Lihat Peserta": hanya di mobile, roda undian disembunyikan sampai tombol diklik */
+.ga-home__toggle { display: none; }
+@media (max-width: 767px) {
+  .ga-home__toggle { display: inline-flex; align-items: center; margin-top: 1rem; background: #fff; color: var(--sb-green-accent); border: 1.5px solid var(--sb-green-accent); border-radius: 50px; padding: .55rem 1.4rem; font-weight: 600; }
+  .ev-ga-row.is-open .ga-home__toggle { background: var(--sb-green-accent); color: #fff; }
+  .ev-ga-row:not(.is-open) .ga-home__wheel { display: none; }
+}

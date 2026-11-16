@@ -59,6 +59,7 @@
                   <span>Pendaftaran giveaway dibuka ${ev.subtitle ? `selama periode event (${esc(ev.subtitle)})` : 'segera'}. Tombol Daftar akan muncul di sini saat pendaftaran dibuka.</span>
                   <span>Pantau info terbaru di Instagram <a href="https://www.instagram.com/te.ko_official" target="_blank" rel="noopener">@te.ko_official</a>.</span>
                 </div>`}</div>
+            <button class="ga-home__toggle" type="button" aria-expanded="false"><i class="bi bi-people me-1"></i> <span>Lihat Peserta</span></button>
           </div>
           <div class="ga-home__wheel">
             <div class="ga-home__canvas"><span class="ga-home__pointer"></span><canvas width="720" height="720"></canvas></div>
@@ -78,6 +79,11 @@
       render(ev.id);
     });
     box.querySelectorAll('[data-open]').forEach(btn => btn.addEventListener('click', () => openForm(btn.dataset.open)));
+    // Mobile: roda undian tersembunyi, tombol "Lihat Peserta" membuka/menutupnya (di laptop tombol tidak tampil).
+    box.querySelectorAll('.ga-home__toggle').forEach(btn => btn.addEventListener('click', () => {
+      const open = btn.closest('.ev-ga-row').classList.toggle('is-open');
+      btn.setAttribute('aria-expanded', open);
+    }));
     box.style.display = '';
 
     const ids = Object.keys(boards);
@@ -133,6 +139,7 @@
     // Pemenang tidak diumumkan di website: roda publik selalu berisi semua peserta.
     const g = boards[id], row = document.getElementById(`ga-${id}`);
     row.querySelector('.ga-home__count').textContent = `${g.entries.length} peserta`;
+    row.querySelector('.ga-home__toggle span').textContent = `Lihat Peserta (${g.entries.length})`;
     g.wheel.set(g.entries.map(e => ({ name: e.name, is_winner: false })), true);
   }
 
