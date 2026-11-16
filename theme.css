@@ -180,13 +180,24 @@ h1, h2, h3, h4, h5, h6,
 .sb-footer__agree { display: flex; gap: 0.5rem; align-items: flex-start; margin-top: 0.75rem; font-size: 0.8rem; color: var(--sb-soft); }
 .sb-footer__agree input { margin-top: 3px; accent-color: var(--sb-green); }
 
-@media (max-width: 991px) {
-  .sb-footer__cols { grid-template-columns: 1fr 1fr; }
-  .sb-footer__news { grid-column: 1 / -1; }
-}
-@media (max-width: 575px) {
-  .sb-footer__inner { padding: 0 1.25rem; }
-  .sb-footer__cols { grid-template-columns: 1fr; gap: 1rem; }
+/* Footer di HP: susunan sama dengan laptop (4 kolom), hanya ukurannya diperkecil */
+@media (max-width: 767px) {
+  .sb-footer { padding: 2rem 0 1.5rem; }
+  .sb-footer__inner { padding: 0 16px; }
+  .sb-footer__cols { gap: .75rem; }
+  .sb-footer h3 { font-size: .8rem; margin-bottom: .6rem; }
+  .sb-footer__cols a { font-size: .68rem; margin-bottom: .5rem; line-height: 1.3; }
+  .sb-footer__news p { font-size: .68rem; margin-bottom: .5rem; }
+  .sb-footer__form { flex-direction: column; gap: .35rem; }
+  .sb-footer__form input[type=email] { font-size: .68rem; padding: 4px 8px; }
+  .sb-footer__form .sb-btn { font-size: .68rem; padding: 4px 8px; width: 100%; }
+  .sb-footer__agree { font-size: .58rem; gap: .3rem; margin-top: .4rem; }
+  .sb-footer__agree input { margin-top: 1px; }
+  .sb-footer hr { margin: 1.25rem 0 1rem; }
+  .sb-footer__social { gap: .5rem; margin-bottom: 1rem; }
+  .sb-footer__social a { width: 30px; height: 30px; font-size: .85rem; }
+  .sb-footer__legal { font-size: .7rem; gap: .35rem 1rem; }
+  .sb-footer__copy { font-size: .7rem; margin-top: .75rem; }
 }
 
 /* ===== KARTU: gaya seragam (putih, sudut 12px, bayangan tipis, judul semibold) ===== */
@@ -348,10 +359,6 @@ html, body { overflow-x: clip !important; }
 .store-row__addr { line-height: 1.5; }
 
 
-@media (max-width: 420px) {
-  .sb-footer__form { flex-wrap: wrap; }
-  .sb-footer__form .sb-btn { width: 100%; }
-}
 
 /* ===== GIVEAWAY di homepage (giveaway-public.js) ===== */
 .ga-home-section { background: var(--sb-warm); padding: 3.5rem 16px; }
