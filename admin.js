@@ -1917,6 +1917,7 @@ window.showAddEventForm = () => {
         <div class="col-md-8">
           <div class="row g-2">
             <div class="col-12"><input type="text" id="event-title" class="form-input" placeholder="Nama Event (misal: Beli 1 Gratis 1)"></div>
+            <div class="col-12"><input type="text" id="event-badge" class="form-input" placeholder="Teks label (kosong = Event Unggulan)"></div>
             <div class="col-12"><input type="text" id="event-date" class="form-input" placeholder="Tanggal/Periode (subtitle)"></div>
             <div class="col-12"><textarea id="event-benefit" class="form-input" placeholder="Keuntungan / Deskripsi (subtitle2)" rows="2"></textarea></div>
             <div class="col-12"><textarea id="event-tnc" class="form-input" placeholder="Syarat & Ketentuan (opsional)" rows="2"></textarea></div>
@@ -1962,6 +1963,7 @@ window.saveNewEventBanner = async () => {
   
   const btn = document.getElementById('submit-event-btn');
   const titleVal   = document.getElementById('event-title')?.value   || '';
+  const badgeVal   = document.getElementById('event-badge')?.value.trim() || '';
   const dateVal    = document.getElementById('event-date')?.value    || '';
   const benefitVal = document.getElementById('event-benefit')?.value || '';
   const tncVal     = document.getElementById('event-tnc')?.value     || '';
@@ -1982,6 +1984,7 @@ window.saveNewEventBanner = async () => {
       image_url: imageUrl,
       is_active: true,
       title:     titleVal    || null,
+      emoji:     badgeVal    || null,
       subtitle:  dateVal     || null,
       subtitle2: benefitVal  || null,
       updated_at: new Date().toISOString()
@@ -2044,6 +2047,10 @@ window.editEvent = (id) => {
               <input type="text" id="edit-event-title" class="form-input" placeholder="Nama Event" value="${(ev.title || '').replace(/"/g, '&quot;')}">
             </div>
             <div class="col-12">
+              <label class="form-label mb-1" style="font-size: 0.8rem; color: #666;">Teks Label (badge)</label>
+              <input type="text" id="edit-event-badge" class="form-input" placeholder="Event Unggulan" value="${(ev.emoji || '').replace(/"/g, '&quot;')}">
+            </div>
+            <div class="col-12">
               <label class="form-label mb-1" style="font-size: 0.8rem; color: #666;">Tanggal/Periode</label>
               <input type="text" id="edit-event-date" class="form-input" placeholder="Tanggal/Periode" value="${(ev.subtitle || '').replace(/"/g, '&quot;')}">
             </div>
@@ -2098,6 +2105,7 @@ window.editEvent = (id) => {
 // Simpan hasil edit banner event (upload foto baru kalau ada, lalu upsert field-fieldnya).
 window.saveEditEventBanner = async (id) => {
   const titleVal   = document.getElementById('edit-event-title')?.value   || '';
+  const badgeVal   = document.getElementById('edit-event-badge')?.value.trim() || '';
   const dateVal    = document.getElementById('edit-event-date')?.value    || '';
   const benefitVal = document.getElementById('edit-event-benefit')?.value || '';
   const tncVal     = document.getElementById('edit-event-tnc')?.value     || '';
@@ -2121,6 +2129,7 @@ window.saveEditEventBanner = async (id) => {
     // NOTE: Kolom 'tnc' harus ditambahkan dulu di Supabase Dashboard sebelum bisa digunakan.
     const updatePayload = {
       title:      titleVal   || null,
+      emoji:      badgeVal   || null,
       subtitle:   dateVal    || null,
       subtitle2:  benefitVal || null,
       button_url: linkVal    || null,

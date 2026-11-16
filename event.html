@@ -112,6 +112,14 @@
       width: 100%;
     }
     @keyframes loading { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+    /* Event card: banner + Visual Merchandise / Mockup crossfade slideshow */
+    .ev-slides { position: relative; overflow: hidden; }
+    .ev-slide { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; opacity: 0; transform: scale(1.06); transition: opacity 1s ease, transform 4.5s ease; pointer-events: none; }
+    .ev-slide.on { opacity: 1; transform: scale(1); }
+    .ev-dots { position: absolute; left: 0; right: 0; bottom: 10px; display: flex; justify-content: center; gap: 6px; z-index: 2; pointer-events: none; }
+    .ev-dots i { width: 7px; height: 7px; border-radius: 50%; background: rgba(255,255,255,.55); box-shadow: 0 0 3px rgba(0,0,0,.35); transition: background .4s, transform .4s; }
+    .ev-dots i.on { background: #fff; transform: scale(1.25); }
+    @media (prefers-reduced-motion: reduce) { .ev-slide { transition: opacity .3s linear; transform: none; } .ev-slide.on { transform: none; } }
   </style>
 
   <!-- Supabase -->
@@ -267,6 +275,30 @@
       requestAnimationFrame(step);
     }
 
+    // Banner + gallery_urls as a crossfading slideshow; plain <img> when there is no gallery.
+    function evSlides(ev, bannerImg, cls) {
+      const extra = (ev.gallery_urls || []).filter(Boolean);
+      if (!extra.length) return bannerImg;
+      return `<div class="ev-slides ${cls}">${bannerImg}${extra.map(u => `<img src="${u}" alt="" class="ev-slide" loading="lazy">`).join('')}<div class="ev-dots">${'<i></i>'.repeat(extra.length + 1)}</div></div>`;
+    }
+
+    // One timer for all cards: step 0 = banner, step k = gallery image k.
+    let evSlideTimer;
+    function startEventSlides() {
+      clearInterval(evSlideTimer);
+      const shows = [...document.querySelectorAll('#events-container .ev-slides')];
+      if (!shows.length) return;
+      const paint = (el, k) => {
+        el.querySelectorAll('.ev-slide').forEach((im, j) => im.classList.toggle('on', j + 1 === k));
+        el.querySelectorAll('.ev-dots i').forEach((d, j) => d.classList.toggle('on', j === k));
+      };
+      shows.forEach(el => { el._k = 0; paint(el, 0); });
+      evSlideTimer = setInterval(() => {
+        if (document.hidden) return;
+        shows.forEach(el => { el._k = (el._k + 1) % (el.querySelectorAll('.ev-slide').length + 1); paint(el, el._k); });
+      }, 3500);
+    }
+
     async function loadEvents() {
       const container = document.getElementById('events-container');
       try {
@@ -313,7 +345,7 @@
             html += `
               <div class="col-12 mb-4 anim-item ev-anchor" id="${ev.id}">
                 <div class="card event-card border-0 shadow-sm overflow-hidden" ${linkAction}>
-                  <img src="${ev.image_url}" alt="${ev.title || 'Event Teiko Bali'}" loading="lazy" class="img-fluid w-100" style="object-fit: cover; aspect-ratio: 16/9;">
+                  ${evSlides(ev, `<img src="${ev.image_url}" alt="${ev.title || 'Event Teiko Bali'}" loading="lazy" class="img-fluid w-100" style="object-fit: cover; aspect-ratio: 16/9;">`, '')}
                 </div>
               </div>
             `;
@@ -323,10 +355,10 @@
                 <div class="card event-card border-0 shadow-sm overflow-hidden" ${linkAction}>
                   <div class="row g-0 align-items-center">
                     <div class="col-12 col-md-7">
-                      <img src="${ev.image_url}" alt="${ev.title || 'Event Teiko Bali'}" loading="lazy" class="img-fluid w-100" style="object-fit: cover; aspect-ratio: 16/9;">
+                      ${evSlides(ev, `<img src="${ev.image_url}" alt="${ev.title || 'Event Teiko Bali'}" loading="lazy" class="img-fluid w-100" style="object-fit: cover; aspect-ratio: 16/9;">`, '')}
                     </div>
                     <div class="col-12 col-md-5 p-4 p-md-5">
-                      <span class="badge mb-3 px-3 py-2" style="background: #F5F5F5; color: #111111; border: 1px solid rgba(17,17,17,0.18);">Event Unggulan</span>
+                      <span class="badge mb-3 px-3 py-2" style="background: #F5F5F5; color: #111111; border: 1px solid rgba(17,17,17,0.18);">${ev.emoji || 'Event Unggulan'}</span>
                       <h2 class="fw-bold mb-3" style="color: #111111;">${ev.title || 'Special Event'}</h2>
                       <span class="d-inline-flex align-items-center px-3 py-2 rounded-pill border mb-4" style="background-color: #f8f9fa; color: #111111; font-size: 0.9rem; font-weight: 600;">
                         <i class="bi bi-calendar-event me-2"></i>${ev.subtitle || 'Promo terbatas'}
@@ -353,7 +385,7 @@
                return `
                  <div class="col-12 col-md-6 col-lg-4 mb-4 ev-anchor" id="${ev.id}">
                    <div class="card event-card border-0 shadow-sm h-100 overflow-hidden" ${linkAction ? `style="cursor: pointer;" ${linkAction}` : ''}>
-                     <img src="${ev.image_url}" alt="${ev.title || 'Event Teiko Bali'}" class="card-img-top h-100" loading="lazy" style="object-fit: cover; aspect-ratio: 16/9;">
+                     ${evSlides(ev, `<img src="${ev.image_url}" alt="${ev.title || 'Event Teiko Bali'}" class="card-img-top h-100" loading="lazy" style="object-fit: cover; aspect-ratio: 16/9;">`, 'h-100')}
                    </div>
                  </div>
                `;
@@ -362,7 +394,7 @@
             return `
               <div class="col-12 col-md-6 col-lg-4 mb-4 ev-anchor" id="${ev.id}">
                 <div class="card event-card border-0 shadow-sm h-100" ${linkAction ? `style="cursor: pointer;" ${linkAction}` : ''}>
-                  <img src="${ev.image_url}" alt="${ev.title || 'Event Teiko Bali'}" class="card-img-top" loading="lazy" style="object-fit: cover; aspect-ratio: 16/9;">
+                  ${evSlides(ev, `<img src="${ev.image_url}" alt="${ev.title || 'Event Teiko Bali'}" class="card-img-top" loading="lazy" style="object-fit: cover; aspect-ratio: 16/9;">`, '')}
                   <div class="card-body">
                     <h5 class="card-title fw-bold mb-2">${ev.title || 'Event Menarik'}</h5>
                     <p class="card-text text-muted small"><i class="bi bi-clock me-1"></i> ${ev.subtitle || 'Promo Terbatas'}</p>
@@ -374,6 +406,7 @@
         }
 
         container.innerHTML = html;
+        startEventSlides();
 
         // Stagger animate event cards
         staggerAnimate('#events-container .anim-item, #events-container [class*="col-"]', 80, 90);
