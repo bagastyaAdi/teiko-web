@@ -218,6 +218,7 @@
           <div class="row g-4">
             <div class="col-md-5 text-center">
               <img id="m-img" src="" class="img-fluid rounded shadow-sm" alt="Event Banner" style="max-height: 400px; object-fit: contain;">
+              <div id="m-gallery" class="d-flex flex-wrap gap-2 justify-content-center mt-3"></div>
             </div>
             <div class="col-md-7">
               <h6 class="fw-bold text-uppercase text-secondary" style="font-size: 0.85rem; letter-spacing: 1px;">Keuntungan</h6>
@@ -302,7 +303,7 @@
         // 1. Render Primary (Landscape)
         finalPrimary.forEach(ev => {
           const originalIndex = data.indexOf(ev);
-          const isFilled = ev.title || ev.subtitle || ev.subtitle2;
+          const isFilled = ev.title || ev.subtitle || ev.subtitle2 || ev.gallery_urls?.length;
           let linkAction = isFilled ? `onclick="openEventModal(${originalIndex})" style="cursor: pointer;"` : '';
           if (!isFilled && ev.button_url) {
              linkAction = `onclick="window.open('${ev.button_url}', '_blank')" style="cursor: pointer;"`;
@@ -344,7 +345,7 @@
         if (finalRegular.length > 0) {
           html += finalRegular.map((ev) => {
             const originalIndex = data.indexOf(ev);
-            const isFilled = ev.title || ev.subtitle || ev.subtitle2;
+            const isFilled = ev.title || ev.subtitle || ev.subtitle2 || ev.gallery_urls?.length;
             let linkAction = isFilled ? `onclick="openEventModal(${originalIndex})"` : '';
             if (!isFilled && ev.button_url) linkAction = `onclick="window.open('${ev.button_url}', '_blank')"`;
 
@@ -391,6 +392,18 @@
       const ev = window.eventsData[index];
       
       document.getElementById('m-img').src = ev.image_url || '';
+      // Banner + Visual Merchandise / Mockup: click a thumbnail to show it large
+      const imgs = [ev.image_url, ...(ev.gallery_urls || [])].filter(Boolean);
+      const gal = document.getElementById('m-gallery');
+      gal.innerHTML = imgs.length > 1 ? imgs.map((url, i) => `
+        <img src="${url}" alt="Gambar ${i + 1}" data-i="${i}" loading="lazy" role="button" tabindex="0"
+          style="width:64px; height:64px; object-fit:cover; border-radius:8px; cursor:pointer; border:2px solid ${i === 0 ? '#111' : 'transparent'}; opacity:${i === 0 ? 1 : 0.6};">`).join('') : '';
+      gal.onclick = gal.onkeydown = (e) => {
+        const t = e.target.closest('img[data-i]');
+        if (!t || (e.type === 'keydown' && e.key !== 'Enter')) return;
+        document.getElementById('m-img').src = imgs[t.dataset.i];
+        gal.querySelectorAll('img').forEach(im => { const on = im === t; im.style.borderColor = on ? '#111' : 'transparent'; im.style.opacity = on ? 1 : 0.6; });
+      };
       document.getElementById('m-title').textContent = ev.title || 'Event Teiko';
       document.getElementById('m-date').textContent = ev.subtitle || 'Periode promo terbatas';
       

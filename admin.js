@@ -1824,6 +1824,74 @@ window.deleteGiveawayEntry = async (id) => {
   }
 };
 
+// ===== Visual Merchandise / Mockup gallery per event (column site_content.gallery_urls text[]) =====
+const eventGallery = {}; // { add: [url], edit: [url] }
+
+function eventGalleryBlock(pre) {
+  return `
+    <div class="mt-3">
+      <label class="form-label mb-1" style="font-size: 0.8rem; color: #666;">Visual Merchandise / Mockup</label>
+      <div id="${pre}-ev-gallery" class="d-flex flex-wrap gap-2"></div>
+      <input type="file" id="${pre}-ev-gallery-input" accept="image/*" multiple style="display:none">
+      <div style="font-size: 0.72rem; color: #888; margin-top: 4px;">Bisa pilih banyak gambar sekaligus.</div>
+    </div>`;
+}
+
+function renderEventGallery(pre) {
+  const box = document.getElementById(`${pre}-ev-gallery`);
+  if (!box) return;
+  const urls = eventGallery[pre] || [];
+  box.innerHTML = urls.map((url, i) => `
+    <div style="position:relative; width:72px; height:72px; border-radius:8px; overflow:hidden; border:1px solid #ddd;">
+      <img src="${url}" alt="Mockup ${i + 1}" style="width:100%; height:100%; object-fit:cover;">
+      <button type="button" title="Hapus gambar" aria-label="Hapus gambar" onclick="removeEventGalleryImage('${pre}', ${i})"
+        style="position:absolute; top:2px; right:2px; width:22px; height:22px; border-radius:50%; border:none; background:rgba(0,0,0,0.6); color:#fff; line-height:1; padding:0;">&times;</button>
+    </div>`).join('') + `
+    <button type="button" id="${pre}-ev-gallery-add" onclick="document.getElementById('${pre}-ev-gallery-input').click()"
+      style="width:72px; height:72px; border-radius:8px; border:2px dashed #ccc; background:#fafafa; color:#888; font-size:0.7rem;">
+      <i class="bi bi-plus-lg d-block" style="font-size:1.1rem;"></i>Tambah
+    </button>`;
+}
+
+window.removeEventGalleryImage = (pre, i) => {
+  eventGallery[pre].splice(i, 1);
+  renderEventGallery(pre);
+};
+
+function initEventGallery(pre, urls) {
+  eventGallery[pre] = [...(urls || [])];
+  renderEventGallery(pre);
+  const input = document.getElementById(`${pre}-ev-gallery-input`);
+  input.onchange = async (e) => {
+    const files = [...e.target.files];
+    input.value = '';
+    if (!files.length) return;
+    const addBtn = document.getElementById(`${pre}-ev-gallery-add`);
+    if (addBtn) addBtn.disabled = true;
+    showToast(`Mengunggah ${files.length} gambar...`, 'info');
+    try {
+      for (const file of files) {
+        const prefix = `event_gal_${Math.random().toString(36).slice(2, 8)}`;
+        eventGallery[pre].push(await uploadAndOptimizeImage(file, prefix, 1400));
+        renderEventGallery(pre);
+      }
+      showToast('Gambar ditambahkan. Klik Simpan supaya tersimpan.');
+    } catch (err) {
+      showToast('Gagal upload gambar: ' + err.message, 'error');
+      renderEventGallery(pre);
+    }
+  };
+}
+
+// Send gallery_urls only when the column exists (same guard pattern as tnc).
+async function withEventGallery(payload, pre) {
+  const urls = eventGallery[pre] || [];
+  const check = await sb.from('site_content').select('gallery_urls').limit(1);
+  if (!check.error) payload.gallery_urls = urls;
+  else if (urls.length) throw new Error("Kolom 'gallery_urls' belum ada. Jalankan di Supabase SQL Editor: alter table site_content add column if not exists gallery_urls text[] not null default '{}';");
+  return payload;
+}
+
 // Tambah Event Banner UI & Logic
 window.showAddEventForm = () => {
   const grid = document.getElementById('events-grid');
@@ -1844,6 +1912,7 @@ window.showAddEventForm = () => {
             </div>
           </div>
           <input type="file" id="event-file-input" accept="image/*" style="display:none">
+          ${eventGalleryBlock('add')}
         </div>
         <div class="col-md-8">
           <div class="row g-2">
@@ -1862,6 +1931,7 @@ window.showAddEventForm = () => {
   `;
   
   grid.insertAdjacentHTML('beforebegin', formHtml);
+  initEventGallery('add', []);
 
   const upload = document.getElementById('event-upload-area');
   const input = document.getElementById('event-file-input');
@@ -1923,6 +1993,7 @@ window.saveNewEventBanner = async () => {
         if (!testCheck.error) insertPayload.tnc = tncVal;
       } catch(e) { /* kolom belum ada, skip */ }
     }
+    await withEventGallery(insertPayload, 'add');
     const { error } = await sb.from('site_content').insert(insertPayload);
 
     if (error) throw error;
@@ -1964,6 +2035,7 @@ window.editEvent = (id) => {
             </div>
           </div>
           <input type="file" id="edit-event-file-input" accept="image/*" style="display:none">
+          ${eventGalleryBlock('edit')}
         </div>
         <div class="col-md-8">
           <div class="row g-2">
@@ -2000,6 +2072,7 @@ window.editEvent = (id) => {
   `;
   
   document.getElementById('events-view').insertBefore(createDiv(formHtml), document.getElementById('events-grid'));
+  initEventGallery('edit', ev.gallery_urls);
 
   const upload = document.getElementById('edit-event-upload-area');
   const input = document.getElementById('edit-event-file-input');
@@ -2061,6 +2134,7 @@ window.saveEditEventBanner = async (id) => {
         if (!testCheck.error) updatePayload.tnc = tncVal;
       } catch(e) { /* kolom belum ada, skip */ }
     }
+    await withEventGallery(updatePayload, 'edit');
     const { error } = await sb.from('site_content').update(updatePayload).eq('id', id);
 
     if (error) throw error;
