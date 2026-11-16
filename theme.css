@@ -476,3 +476,4 @@ html, body { overflow-x: clip !important; }
   .ev-ga-row.is-open .ga-home__toggle { background: var(--sb-green-accent); color: #fff; }
   .ev-ga-row:not(.is-open) .ga-home__wheel { display: none; }
 }
+.ga-home__info h2 { font-weight: 700; }
