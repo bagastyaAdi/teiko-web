@@ -27,9 +27,13 @@
             ${ev.subtitle2 ? `<p class="ga-home__desc">${esc(ev.subtitle2).replace(/\n/g, '<br>')}</p>` : ''}
             ${ev.giveaway ? `
             <form class="ga-home__form" novalidate>
-              <input class="form-control" name="name" placeholder="Nama lengkap" maxlength="80" autocomplete="name">
-              <input class="form-control" name="phone" type="tel" placeholder="No. telp / WhatsApp (08...)" autocomplete="tel" inputmode="tel">
-              <div class="input-group"><span class="input-group-text">@</span><input class="form-control" name="instagram" placeholder="username Instagram" maxlength="31" autocapitalize="off"></div>
+              <p class="ga-home__note">Semua data wajib diisi <span class="ga-home__req">*</span></p>
+              <label class="ga-home__label"><span>Nama lengkap <span class="ga-home__req">*</span></span>
+                <input class="form-control" name="name" placeholder="Nama lengkap" maxlength="80" autocomplete="name" required></label>
+              <label class="ga-home__label"><span>No. telp / WhatsApp <span class="ga-home__req">*</span></span>
+                <input class="form-control" name="phone" type="tel" placeholder="08..." autocomplete="tel" inputmode="tel" required></label>
+              <label class="ga-home__label"><span>Instagram <span class="ga-home__req">*</span></span>
+                <div class="input-group"><span class="input-group-text">@</span><input class="form-control" name="instagram" placeholder="username" maxlength="31" autocapitalize="off" required></div></label>
               <button class="ga-home__btn" type="submit">Daftar Giveaway</button>
               <div class="ga-home__msg" role="status"></div>
             </form>` : '<p class="ga-home__closed">Pendaftaran sudah ditutup.</p>'}
@@ -65,14 +69,15 @@
       </div>
       <div class="home-events__grid">
         ${list.map(ev => `
-          <a class="home-events__card" href="event">
-            <img src="${esc(ev.image_url)}" alt="${esc(ev.title || 'Event Teiko')}" loading="lazy">
+          <div class="home-events__card">
+            <a href="event"><img src="${esc(ev.image_url)}" alt="${esc(ev.title || 'Event Teiko')}" loading="lazy"></a>
             <div class="home-events__body">
               ${ev.giveaway ? '<span class="home-events__tag"><i class="bi bi-gift me-1"></i>Giveaway</span>' : ''}
-              <h3>${esc(ev.title || 'Event Teiko')}</h3>
-              ${ev.subtitle ? `<p><i class="bi bi-calendar-event me-1"></i>${esc(ev.subtitle)}</p>` : ''}
+              <h3><a href="event">${esc(ev.title || 'Event Teiko')}</a></h3>
+              ${ev.subtitle ? `<p><i class="bi bi-clock me-1"></i>${esc(ev.subtitle)}</p>` : ''}
+              ${ev.giveaway ? `<a class="home-events__join" href="#ga-${ev.id}">Ikut Giveaway <i class="bi bi-arrow-down"></i></a>` : ''}
             </div>
-          </a>`).join('')}
+          </div>`).join('')}
       </div>`;
     box.style.display = '';
   }

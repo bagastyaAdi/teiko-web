@@ -11,7 +11,8 @@ window.GiveawayWheel = function (canvas) {
     const R = canvas.width / 2;
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     if (!pool.length) {
-      ctx.fillStyle = '#F2F0EB'; ctx.beginPath(); ctx.arc(R, R, R - 4, 0, TAU); ctx.fill();
+      ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(R, R, R - 4, 0, TAU); ctx.fill();
+      ctx.strokeStyle = '#D4E9E2'; ctx.lineWidth = 6; ctx.stroke();
       ctx.fillStyle = '#777'; ctx.font = '600 30px Figtree, sans-serif'; ctx.textAlign = 'center';
       ctx.fillText('Belum ada peserta', R, R + 10);
       return;
