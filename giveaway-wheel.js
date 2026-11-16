@@ -2,8 +2,8 @@
 // Pemenang dipilih acak (crypto) dulu, lalu roda diputar supaya berhenti tepat di potongannya.
 window.GiveawayWheel = function (canvas) {
   const TAU = 2 * Math.PI;
-  const COLORS = ['#006241', '#D4E9E2', '#1E3932', '#F2F0EB', '#00754A', '#CBA258'];
-  const DARK_TEXT = ['#D4E9E2', '#F2F0EB', '#CBA258'];
+  const COLORS = ['#006241', '#D4E9E2', '#1E3932', '#FFFFFF', '#00754A', '#CBA258'];
+  const DARK_TEXT = ['#D4E9E2', '#FFFFFF', '#CBA258'];
   const ctx = canvas.getContext('2d');
   let angle = 0, spinning = false, pool = [];
 
@@ -33,6 +33,7 @@ window.GiveawayWheel = function (canvas) {
       ctx.restore();
     });
     ctx.restore();
+    ctx.strokeStyle = '#1E3932'; ctx.lineWidth = 6; ctx.beginPath(); ctx.arc(R, R, R - 4, 0, TAU); ctx.stroke();
     ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(R, R, 46, 0, TAU); ctx.fill();
     ctx.strokeStyle = '#1E3932'; ctx.lineWidth = 6; ctx.stroke();
   }

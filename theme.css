@@ -406,3 +406,7 @@ html, body { overflow-x: clip !important; }
 
 .ga-home__video video { width: 100%; max-width: 420px; border-radius: 12px; display: block; margin: 0 auto; background: #000; }
 .ga-home__vlabel { font-weight: 600; margin: 1.5rem 0 .5rem; }
+
+.home-events__card button.home-events__join { border: 0; }
+.home-events__form { margin-top: .85rem; max-width: none; }
+.home-events__card .ga-home__done { margin-top: .85rem; background: #F2F0EB; font-size: .9rem; }

@@ -1,4 +1,4 @@
-// Event Terbaru + Giveaway di homepage (index.html). Giveaway: form daftar selama pendaftaran dibuka,
+// Event Terbaru + Giveaway di homepage (index.html). Form daftar ada di kartu event (tombol Daftar);
 // roda undian berisi nama peserta (dari giveaway_public(), tanpa no. telp) dan daftar pemenang.
 // Spin hanya dari admin.html; di website roda cuma ditonton (update tiap 20 detik).
 (function () {
@@ -24,18 +24,9 @@
             <h2>${esc(ev.title || 'Giveaway Teiko')}</h2>
             ${ev.subtitle ? `<p class="ga-home__period"><i class="bi bi-calendar-event me-1"></i>${esc(ev.subtitle)}</p>` : ''}
             ${ev.subtitle2 ? `<p class="ga-home__desc">${esc(ev.subtitle2).replace(/\n/g, '<br>')}</p>` : ''}
-            ${ev.giveaway ? `
-            <form class="ga-home__form" novalidate>
-              <p class="ga-home__note">Semua data wajib diisi <span class="ga-home__req">*</span></p>
-              <label class="ga-home__label"><span>Nama lengkap <span class="ga-home__req">*</span></span>
-                <input class="form-control" name="name" placeholder="Nama lengkap" maxlength="80" autocomplete="name" required></label>
-              <label class="ga-home__label"><span>No. telp / WhatsApp <span class="ga-home__req">*</span></span>
-                <input class="form-control" name="phone" type="tel" placeholder="08..." autocomplete="tel" inputmode="tel" required></label>
-              <label class="ga-home__label"><span>Instagram <span class="ga-home__req">*</span></span>
-                <div class="input-group"><span class="input-group-text">@</span><input class="form-control" name="instagram" placeholder="username" maxlength="31" autocapitalize="off" required></div></label>
-              <button class="ga-home__btn" type="submit">Daftar Giveaway</button>
-              <div class="ga-home__msg" role="status"></div>
-            </form>` : '<p class="ga-home__closed">Pendaftaran sudah ditutup.</p>'}
+            ${ev.giveaway
+              ? `<button class="ga-home__btn" type="button" data-open="${ev.id}">Daftar Giveaway</button>`
+              : '<p class="ga-home__closed">Pendaftaran sudah ditutup.</p>'}
           </div>
           <div class="ga-home__wheel">
             <div class="ga-home__canvas"><span class="ga-home__pointer"></span><canvas width="720" height="720"></canvas></div>
@@ -46,7 +37,7 @@
         </div>`);
       const box = document.getElementById(`ga-${ev.id}`);
       boards[ev.id] = { wheel: GiveawayWheel(box.querySelector('canvas')), entries: entries || [] };
-      box.querySelector('form')?.addEventListener('submit', e => join(e, ev.id));
+      box.querySelector('[data-open]')?.addEventListener('click', () => openForm(ev.id));
       render(ev.id);
     }
     const ids = Object.keys(boards);
@@ -66,7 +57,8 @@
   // Ringkasan "Event Terbaru" di homepage: maksimal 3 kartu, klik menuju halaman Event.
   function renderEvents(events) {
     const box = document.getElementById('home-events');
-    const list = events.filter(ev => ev.image_url).slice(0, 3);
+    // Event giveaway yang masih buka didahulukan supaya kartunya (dan form daftarnya) selalu tampil.
+    const list = events.filter(ev => ev.image_url).sort((a, b) => (b.giveaway ? 1 : 0) - (a.giveaway ? 1 : 0)).slice(0, 3);
     if (!box || !list.length) return;
     box.innerHTML = `
       <div class="home-events__head">
@@ -81,11 +73,34 @@
               ${ev.giveaway ? '<span class="home-events__tag"><i class="bi bi-gift me-1"></i>Giveaway</span>' : ''}
               <h3><a href="event">${esc(ev.title || 'Event Teiko')}</a></h3>
               ${ev.subtitle ? `<p><i class="bi bi-clock me-1"></i>${esc(ev.subtitle)}</p>` : ''}
-              ${ev.giveaway ? `<a class="home-events__join" href="#ga-${ev.id}">Ikut Giveaway <i class="bi bi-arrow-down"></i></a>` : ''}
+              ${ev.giveaway ? `<button class="home-events__join" type="button" data-open="${ev.id}">Daftar</button>
+              <form class="ga-home__form home-events__form" id="gaform-${ev.id}" novalidate hidden>
+                <p class="ga-home__note">Semua data wajib diisi <span class="ga-home__req">*</span></p>
+                <label class="ga-home__label"><span>Nama lengkap <span class="ga-home__req">*</span></span>
+                  <input class="form-control" name="name" placeholder="Nama lengkap" maxlength="80" autocomplete="name" required></label>
+                <label class="ga-home__label"><span>No. telp / WhatsApp <span class="ga-home__req">*</span></span>
+                  <input class="form-control" name="phone" type="tel" placeholder="08..." autocomplete="tel" inputmode="tel" required></label>
+                <label class="ga-home__label"><span>Instagram <span class="ga-home__req">*</span></span>
+                  <div class="input-group"><span class="input-group-text">@</span><input class="form-control" name="instagram" placeholder="username" maxlength="31" autocapitalize="off" required></div></label>
+                <button class="ga-home__btn" type="submit">Kirim</button>
+                <div class="ga-home__msg" role="status"></div>
+              </form>` : ''}
             </div>
           </div>`).join('')}
       </div>`;
+    box.querySelectorAll('[data-open]').forEach(btn => btn.addEventListener('click', () => openForm(btn.dataset.open)));
+    box.querySelectorAll('form').forEach(f => f.addEventListener('submit', e => join(e, f.id.slice(7))));
     box.style.display = '';
+  }
+
+  // Buka form daftar di dalam kartu event (tombol "Daftar" di kartu atau di bagian giveaway).
+  function openForm(id) {
+    const f = document.getElementById('gaform-' + id);
+    if (!f) return;
+    f.hidden = false;
+    f.previousElementSibling?.matches('.home-events__join') && (f.previousElementSibling.hidden = true);
+    f.closest('.home-events__card').scrollIntoView({ behavior: 'smooth', block: 'center' });
+    f.elements.namedItem('name').focus({ preventScroll: true });
   }
 
   function render(id) {
@@ -129,8 +144,10 @@
       if (error.code === '42501') return fail('Pendaftaran giveaway sudah ditutup.');
       return fail('Gagal mendaftar, coba lagi.');
     }
-    f.outerHTML = '<div class="ga-home__done"><i class="bi bi-check-circle me-1"></i> Kamu sudah terdaftar! Pantau Instagram Teiko untuk pengumuman pemenang.</div>';
-    refresh();
+    f.outerHTML = `<div class="ga-home__done"><i class="bi bi-check-circle me-1"></i> ${esc(name)}, kamu sudah terdaftar! Namamu sudah masuk roda undian.</div>`;
+    document.querySelector(`#ga-${eventId} [data-open]`)?.remove();
+    await refresh();
+    document.getElementById(`ga-${eventId}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
