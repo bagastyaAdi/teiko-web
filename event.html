@@ -239,11 +239,33 @@
 
   <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="script.js?v=44" defer></script>
+  <script src="script.js?v=45" defer></script>
   <script src="navbar.js?v=39" defer></script> 
   <script src="footer.js?v=36" defer></script>
   
   <script>
+    // Hash dibuang dari URL sebelum kartu dirender: kalau tidak, browser ikut melompat ke #id
+    // begitu kartunya muncul dan bentrok dengan animasi scroll di bawah.
+    const scrollTargetId = decodeURIComponent(location.hash.slice(1));
+    if (scrollTargetId) history.replaceState(null, '', location.pathname + location.search);
+
+    // Scroll halus ke elemen. Tujuan dihitung ulang tiap frame, jadi tetap pas walau gambar/konten
+    // di atasnya masih berubah tinggi selama animasi.
+    function glideTo(el) {
+      const D = 1400, start = window.scrollY, t0 = performance.now();
+      const ease = t => t < .5 ? 4 * t * t * t : 1 - Math.pow(-2 * t + 2, 3) / 2;
+      const margin = parseFloat(getComputedStyle(el).scrollMarginTop) || 0;
+      const useLenis = typeof lenis !== 'undefined' && lenis;
+      const step = now => {
+        const p = Math.min(1, (now - t0) / D);
+        const end = el.getBoundingClientRect().top + window.scrollY - margin;
+        const y = start + (end - start) * ease(p);
+        if (useLenis) lenis.scrollTo(y, { immediate: true, force: true }); else window.scrollTo(0, y);
+        if (p < 1) requestAnimationFrame(step);
+      };
+      requestAnimationFrame(step);
+    }
+
     async function loadEvents() {
       const container = document.getElementById('events-container');
       try {
@@ -356,9 +378,8 @@
         staggerAnimate('#events-container .anim-item, #events-container [class*="col-"]', 80, 90);
 
         // Datang dari homepage (event#event_xxx): event dirender async, jadi scroll manual ke kartunya
-        const target = location.hash && document.getElementById(decodeURIComponent(location.hash.slice(1)));
-        // ponytail: tunggu 600ms sampai animasi/konten di atas selesai bergeser; naikkan kalau masih meleset
-        if (target) setTimeout(() => target.scrollIntoView({ behavior: 'smooth', block: 'start' }), 600);
+        const target = scrollTargetId && document.getElementById(scrollTargetId);
+        if (target) setTimeout(() => glideTo(target), 300);
       } catch (err) {
         console.error('Error loading events:', err);
         container.innerHTML = `<div class="col-12 text-center text-danger">Gagal memuat event. Silakan coba lagi nanti.</div>`;

@@ -6,12 +6,13 @@
 let lenis;
 if (typeof Lenis !== 'undefined') {
   lenis = new Lenis({
-    duration: 1.15,
-    easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+    // lerp (bukan duration): tiap frame mendekati target 7%, terasa lebih halus & kontinu saat scroll mouse/trackpad.
+    // Di HP tetap scroll bawaan (paling mulus di layar sentuh).
+    lerp: 0.07,
     orientation: 'vertical',
     gestureOrientation: 'vertical',
     smoothWheel: true,
-    wheelMultiplier: 1,
+    wheelMultiplier: 0.9,
     touchMultiplier: 2,
     infinite: false,
   });
