@@ -430,3 +430,9 @@ html, body { overflow-x: clip !important; }
 .ga-dialog h3 { font-size: 1.5rem; font-weight: 600; margin: 0 0 .25rem; }
 .ga-dialog__close { position: absolute; top: .75rem; right: .9rem; border: 0; background: none; font-size: 1.75rem; line-height: 1; color: rgba(0,0,0,.45); }
 .ga-home__action { margin-top: .25rem; }
+
+/* Tepi kiri/kanan section Event & Giveaway = tepi 4 kartu promo (40px gutter, max 1280px) */
+.home-events-section { padding: 1.5rem 40px 0; }
+.home-events__head, .home-events__grid, .ev-ga-row { max-width: 1280px; }
+.ev-ga-row { margin-bottom: 0; }
+@media (max-width: 767px) { .home-events-section { padding: 1rem 16px 0; } }
