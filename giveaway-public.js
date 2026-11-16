@@ -53,7 +53,6 @@
             <div class="ga-home__action">${ev.giveaway
               ? `<button class="ga-home__btn" type="button" data-open="${ev.id}">Daftar Giveaway</button>`
               : '<p class="ga-home__closed">Pendaftaran sudah ditutup.</p>'}</div>
-            <div class="ga-home__winners"></div>
           </div>
           <div class="ga-home__wheel">
             <div class="ga-home__canvas"><span class="ga-home__pointer"></span><canvas width="720" height="720"></canvas></div>
@@ -125,15 +124,10 @@
   }
 
   function render(id) {
+    // Pemenang tidak diumumkan di website: roda publik selalu berisi semua peserta.
     const g = boards[id], row = document.getElementById(`ga-${id}`);
-    const winners = g.entries.filter(e => e.is_winner);
     row.querySelector('.ga-home__count').textContent = `${g.entries.length} peserta`;
-    row.querySelector('.ga-home__winners').innerHTML = winners.length ? `
-      <div class="ga-home__winbox">
-        <div class="ga-home__winlabel"><i class="bi bi-trophy me-1"></i> Pemenang</div>
-        ${winners.map(w => `<div class="ga-home__winner">${esc(w.name)} <span>@${esc(w.instagram)}</span></div>`).join('')}
-      </div>` : '';
-    g.wheel.set(g.entries, true);
+    g.wheel.set(g.entries.map(e => ({ name: e.name, is_winner: false })), true);
   }
 
   async function refresh() {
