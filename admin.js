@@ -753,7 +753,7 @@ function showAddSlideForm() {
       <div class="row g-3">
         <div class="col-md-4">
           <div class="upload-area" id="slide-upload-area">
-            <img id="slide-preview" src="./asset/hero3.png" class="img-preview" style="display:none;aspect-ratio:3/4;object-fit:cover;">
+            <img id="slide-preview" src="" class="img-preview" style="display:none;aspect-ratio:3/4;object-fit:cover;">
             <div class="upload-placeholder" id="slide-placeholder"><i class="bi bi-plus-circle"></i><p>Foto Minuman</p></div>
           </div>
           <input type="file" id="slide-file-input" accept="image/*" style="display:none">
@@ -832,7 +832,7 @@ window.editSlide = (id) => {
       <div class="row g-3">
         <div class="col-md-4">
           <div class="upload-area" id="edit-slide-upload-area">
-            <img id="edit-slide-preview" src="${slide.image_url || './asset/hero3.png'}" class="img-preview" style="display:block;aspect-ratio:3/4;object-fit:cover;">
+            <img id="edit-slide-preview" src="${slide.image_url || ''}" class="img-preview" style="display:block;aspect-ratio:3/4;object-fit:cover;">
             <div class="upload-overlay"><i class="bi bi-camera"></i><span>Ganti Foto</span></div>
           </div>
           <input type="file" id="edit-slide-file-input" accept="image/*" style="display:none">
@@ -1018,7 +1018,7 @@ function renderDrinks() {
   }
 
   const rows = drinksData.map(drink => {
-    const imgSrc = (drink.image_url && drink.image_url.trim() !== '') ? drink.image_url : './asset/hero1.webp';
+    const imgSrc = (drink.image_url && drink.image_url.trim() !== '') ? drink.image_url : '';
     return `
     <tr>
       <td><div class="admin-table-product" onclick="editDrink('${drink.id}')" title="Klik untuk edit">
@@ -1060,7 +1060,7 @@ window.seedDefaultDrinks = async () => {
       category: 'Chocolate',
       price: 'Rp 15.000',
       oz_size: '16 oz',
-      image_url: './asset/hero3.png',
+      image_url: '',
       detail: 'Paduan coklat pekat khas Belgia dengan susu segar dan krim manis yang lumer di mulut.',
       is_active: true
     },
@@ -1069,7 +1069,7 @@ window.seedDefaultDrinks = async () => {
       category: 'Milk',
       price: 'Rp 18.000',
       oz_size: '16 oz',
-      image_url: './asset/hero1.webp',
+      image_url: '',
       detail: 'Susu segar lembut dipadukan dengan gula aren asli khas Teiko serta kenyalnya boba premium.',
       is_active: true
     },
@@ -1078,7 +1078,7 @@ window.seedDefaultDrinks = async () => {
       category: 'Tea',
       price: 'Rp 20.000',
       oz_size: '16 oz',
-      image_url: './asset/hero1.webp',
+      image_url: '',
       detail: 'Teh hijau Uji Matcha pilihan bergaya Jepang dengan susu oat yang gurih dan menyehatkan.',
       is_active: true
     },
@@ -1087,7 +1087,7 @@ window.seedDefaultDrinks = async () => {
       category: 'Chocolate',
       price: 'Rp 18.000',
       oz_size: '16 oz',
-      image_url: './asset/hero3.png',
+      image_url: '',
       detail: 'Cokelat Belgia autentik dengan lapisan krim kental bertekstur lembut dan rasa cokelat pekat.',
       is_active: true
     },
@@ -1096,7 +1096,7 @@ window.seedDefaultDrinks = async () => {
       category: 'Coffee',
       price: 'Rp 18.000',
       oz_size: '16 oz',
-      image_url: './asset/hero1.webp',
+      image_url: '',
       detail: 'Kopi espresso house-blend Teiko berpadu dengan susu kental lembut dan taburan bubuk kopi.',
       is_active: true
     },
@@ -1105,7 +1105,7 @@ window.seedDefaultDrinks = async () => {
       category: 'Milk',
       price: 'Rp 16.000',
       oz_size: '16 oz',
-      image_url: './asset/hero3.png',
+      image_url: '',
       detail: 'Aroma talas (taro) yang harum manis menyatu sempurna dengan susu krim kental khas Teiko.',
       is_active: true
     },
@@ -1114,7 +1114,7 @@ window.seedDefaultDrinks = async () => {
       category: 'Tea',
       price: 'Rp 10.000',
       oz_size: '22 oz',
-      image_url: './asset/hero1.webp',
+      image_url: '',
       detail: 'Teh melati seduh segar alami yang harum, ringan, dan sangat menyegarkan untuk setiap waktu.',
       is_active: true
     },
@@ -1123,7 +1123,7 @@ window.seedDefaultDrinks = async () => {
       category: 'Coffee',
       price: 'Rp 20.000',
       oz_size: '16 oz',
-      image_url: './asset/hero1.webp',
+      image_url: '',
       detail: 'Espresso kaya rasa dengan sirup karamel legit dan lapisan busa susu yang lembut.',
       is_active: true
     }
@@ -1157,7 +1157,7 @@ document.getElementById('add-drink-btn').addEventListener('click', () => {
       <div class="row g-3">
         <div class="col-md-4">
           <div class="upload-area" id="drink-upload-area">
-            <img id="drink-preview" src="./asset/hero1.webp" class="img-preview" style="display:none">
+            <img id="drink-preview" src="" class="img-preview" style="display:none">
             <div class="upload-placeholder" id="drink-placeholder">
               <i class="bi bi-plus-circle"></i><p>Foto Minuman</p>
             </div>
@@ -1296,7 +1296,7 @@ window.editDrink = (id) => {
       <div class="row g-3">
         <div class="col-md-4">
           <div class="upload-area" id="edit-drink-upload-area">
-            <img id="edit-drink-preview" src="${drink.image_url || './asset/hero1.webp'}" class="img-preview" style="display:block">
+            <img id="edit-drink-preview" src="${drink.image_url || ''}" class="img-preview" style="display:block">
             <div class="upload-overlay">
               <i class="bi bi-camera"></i><span>Ganti Foto</span>
             </div>
@@ -1423,7 +1423,7 @@ async function addNewHero() {
       <div class="row g-3">
         <div class="col-md-4">
           <div class="upload-area" id="new-hero-upload-area">
-            <img id="new-hero-preview" src="./asset/hero1.webp" class="img-preview" style="display:none">
+            <img id="new-hero-preview" src="" class="img-preview" style="display:none">
             <div class="upload-placeholder" id="new-hero-placeholder">
               <i class="bi bi-plus-circle"></i><p>Foto Banner 1920 x 800 px</p>
             </div>
@@ -1524,7 +1524,7 @@ function renderEventsAdmin() {
 
   grid.innerHTML = eventsAdminData.map(ev => `
     <div class="drink-admin-card section-card-v2" id="event-card-${ev.id}">
-      <div class="section-card-v2-imgwrap" onclick="editEvent('${ev.id}')" title="Klik untuk edit"><img src="${ev.image_url || './asset/hero1.webp'}" class="drink-admin-img" alt="" loading="lazy" style="width:100%;height:auto;display:block;border-radius:10px;"></div>
+      <div class="section-card-v2-imgwrap" onclick="editEvent('${ev.id}')" title="Klik untuk edit"><img src="${ev.image_url || ''}" class="drink-admin-img" alt="" loading="lazy" style="width:100%;height:auto;display:block;border-radius:10px;"></div>
       <div class="drink-admin-body">
         <div class="section-card-v2-name">${ev.title || 'Event Banner'}</div>
         <div class="section-card-v2-row">
@@ -1750,7 +1750,7 @@ window.showAddEventForm = () => {
       <div class="row g-3">
         <div class="col-md-4">
           <div class="upload-area" id="event-upload-area">
-            <img id="event-preview" src="./asset/hero1.webp" class="img-preview" style="display:none; object-fit: contain; aspect-ratio: 5/4; background: #f0f0f0;">
+            <img id="event-preview" src="" class="img-preview" style="display:none; object-fit: contain; aspect-ratio: 5/4; background: #f0f0f0;">
             <div class="upload-placeholder" id="event-placeholder">
               <i class="bi bi-plus-circle"></i><p>Foto Event 1600 x 900 px</p>
             </div>
@@ -1870,7 +1870,7 @@ window.editEvent = (id) => {
       <div class="row g-3">
         <div class="col-md-4">
           <div class="upload-area" id="edit-event-upload-area">
-            <img id="edit-event-preview" src="${ev.image_url || './asset/hero1.webp'}" class="img-preview" style="display:block; object-fit: contain; aspect-ratio: 5/4; background: #f0f0f0;">
+            <img id="edit-event-preview" src="${ev.image_url || ''}" class="img-preview" style="display:block; object-fit: contain; aspect-ratio: 5/4; background: #f0f0f0;">
             <div class="upload-overlay">
               <i class="bi bi-camera"></i><span>Ganti Foto</span>
             </div>

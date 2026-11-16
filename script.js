@@ -100,36 +100,22 @@ let newsItems = [];
 let drinkSlides = [];
 let currentDrinkIdx = 0;
 let drinkSlideTimer = null;
+let drinkSlidesLoaded = false;
+let drinkDisplayOn = null; // null = status saklar belum diketahui
+
+// Kubah hijau (#hero1-section) tersembunyi dari HTML. Baru tampil kalau saklar
+// Display Minuman ON *dan* ada slide aktif. Selain itu (OFF, kosong, error) tidak pernah muncul.
+function updateDrinkHero() {
+  const el = document.getElementById('hero1-section');
+  if (!el) return;
+  const show = drinkDisplayOn === true && drinkSlidesLoaded && drinkSlides.length > 0;
+  el.style.display = show ? '' : 'none';
+  if (typeof ScrollTrigger !== 'undefined') setTimeout(() => ScrollTrigger.refresh(), 100);
+}
 
 // Ambil daftar minuman buat slideshow "kubah hijau" (hero_drink_slides table).
-// Fallback ke defaultDrinkSlides kalau DB kosong/error.
+// Kosong/error: drinkSlides = [] dan kubah tetap tersembunyi (lihat updateDrinkHero).
 async function loadDrinkSlides() {
-  const defaultDrinkSlides = [
-    {
-      id: 'slide-1',
-      name: 'NEW MENU ES COKLAT',
-      subtitle: 'Rasanya Enak Banget, Bikin Nagih! Teiko Emang Paling Pas Buat Setiap Momen.',
-      image_url: './asset/hero3.png'
-    },
-    {
-      id: 'slide-2',
-      name: 'BELGIAN CHOCO ICE',
-      subtitle: 'Coklat Belgia pilihan dengan kelembutan yang meleleh di mulut. Nyegerin banget!',
-      image_url: './asset/hero3.png'
-    },
-    {
-      id: 'slide-3',
-      name: 'GREEN TEA CREAM',
-      subtitle: 'Teh hijau asli Jepang berpadu dengan susu creamy. Sensasi tenang di tiap tegukan!',
-      image_url: './asset/hero1.webp'
-    },
-    {
-      id: 'slide-4',
-      name: 'COFFEE CREAM SPECIAL',
-      subtitle: 'Rasa kopi lembut berpadu krim spesial Teiko. Semangat hari-harimu jadi maksimal!',
-      image_url: './asset/hero3.png'
-    }
-  ];
 
   try {
     if (typeof sb !== 'undefined') {
@@ -138,24 +124,16 @@ async function loadDrinkSlides() {
         .select('*')
         .eq('is_active', true)
         .order('sort_order', { ascending: true });
-      if (!error && data && data.length > 0) {
-        drinkSlides = data;
-      } else if (!error) {
-        // Semua slide OFF/dihapus: kubah hijau ikut hilang, bukan balik ke minuman default.
-        const drinkHero = document.getElementById('hero1-section');
-        if (drinkHero) { drinkHero.dataset.empty = '1'; drinkHero.style.display = 'none'; }
-        if (typeof ScrollTrigger !== 'undefined') setTimeout(() => ScrollTrigger.refresh(), 100);
-        return;
-      } else {
-        drinkSlides = defaultDrinkSlides;
-      }
-    } else {
-      drinkSlides = defaultDrinkSlides;
+      drinkSlides = (!error && data) ? data : [];
     }
   } catch (err) {
-    console.warn('hero_drink_slides tidak bisa dimuat, menggunakan default slides:', err.message);
-    drinkSlides = defaultDrinkSlides;
+    console.warn('hero_drink_slides tidak bisa dimuat:', err.message);
+    drinkSlides = [];
   }
+  // Tidak ada slide aktif / gagal dimuat: kubah hijau tetap tersembunyi, tanpa minuman default.
+  drinkSlidesLoaded = true;
+  updateDrinkHero();
+  if (!drinkSlides.length) return;
 
   renderDrinkSlide(0, false);
   startDrinkSlideTimer();
@@ -199,7 +177,7 @@ function renderDrinkSlide(idx, animate = true) {
   }
 
   if (!animate || typeof gsap === 'undefined') {
-    if (imgEl)   imgEl.src = slide.image_url || './asset/hero3.png';
+    if (imgEl)   imgEl.src = slide.image_url || '';
     if (titleEl) titleEl.textContent = slide.name || 'NEW MENU';
     if (quoteEl && slide.subtitle) quoteEl.textContent = slide.subtitle;
     return;
@@ -210,7 +188,7 @@ function renderDrinkSlide(idx, animate = true) {
   gsap.to(els, {
     opacity: 0, y: -12, duration: 0.35, ease: 'power2.in',
     onComplete: () => {
-      if (imgEl)   imgEl.src = slide.image_url || './asset/hero3.png';
+      if (imgEl)   imgEl.src = slide.image_url || '';
       if (titleEl) titleEl.innerHTML = (slide.name || 'NEW MENU').replace(/\n/g, '<br>');
       if (quoteEl && slide.subtitle) quoteEl.textContent = slide.subtitle;
       gsap.fromTo(els,
@@ -230,27 +208,6 @@ function startDrinkSlideTimer() {
   }, 4500);
 }
 
-// Isi gambar/judul/quote di kubah hijau langsung tanpa animasi (dipakai fallback).
-function updateGreenArchDisplay(item) {
-  const imgEl = document.getElementById('es-coklat-cup-img');
-  const titleEl = document.getElementById('hero1-title');
-  const quoteEl = document.querySelector('.hero-product__quote-text');
-
-  if (imgEl) {
-    imgEl.src = (item && item.image_url && item.image_url.trim() !== '') ? item.image_url : './asset/hero3.png';
-  }
-  if (titleEl) {
-    const titleText = (item && item.title && item.title.trim() !== '') ? item.title : 'NEW MENU ES COKLAT';
-    titleEl.innerHTML = titleText.replace(/\n/g, '<br>');
-    titleEl.style.opacity = '1';
-    titleEl.style.visibility = 'visible';
-    titleEl.style.display = 'block';
-  }
-  if (quoteEl && item && item.subtitle && item.subtitle.trim() !== '') {
-    quoteEl.textContent = item.subtitle;
-  }
-}
-
 // Tampilin satu hero banner (carousel lebar promo) di posisi index.
 function renderHeroSlide(index, animate = true) {
   if (!heroSlides || heroSlides.length === 0) return;
@@ -262,12 +219,7 @@ function renderHeroSlide(index, animate = true) {
   const bannerLinkEl = document.getElementById('hero-banner-link');
   const bannerDots = document.querySelectorAll('.fullwidth-banner-dots .banner-dot');
 
-  const defaultBanners = {
-    'hero1': './asset/hero1.webp',
-    'hero2': './asset/hero2.webp',
-    'hero3': './asset/hero1.webp'
-  };
-  const targetBanner = (slide.image_url && slide.image_url.trim() !== '') ? slide.image_url : (defaultBanners[slide.id] || './asset/hero1.webp');
+  const targetBanner = slide.image_url;
 
   // Cuma bisa diklik kalau admin isi "Link Tujuan Klik" di section ini. Kosong = gambar statis, gak nge-link kemana-mana.
   const targetUrl = (slide.button_url && slide.button_url.trim() !== '' && slide.button_url !== '#' && slide.button_url !== 'javascript:void(0)') ? slide.button_url : null;
@@ -416,8 +368,8 @@ async function loadContent() {
 
     // Display Minuman (kubah hijau) bisa dimatikan dari admin (Kelola Konten).
     // Kalau OFF, hero disembunyikan dan slider foto landscape (hero1, hero2, ...) jadi pembuka halaman.
-    const drinkHero = document.getElementById('hero1-section');
-    if (drinkHero) drinkHero.style.display = ((foundDrinkDisplay && foundDrinkDisplay.is_active === false) || drinkHero.dataset.empty) ? 'none' : '';
+    drinkDisplayOn = !(foundDrinkDisplay && foundDrinkDisplay.is_active === false);
+    updateDrinkHero();
 
     // Sort heroes by id (hero1, hero2, hero3, hero_...)
     heroSlides.sort((a, b) => a.id.localeCompare(b.id));
@@ -443,15 +395,9 @@ async function loadContent() {
     }
   } catch (err) {
     console.warn('Konten tidak dapat dimuat dari database Supabase:', err.message);
-    if (heroSlides.length === 0) {
-      heroSlides = [
-        { id: 'hero1', title: 'NEW MENU ES COKLAT', image_url: './asset/hero3.png' },
-        { id: 'hero2', title: 'NEW MENU GREEN TEA', image_url: './asset/hero3.png' },
-        { id: 'hero3', title: 'NEW MENU COFFEE CREAM', image_url: './asset/hero3.png' }
-      ];
-      renderHeroSlide(0, false);
-      initHeroCarousel();
-    }
+    // Gagal muat: kubah & banner tetap tersembunyi, tidak balik ke banner lama.
+    drinkDisplayOn = false;
+    updateDrinkHero();
   }
 }
 

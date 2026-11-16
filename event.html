@@ -198,9 +198,6 @@
     </div>
   </main>
 
-  <!-- Spin wheel giveaway publik (diisi loadGiveawayWheels) -->
-  <section class="container mb-5" id="giveaway-wheels"></section>
-
   <!-- Modal Detail Event -->
   <div class="modal fade" id="eventModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
@@ -229,7 +226,6 @@
               <p id="m-tnc" class="text-muted small" style="white-space: pre-line;"></p>
               
               <div id="m-link-container" style="display:none;"></div>
-              <div id="m-giveaway"></div>
             </div>
           </div>
         </div>
@@ -242,8 +238,7 @@
 
   <!-- Scripts -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-  <script src="giveaway-wheel.js?v=1" defer></script>
-  <script src="script.js?v=43" defer></script>
+  <script src="script.js?v=44" defer></script>
   <script src="navbar.js?v=39" defer></script> 
   <script src="footer.js?v=36" defer></script>
   
@@ -284,7 +279,7 @@
         // 1. Render Primary (Landscape)
         finalPrimary.forEach(ev => {
           const originalIndex = data.indexOf(ev);
-          const isFilled = ev.title || ev.subtitle || ev.subtitle2 || ev.giveaway;
+          const isFilled = ev.title || ev.subtitle || ev.subtitle2;
           let linkAction = isFilled ? `onclick="openEventModal(${originalIndex})" style="cursor: pointer;"` : '';
           if (!isFilled && ev.button_url) {
              linkAction = `onclick="window.open('${ev.button_url}', '_blank')" style="cursor: pointer;"`;
@@ -307,7 +302,7 @@
                       <img src="${ev.image_url}" alt="${ev.title || 'Event Teiko Bali'}" loading="lazy" class="img-fluid w-100" style="object-fit: cover; aspect-ratio: 16/9;">
                     </div>
                     <div class="col-12 col-md-5 p-4 p-md-5">
-                      <span class="badge mb-3 px-3 py-2" style="background: #F5F5F5; color: #111111; border: 1px solid rgba(17,17,17,0.18);">Event Unggulan</span>${ev.giveaway ? ' <span class="badge mb-3 px-3 py-2" style="background:#006241;color:#fff;"><i class="bi bi-gift me-1"></i>Giveaway</span>' : ''}
+                      <span class="badge mb-3 px-3 py-2" style="background: #F5F5F5; color: #111111; border: 1px solid rgba(17,17,17,0.18);">Event Unggulan</span>
                       <h2 class="fw-bold mb-3" style="color: #111111;">${ev.title || 'Special Event'}</h2>
                       <span class="d-inline-flex align-items-center px-3 py-2 rounded-pill border mb-4" style="background-color: #f8f9fa; color: #111111; font-size: 0.9rem; font-weight: 600;">
                         <i class="bi bi-calendar-event me-2"></i>${ev.subtitle || 'Promo terbatas'}
@@ -326,7 +321,7 @@
         if (finalRegular.length > 0) {
           html += finalRegular.map((ev) => {
             const originalIndex = data.indexOf(ev);
-            const isFilled = ev.title || ev.subtitle || ev.subtitle2 || ev.giveaway;
+            const isFilled = ev.title || ev.subtitle || ev.subtitle2;
             let linkAction = isFilled ? `onclick="openEventModal(${originalIndex})"` : '';
             if (!isFilled && ev.button_url) linkAction = `onclick="window.open('${ev.button_url}', '_blank')"`;
 
@@ -345,7 +340,6 @@
                 <div class="card event-card border-0 shadow-sm h-100" ${linkAction ? `style="cursor: pointer;" ${linkAction}` : ''}>
                   <img src="${ev.image_url}" alt="${ev.title || 'Event Teiko Bali'}" class="card-img-top" loading="lazy" style="object-fit: cover; aspect-ratio: 16/9;">
                   <div class="card-body">
-                    ${ev.giveaway ? '<span class="badge mb-2" style="background:#006241;color:#fff;"><i class="bi bi-gift me-1"></i>Giveaway</span>' : ''}
                     <h5 class="card-title fw-bold mb-2">${ev.title || 'Event Menarik'}</h5>
                     <p class="card-text text-muted small"><i class="bi bi-clock me-1"></i> ${ev.subtitle || 'Promo Terbatas'}</p>
                   </div>
@@ -356,7 +350,6 @@
         }
 
         container.innerHTML = html;
-        loadGiveawayWheels(data);
 
         // Stagger animate event cards
         staggerAnimate('#events-container .anim-item, #events-container [class*="col-"]', 80, 90);
@@ -388,103 +381,8 @@
         linkContainer.style.display = 'none';
       }
 
-      const ga = document.getElementById('m-giveaway');
-      ga.innerHTML = ev.giveaway ? `
-        <form class="ga-form mt-4 p-3 rounded-3" style="background:#F2F0EB;" onsubmit="joinGiveaway(event, '${ev.id}')">
-          <h6 class="fw-bold mb-1"><i class="bi bi-gift me-1"></i> Ikut Giveaway</h6>
-          <p class="small text-muted mb-3">Isi data diri kamu. Pemenang diundi dan dihubungi lewat nomor ini.</p>
-          <input class="form-control mb-2" name="name" placeholder="Nama lengkap" required minlength="2" maxlength="80" autocomplete="name">
-          <input class="form-control mb-2" name="phone" type="tel" placeholder="No. telp / WhatsApp (08...)" required autocomplete="tel" inputmode="tel">
-          <div class="input-group mb-3"><span class="input-group-text">@</span><input class="form-control" name="instagram" placeholder="username Instagram" required maxlength="31" autocapitalize="off"></div>
-          <button class="btn w-100 rounded-pill" style="background:#006241;color:#fff;" type="submit">Daftar Giveaway</button>
-          <div class="ga-msg small mt-2" role="status"></div>
-        </form>` : '';
-
       const modal = new bootstrap.Modal(document.getElementById('eventModal'));
       modal.show();
-    }
-
-    async function joinGiveaway(e, eventId) {
-      e.preventDefault();
-      const f = e.target, msg = f.querySelector('.ga-msg'), btn = f.querySelector('button');
-      const name = f.elements.namedItem('name').value.trim().replace(/\s+/g, ' ');
-      const phone = f.elements.namedItem('phone').value.replace(/[\s.()-]/g, '');
-      const instagram = f.elements.namedItem('instagram').value.trim().replace(/^@/, '').replace(/^https?:\/\/(www\.)?instagram\.com\//i, '').replace(/\/.*$/, '');
-      const fail = t => { msg.style.color = '#c0392b'; msg.textContent = t; };
-      if (!/^\+?[0-9]{8,15}$/.test(phone)) return fail('No. telp harus 8-15 angka.');
-      if (!/^[A-Za-z0-9._]{1,30}$/.test(instagram)) return fail('Username Instagram tidak valid.');
-      btn.disabled = true; msg.textContent = '';
-      const { error } = await sb.from('giveaway_entries').insert({ event_id: eventId, name, phone, instagram });
-      btn.disabled = false;
-      if (error) {
-        if (error.code === '23505') return fail('Nomor ini sudah terdaftar di giveaway ini.');
-        if (error.code === '42501') return fail('Pendaftaran giveaway sudah ditutup.');
-        return fail('Gagal mendaftar, coba lagi.');
-      }
-      f.innerHTML = '<h6 class="fw-bold mb-1" style="color:#006241;"><i class="bi bi-check-circle me-1"></i> Kamu sudah terdaftar!</h6><p class="small text-muted mb-0">Pantau Instagram Teiko untuk pengumuman pemenang. Semoga beruntung!</p>';
-    }
-
-    // ===== Spin wheel publik: nama peserta dari giveaway_public() (tanpa no. telp) =====
-    const escHtml = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
-    const gaWheels = {}; // eventId -> { wheel, entries }
-
-    async function loadGiveawayWheels(events) {
-      const wrap = document.getElementById('giveaway-wheels');
-      const { data: { session } } = await sb.auth.getSession(); // admin login di /admin, browser yang sama
-      for (const ev of events) {
-        const { data, error } = await sb.rpc('giveaway_public', { p_event: ev.id });
-        if (error || !data || !data.length) continue;
-        wrap.insertAdjacentHTML('beforeend', `
-          <div class="ga-public text-center py-5" id="ga-${ev.id}">
-            <h6 class="text-uppercase text-secondary fw-bold" style="letter-spacing:2px; font-size:.8rem;">Undian Giveaway</h6>
-            <h2 class="fw-bold h2 mb-1">${escHtml(ev.title || 'Giveaway Teiko')}</h2>
-            <p class="text-muted ga-count"></p>
-            <div style="position:relative; max-width:420px; margin:1.5rem auto 0;">
-              <div style="position:absolute; left:50%; top:-6px; transform:translateX(-50%); border-left:16px solid transparent; border-right:16px solid transparent; border-top:30px solid #111; z-index:1;"></div>
-              <canvas width="720" height="720" style="width:100%; height:auto; display:block;"></canvas>
-            </div>
-            ${session ? `<button class="btn rounded-pill px-5 mt-4 ga-spin" style="background:#006241;color:#fff;" onclick="spinPublicWheel('${ev.id}')"><i class="bi bi-arrow-repeat me-1"></i> Spin</button>` : ''}
-            <div class="ga-winners mt-4"></div>
-          </div>`);
-        gaWheels[ev.id] = { wheel: GiveawayWheel(document.querySelector(`#ga-${ev.id} canvas`)), entries: data };
-        renderPublicWheel(ev.id);
-      }
-      if (Object.keys(gaWheels).length) setInterval(refreshPublicWheels, 20000);
-    }
-
-    function renderPublicWheel(id) {
-      const g = gaWheels[id], box = document.getElementById(`ga-${id}`);
-      const winners = g.entries.filter(e => e.is_winner);
-      box.querySelector('.ga-count').textContent = `${g.entries.length} peserta`;
-      box.querySelector('.ga-winners').innerHTML = winners.length ? `
-        <div class="d-inline-block text-start p-3 rounded-3" style="background:#FFF6DD; border:1px solid #CBA258; min-width:260px;">
-          <div style="font-size:.8rem; letter-spacing:.08em; text-transform:uppercase; color:#8a6d1f;"><i class="bi bi-trophy me-1"></i> Pemenang</div>
-          ${winners.map(w => `<div class="fw-bold" style="font-size:1.15rem;">${escHtml(w.name)} <span class="fw-normal text-muted">@${escHtml(w.instagram)}</span></div>`).join('')}
-        </div>` : '';
-      g.wheel.set(g.entries, true);
-    }
-
-    async function refreshPublicWheels() {
-      for (const id of Object.keys(gaWheels)) {
-        if (gaWheels[id].wheel.spinning) continue;
-        const { data, error } = await sb.rpc('giveaway_public', { p_event: id });
-        if (error || !data) continue;
-        gaWheels[id].entries = data;
-        renderPublicWheel(id);
-      }
-    }
-
-    function spinPublicWheel(id) {
-      const g = gaWheels[id], btn = document.querySelector(`#ga-${id} .ga-spin`);
-      btn.disabled = true;
-      const started = g.wheel.spin(async winner => {
-        const { error } = await sb.from('giveaway_entries').update({ is_winner: true }).eq('id', winner.id);
-        btn.disabled = false;
-        if (error) { alert('Gagal simpan pemenang: ' + error.message); return; }
-        winner.is_winner = true;
-        renderPublicWheel(id);
-      });
-      if (!started) btn.disabled = false;
     }
 
     // staggerAnimate ada di script.js (dipakai bareng halaman lain)

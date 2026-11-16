@@ -20,7 +20,7 @@
   <meta property="og:type" content="website">
   <meta property="og:title" content="Teiko Bali - Minuman Teh & Kopi Rasa Khas">
   <meta property="og:description" content="Teiko - Minuman teh dan kopi dengan rasa khas, harga ramah dan kualitas premium. Outlet tersebar di Denpasar, Bali.">
-  <meta property="og:image" content="https://teiko.co.id/asset/hero1.webp">
+  <meta property="og:image" content="https://teiko.co.id/asset/logo.png">
   <meta property="og:url" content="https://teiko.co.id/">
   <meta name="twitter:card" content="summary_large_image">
 
@@ -32,7 +32,7 @@
     "name": "Teiko",
     "alternateName": "Teiko Bali",
     "url": "https://teiko.co.id/",
-    "image": "https://teiko.co.id/asset/hero1.webp",
+    "image": "https://teiko.co.id/asset/logo.png",
     "logo": "https://teiko.co.id/asset/logo.png",
     "address": {
       "@type": "PostalAddress",
@@ -61,7 +61,7 @@
   <!-- Custom CSS -->
   <link rel="stylesheet" href="style.css?v=45">
   <link rel="stylesheet" href="navbar.css?v=39">
-  <link rel="stylesheet" href="theme.css?v=9">
+  <link rel="stylesheet" href="theme.css?v=10">
 
   <!-- GSAP & Lenis Smooth Scrolling -->
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
@@ -80,7 +80,7 @@
 
   <main>
     <!-- ===== PRODUCT-CENTRIC HERO ===== -->
-    <section id="hero1-section" class="hero-product">
+    <section id="hero1-section" class="hero-product" style="display:none;">
       <div class="hero-product__inner">
 
         <!-- Header: Eyebrow + Title + Description -->
@@ -102,7 +102,7 @@
 
           <!-- CENTER: Product Cup PNG -->
           <div class="hero-product__image-wrap">
-            <img id="es-coklat-cup-img" src="./asset/hero3.png" alt="Es Coklat Teiko Cup" class="hero-product__image" fetchpriority="high" loading="eager" decoding="async" width="378" height="472" />
+            <img id="es-coklat-cup-img" src="" alt="Es Coklat Teiko Cup" class="hero-product__image" fetchpriority="high" loading="eager" decoding="async" width="378" height="472" />
             <!-- CAROUSEL DOTS: Perfectly centered under the drink cup -->
             <div class="hero-product__dots hero-carousel-dots" id="hero-carousel-dots"></div>
           </div>
@@ -151,10 +151,10 @@
     </section>
 
     <!-- ===== FULL-WIDTH PROMOTIONAL BANNERS CAROUSEL (CMS: hero1, hero2, hero3) ===== -->
-    <section id="fullwidth-hero-banner-section" class="fullwidth-banner-section">
+    <section id="fullwidth-hero-banner-section" class="fullwidth-banner-section" style="display:none;">
       <div class="fullwidth-banner-track">
         <a id="hero-banner-link" href="javascript:void(0)" class="fullwidth-banner-link">
-          <img id="hero-banner-img" src="./asset/hero1.webp" alt="Teiko Promo Banner" class="fullwidth-banner-img" loading="eager" decoding="async" width="721" height="286" />
+          <img id="hero-banner-img" src="" alt="Teiko Promo Banner" class="fullwidth-banner-img" loading="eager" decoding="async" width="721" height="286" />
           <img id="hero-banner-img-overlay" src="" alt="" class="fullwidth-banner-img fullwidth-banner-img--overlay" aria-hidden="true" decoding="async" width="721" height="286" />
         </a>
       </div>
@@ -197,6 +197,9 @@
         </a>
       </div>
     </section>
+
+    <!-- ===== GIVEAWAY (diisi giveaway-public.js, tersembunyi kalau tidak ada) ===== -->
+    <section id="giveaway-section" class="ga-home-section" style="display:none;"></section>
 
     <!-- ===== CTA BLOCKS (gaya blok warna full-width: judul, 1 kalimat, tombol, foto) ===== -->
     <section class="cta-blocks">
@@ -241,7 +244,9 @@
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" defer></script>
 
   <!-- Custom JS -->
-  <script src="script.js?v=43" defer></script>
+  <script src="giveaway-wheel.js?v=1" defer></script>
+  <script src="giveaway-public.js?v=1" defer></script>
+  <script src="script.js?v=44" defer></script>
   <script src="navbar.js?v=39" defer></script>
   <script src="footer.js?v=36" defer></script>
 </body>

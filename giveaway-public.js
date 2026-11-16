@@ -1,0 +1,117 @@
+// Giveaway di homepage (index.html): form daftar selama pendaftaran dibuka,
+// roda undian berisi nama peserta (dari giveaway_public(), tanpa no. telp) dan daftar pemenang.
+// Tombol Spin cuma muncul kalau admin sedang login di browser yang sama.
+(function () {
+  const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const boards = {}; // eventId -> { wheel, entries }
+
+  async function init() {
+    const wrap = document.getElementById('giveaway-section');
+    if (!wrap || typeof sb === 'undefined') return;
+    const { data: events, error } = await sb.from('site_content')
+      .select('id,title,subtitle,subtitle2,image_url,giveaway,is_active')
+      .ilike('id', 'event_%').eq('is_active', true);
+    if (error || !events) return;
+    const { data: { session } } = await sb.auth.getSession();
+    events.sort((a, b) => b.id.localeCompare(a.id));
+    for (const ev of events) {
+      const { data: entries } = await sb.rpc('giveaway_public', { p_event: ev.id });
+      if (!ev.giveaway && !(entries && entries.length)) continue;
+      wrap.insertAdjacentHTML('beforeend', `
+        <div class="ga-home" id="ga-${ev.id}">
+          <div class="ga-home__info">
+            <span class="ga-home__kicker"><i class="bi bi-gift me-1"></i> Giveaway</span>
+            <h2>${esc(ev.title || 'Giveaway Teiko')}</h2>
+            ${ev.subtitle ? `<p class="ga-home__period"><i class="bi bi-calendar-event me-1"></i>${esc(ev.subtitle)}</p>` : ''}
+            ${ev.subtitle2 ? `<p class="ga-home__desc">${esc(ev.subtitle2).replace(/\n/g, '<br>')}</p>` : ''}
+            ${ev.giveaway ? `
+            <form class="ga-home__form" novalidate>
+              <input class="form-control" name="name" placeholder="Nama lengkap" maxlength="80" autocomplete="name">
+              <input class="form-control" name="phone" type="tel" placeholder="No. telp / WhatsApp (08...)" autocomplete="tel" inputmode="tel">
+              <div class="input-group"><span class="input-group-text">@</span><input class="form-control" name="instagram" placeholder="username Instagram" maxlength="31" autocapitalize="off"></div>
+              <button class="ga-home__btn" type="submit">Daftar Giveaway</button>
+              <div class="ga-home__msg" role="status"></div>
+            </form>` : '<p class="ga-home__closed">Pendaftaran sudah ditutup.</p>'}
+          </div>
+          <div class="ga-home__wheel">
+            <div class="ga-home__canvas"><span class="ga-home__pointer"></span><canvas width="720" height="720"></canvas></div>
+            <p class="ga-home__count"></p>
+            ${session ? '<button class="ga-home__btn ga-home__spin" type="button"><i class="bi bi-arrow-repeat me-1"></i> Spin</button>' : ''}
+            <div class="ga-home__winners"></div>
+          </div>
+        </div>`);
+      const box = document.getElementById(`ga-${ev.id}`);
+      boards[ev.id] = { wheel: GiveawayWheel(box.querySelector('canvas')), entries: entries || [] };
+      box.querySelector('form')?.addEventListener('submit', e => join(e, ev.id));
+      box.querySelector('.ga-home__spin')?.addEventListener('click', () => spin(ev.id));
+      render(ev.id);
+    }
+    if (Object.keys(boards).length) {
+      wrap.style.display = '';
+      setInterval(refresh, 20000);
+    }
+  }
+
+  function render(id) {
+    const g = boards[id], box = document.getElementById(`ga-${id}`);
+    const winners = g.entries.filter(e => e.is_winner);
+    box.querySelector('.ga-home__count').textContent = `${g.entries.length} peserta`;
+    box.querySelector('.ga-home__winners').innerHTML = winners.length ? `
+      <div class="ga-home__winbox">
+        <div class="ga-home__winlabel"><i class="bi bi-trophy me-1"></i> Pemenang</div>
+        ${winners.map(w => `<div class="ga-home__winner">${esc(w.name)} <span>@${esc(w.instagram)}</span></div>`).join('')}
+      </div>` : '';
+    g.wheel.set(g.entries, true);
+  }
+
+  async function refresh() {
+    for (const id of Object.keys(boards)) {
+      if (boards[id].wheel.spinning) continue;
+      const { data, error } = await sb.rpc('giveaway_public', { p_event: id });
+      if (error || !data) continue;
+      boards[id].entries = data;
+      render(id);
+    }
+  }
+
+  function spin(id) {
+    const g = boards[id], btn = document.querySelector(`#ga-${id} .ga-home__spin`);
+    btn.disabled = true;
+    const started = g.wheel.spin(async winner => {
+      const { error } = await sb.from('giveaway_entries').update({ is_winner: true }).eq('id', winner.id);
+      btn.disabled = false;
+      if (error) {
+        btn.insertAdjacentHTML('afterend', `<p class="ga-home__msg is-error">Gagal simpan pemenang: ${esc(error.message)}</p>`);
+        return;
+      }
+      winner.is_winner = true;
+      render(id);
+    });
+    if (!started) btn.disabled = false;
+  }
+
+  async function join(e, eventId) {
+    e.preventDefault();
+    const f = e.target, msg = f.querySelector('.ga-home__msg'), btn = f.querySelector('button');
+    const val = n => f.elements.namedItem(n).value;
+    const name = val('name').trim().replace(/\s+/g, ' ');
+    const phone = val('phone').replace(/[\s.()-]/g, '');
+    const instagram = val('instagram').trim().replace(/^@/, '').replace(/^https?:\/\/(www\.)?instagram\.com\//i, '').replace(/\/.*$/, '');
+    const fail = t => { msg.className = 'ga-home__msg is-error'; msg.textContent = t; };
+    if (name.length < 2) return fail('Isi nama lengkap.');
+    if (!/^\+?[0-9]{8,15}$/.test(phone)) return fail('No. telp harus 8-15 angka.');
+    if (!/^[A-Za-z0-9._]{1,30}$/.test(instagram)) return fail('Username Instagram tidak valid.');
+    btn.disabled = true; msg.textContent = '';
+    const { error } = await sb.from('giveaway_entries').insert({ event_id: eventId, name, phone, instagram });
+    btn.disabled = false;
+    if (error) {
+      if (error.code === '23505') return fail('Nomor ini sudah terdaftar di giveaway ini.');
+      if (error.code === '42501') return fail('Pendaftaran giveaway sudah ditutup.');
+      return fail('Gagal mendaftar, coba lagi.');
+    }
+    f.outerHTML = '<div class="ga-home__done"><i class="bi bi-check-circle me-1"></i> Kamu sudah terdaftar! Pantau Instagram Teiko untuk pengumuman pemenang.</div>';
+    refresh();
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
+})();
