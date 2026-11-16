@@ -1647,7 +1647,7 @@ window.openGiveaway = async (id) => {
       <div class="d-flex justify-content-between align-items-start mb-3 gap-3">
         <div>
           <h4 class="mb-1">Giveaway: ${escHtml(ev.title || 'Event')}</h4>
-          <p class="text-muted mb-0" style="font-size:.85rem;">Pendaftaran ${ev.giveaway ? '<strong class="text-success">dibuka</strong>' : '<strong>belum dibuka</strong> (buka di daftar event di atas)'}. Pemenang tidak ikut putaran berikutnya. Cek No. Struk sebelum spin; hapus peserta yang struknya tidak valid.</p>
+          <p class="text-muted mb-0" style="font-size:.85rem;">Pendaftaran ${ev.giveaway ? '<strong class="text-success">dibuka</strong>' : '<strong>belum dibuka</strong> (buka di daftar event di atas)'}. Pemenang tidak ikut putaran berikutnya. Cek foto struk sebelum spin (klik untuk perbesar); hapus peserta yang struknya tidak valid atau dipakai dua kali.</p>
         </div>
         <div class="d-flex gap-2 ga-hide-rec">
           <button class="btn btn-dark" onclick="toggleRecordMode(true)" title="Sembunyikan sidebar & samarkan no. telp untuk rekam layar"><i class="bi bi-record-circle me-1"></i>Mode Rekam</button>
@@ -1670,7 +1670,7 @@ window.openGiveaway = async (id) => {
             <button class="btn btn-light btn-sm ga-hide-rec" onclick="loadGiveawayEntries()"><i class="bi bi-arrow-clockwise"></i> Refresh</button>
           </div>
           <div class="admin-table-wrap" style="max-height:420px; overflow:auto;"><table class="admin-table">
-            <thead><tr><th>#</th><th>Nama</th><th>No. Telp</th><th>No. Struk</th><th>Instagram</th><th>Daftar</th><th></th></tr></thead>
+            <thead><tr><th>#</th><th>Nama</th><th>No. Telp</th><th>Struk</th><th>Instagram</th><th>Daftar</th><th></th></tr></thead>
             <tbody id="ga-tbody"></tbody>
           </table></div>
         </div>
@@ -1697,6 +1697,13 @@ window.loadGiveawayEntries = async () => {
     document.getElementById('ga-count').textContent = 'Gagal memuat: ' + err.message;
     return;
   }
+  // Foto struk di bucket privat: buat signed URL (1 jam) sekaligus untuk semua peserta.
+  const paths = gaEntries.map(e => e.receipt_image).filter(Boolean);
+  const signed = {};
+  if (paths.length) {
+    const { data } = await sb.storage.from('giveaway-receipts').createSignedUrls(paths, 3600);
+    (data || []).forEach(s => { if (s.signedUrl) signed[s.path] = s.signedUrl; });
+  }
   const pool = gaEntries.filter(e => !e.is_winner);
   document.getElementById('ga-count').textContent = `${gaEntries.length} peserta, ${pool.length} ikut spin`;
   document.getElementById('ga-tbody').innerHTML = gaEntries.map((e, i) => `
@@ -1704,7 +1711,9 @@ window.loadGiveawayEntries = async () => {
       <td>${i + 1}</td>
       <td>${escHtml(e.name)}${e.is_winner ? ' <span class="badge bg-warning text-dark">Pemenang</span>' : ''}</td>
       <td><a class="ga-full" href="https://wa.me/${escHtml(e.phone.replace(/^\+/, '').replace(/^0/, '62'))}" target="_blank" rel="noopener">${escHtml(e.phone)}</a><span class="ga-mask">${escHtml(maskPhone(e.phone))}</span></td>
-      <td style="font-family:monospace;">${escHtml(e.receipt || '-')}</td>
+      <td>${signed[e.receipt_image]
+        ? `<a href="${escHtml(signed[e.receipt_image])}" target="_blank" rel="noopener" title="Buka foto struk"><img src="${escHtml(signed[e.receipt_image])}" alt="Struk" style="width:48px;height:48px;object-fit:cover;border-radius:6px;"></a>`
+        : `<span style="font-family:monospace;">${escHtml(e.receipt || '-')}</span>`}</td>
       <td><a href="https://instagram.com/${escHtml(e.instagram)}" target="_blank" rel="noopener">@${escHtml(e.instagram)}</a></td>
       <td style="white-space:nowrap; font-size:.8rem;">${new Date(e.created_at).toLocaleString('id-ID', { dateStyle: 'short', timeStyle: 'short' })}</td>
       <td style="white-space:nowrap;" class="ga-hide-rec">
