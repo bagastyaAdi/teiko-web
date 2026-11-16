@@ -15,13 +15,15 @@
   let dialog, currentEvent = null;
 
   const cardHtml = ev => `
-    <div class="home-events__card">
-      <a href="event"><img src="${esc(ev.image_url)}" alt="${esc(ev.title || 'Event Teiko')}" loading="lazy"></a>
+    <a class="home-events__card home-events__card--wide" href="event#${esc(ev.id)}">
+      <img src="${esc(ev.image_url)}" alt="${esc(ev.title || 'Event Teiko')}" loading="lazy">
       <div class="home-events__body">
-        <h3><a href="event">${esc(ev.title || 'Event Teiko')}</a></h3>
-        ${ev.subtitle ? `<p><i class="bi bi-clock me-1"></i>${esc(ev.subtitle)}</p>` : ''}
+        <h3>${esc(ev.title || 'Event Teiko')}</h3>
+        ${ev.subtitle ? `<p class="home-events__period"><i class="bi bi-calendar-event me-1"></i>${esc(ev.subtitle)}</p>` : ''}
+        ${ev.subtitle2 ? `<p class="home-events__desc">${esc(ev.subtitle2).replace(/\n/g, '<br>')}</p>` : ''}
+        <span class="home-events__cta">Lihat Detail <i class="bi bi-arrow-right ms-1"></i></span>
       </div>
-    </div>`;
+    </a>`;
 
   async function init() {
     const box = document.getElementById('home-events');
@@ -49,10 +51,14 @@
             <h2>${esc(ev.title || 'Giveaway Teiko')}</h2>
             ${ev.subtitle ? `<p class="ga-home__period"><i class="bi bi-calendar-event me-1"></i>${esc(ev.subtitle)}</p>` : ''}
             ${ev.subtitle2 ? `<p class="ga-home__desc">${esc(ev.subtitle2).replace(/\n/g, '<br>')}</p>` : ''}
-            <a class="ga-home__more" href="event">Lihat detail &amp; syarat ketentuan <i class="bi bi-arrow-right"></i></a>
+            <a class="ga-home__more" href="event#${esc(ev.id)}">Lihat detail &amp; syarat ketentuan <i class="bi bi-arrow-right"></i></a>
             <div class="ga-home__action">${ev.giveaway
               ? `<button class="ga-home__btn" type="button" data-open="${ev.id}">Daftar Giveaway</button>`
-              : '<p class="ga-home__closed">Pendaftaran belum dibuka.</p>'}</div>
+              : `<div class="ga-home__closed">
+                  <strong><i class="bi bi-hourglass-split me-1"></i> Pendaftaran belum dibuka</strong>
+                  <span>Pendaftaran giveaway dibuka ${ev.subtitle ? `selama periode event (${esc(ev.subtitle)})` : 'segera'}. Tombol Daftar akan muncul di sini saat pendaftaran dibuka.</span>
+                  <span>Pantau info terbaru di Instagram <a href="https://www.instagram.com/te.ko_official" target="_blank" rel="noopener">@te.ko_official</a>.</span>
+                </div>`}</div>
           </div>
           <div class="ga-home__wheel">
             <div class="ga-home__canvas"><span class="ga-home__pointer"></span><canvas width="720" height="720"></canvas></div>

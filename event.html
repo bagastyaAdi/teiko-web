@@ -14,7 +14,7 @@
   
   <link rel="stylesheet" href="style.css?v=45">
   <link rel="stylesheet" href="navbar.css?v=39">
-  <link rel="stylesheet" href="theme.css?v=9">
+  <link rel="stylesheet" href="theme.css?v=11">
 
   <!-- GSAP & Lenis Smooth Scrolling -->
   <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
@@ -288,7 +288,7 @@
 
           if (!isFilled) {
             html += `
-              <div class="col-12 mb-4 anim-item">
+              <div class="col-12 mb-4 anim-item ev-anchor" id="${ev.id}">
                 <div class="card event-card border-0 shadow-sm overflow-hidden" ${linkAction}>
                   <img src="${ev.image_url}" alt="${ev.title || 'Event Teiko Bali'}" loading="lazy" class="img-fluid w-100" style="object-fit: cover; aspect-ratio: 16/9;">
                 </div>
@@ -296,7 +296,7 @@
             `;
           } else {
             html += `
-              <div class="col-12 mb-4 anim-item">
+              <div class="col-12 mb-4 anim-item ev-anchor" id="${ev.id}">
                 <div class="card event-card border-0 shadow-sm overflow-hidden" ${linkAction}>
                   <div class="row g-0 align-items-center">
                     <div class="col-12 col-md-7">
@@ -328,7 +328,7 @@
 
             if (!isFilled) {
                return `
-                 <div class="col-12 col-md-6 col-lg-4 mb-4">
+                 <div class="col-12 col-md-6 col-lg-4 mb-4 ev-anchor" id="${ev.id}">
                    <div class="card event-card border-0 shadow-sm h-100 overflow-hidden" ${linkAction ? `style="cursor: pointer;" ${linkAction}` : ''}>
                      <img src="${ev.image_url}" alt="${ev.title || 'Event Teiko Bali'}" class="card-img-top h-100" loading="lazy" style="object-fit: cover; aspect-ratio: 16/9;">
                    </div>
@@ -337,7 +337,7 @@
             }
 
             return `
-              <div class="col-12 col-md-6 col-lg-4 mb-4">
+              <div class="col-12 col-md-6 col-lg-4 mb-4 ev-anchor" id="${ev.id}">
                 <div class="card event-card border-0 shadow-sm h-100" ${linkAction ? `style="cursor: pointer;" ${linkAction}` : ''}>
                   <img src="${ev.image_url}" alt="${ev.title || 'Event Teiko Bali'}" class="card-img-top" loading="lazy" style="object-fit: cover; aspect-ratio: 16/9;">
                   <div class="card-body">
@@ -354,6 +354,11 @@
 
         // Stagger animate event cards
         staggerAnimate('#events-container .anim-item, #events-container [class*="col-"]', 80, 90);
+
+        // Datang dari homepage (event#event_xxx): event dirender async, jadi scroll manual ke kartunya
+        const target = location.hash && document.getElementById(decodeURIComponent(location.hash.slice(1)));
+        // ponytail: tunggu 600ms sampai animasi/konten di atas selesai bergeser; naikkan kalau masih meleset
+        if (target) setTimeout(() => target.scrollIntoView({ behavior: 'smooth', block: 'start' }), 600);
       } catch (err) {
         console.error('Error loading events:', err);
         container.innerHTML = `<div class="col-12 text-center text-danger">Gagal memuat event. Silakan coba lagi nanti.</div>`;
