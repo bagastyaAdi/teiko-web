@@ -1647,7 +1647,7 @@ window.openGiveaway = async (id) => {
       <div class="d-flex justify-content-between align-items-start mb-3 gap-3">
         <div>
           <h4 class="mb-1">Giveaway: ${escHtml(ev.title || 'Event')}</h4>
-          <p class="text-muted mb-0" style="font-size:.85rem;">Pendaftaran ${ev.giveaway ? '<strong class="text-success">dibuka</strong>' : '<strong>ditutup</strong> (klik ikon kado di kartu event untuk membuka)'}. Pemenang tidak ikut putaran berikutnya.</p>
+          <p class="text-muted mb-0" style="font-size:.85rem;">Pendaftaran ${ev.giveaway ? '<strong class="text-success">dibuka</strong>' : '<strong>ditutup</strong> (klik ikon kado di kartu event untuk membuka)'}. Pemenang tidak ikut putaran berikutnya. Cek No. Struk sebelum spin; hapus peserta yang struknya tidak valid.</p>
         </div>
         <div class="d-flex gap-2 ga-hide-rec">
           <button class="btn btn-dark" onclick="toggleRecordMode(true)" title="Sembunyikan sidebar & samarkan no. telp untuk rekam layar"><i class="bi bi-record-circle me-1"></i>Mode Rekam</button>
@@ -1670,7 +1670,7 @@ window.openGiveaway = async (id) => {
             <button class="btn btn-light btn-sm ga-hide-rec" onclick="loadGiveawayEntries()"><i class="bi bi-arrow-clockwise"></i> Refresh</button>
           </div>
           <div class="admin-table-wrap" style="max-height:420px; overflow:auto;"><table class="admin-table">
-            <thead><tr><th>#</th><th>Nama</th><th>No. Telp</th><th>Instagram</th><th>Daftar</th><th></th></tr></thead>
+            <thead><tr><th>#</th><th>Nama</th><th>No. Telp</th><th>No. Struk</th><th>Instagram</th><th>Daftar</th><th></th></tr></thead>
             <tbody id="ga-tbody"></tbody>
           </table></div>
         </div>
@@ -1704,13 +1704,14 @@ window.loadGiveawayEntries = async () => {
       <td>${i + 1}</td>
       <td>${escHtml(e.name)}${e.is_winner ? ' <span class="badge bg-warning text-dark">Pemenang</span>' : ''}</td>
       <td><a class="ga-full" href="https://wa.me/${escHtml(e.phone.replace(/^\+/, '').replace(/^0/, '62'))}" target="_blank" rel="noopener">${escHtml(e.phone)}</a><span class="ga-mask">${escHtml(maskPhone(e.phone))}</span></td>
+      <td style="font-family:monospace;">${escHtml(e.receipt || '-')}</td>
       <td><a href="https://instagram.com/${escHtml(e.instagram)}" target="_blank" rel="noopener">@${escHtml(e.instagram)}</a></td>
       <td style="white-space:nowrap; font-size:.8rem;">${new Date(e.created_at).toLocaleString('id-ID', { dateStyle: 'short', timeStyle: 'short' })}</td>
       <td style="white-space:nowrap;" class="ga-hide-rec">
         ${e.is_winner ? `<button class="btn-icon" onclick="setGiveawayWinner('${e.id}', false)" title="Batalkan pemenang"><i class="bi bi-arrow-counterclockwise"></i></button>` : ''}
         <button class="btn-icon btn-icon-danger" onclick="deleteGiveawayEntry('${e.id}')" title="Hapus peserta"><i class="bi bi-trash"></i></button>
       </td>
-    </tr>`).join('') || '<tr><td colspan="6" class="text-center text-muted py-4">Belum ada peserta.</td></tr>';
+    </tr>`).join('') || '<tr><td colspan="7" class="text-center text-muted py-4">Belum ada peserta.</td></tr>';
   gaWheel.set(gaEntries, true);
 };
 

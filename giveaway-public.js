@@ -80,6 +80,8 @@
                   <input class="form-control" name="name" placeholder="Nama lengkap" maxlength="80" autocomplete="name" required></label>
                 <label class="ga-home__label"><span>No. telp / WhatsApp <span class="ga-home__req">*</span></span>
                   <input class="form-control" name="phone" type="tel" placeholder="08..." autocomplete="tel" inputmode="tel" required></label>
+                <label class="ga-home__label"><span>No. Struk <span class="ga-home__req">*</span></span>
+                  <input class="form-control" name="receipt" placeholder="Nomor di struk belanja Teiko" maxlength="40" autocapitalize="characters" required></label>
                 <label class="ga-home__label"><span>Instagram <span class="ga-home__req">*</span></span>
                   <div class="input-group"><span class="input-group-text">@</span><input class="form-control" name="instagram" placeholder="username" maxlength="31" autocapitalize="off" required></div></label>
                 <button class="ga-home__btn" type="submit">Kirim</button>
@@ -131,16 +133,18 @@
     const val = n => f.elements.namedItem(n).value;
     const name = val('name').trim().replace(/\s+/g, ' ');
     const phone = val('phone').replace(/[\s.()-]/g, '');
+    const receipt = val('receipt').trim().replace(/\s+/g, '').toUpperCase();
     const instagram = val('instagram').trim().replace(/^@/, '').replace(/^https?:\/\/(www\.)?instagram\.com\//i, '').replace(/\/.*$/, '');
     const fail = t => { msg.className = 'ga-home__msg is-error'; msg.textContent = t; };
     if (name.length < 2) return fail('Isi nama lengkap.');
     if (!/^\+?[0-9]{8,15}$/.test(phone)) return fail('No. telp harus 8-15 angka.');
+    if (!/^[A-Za-z0-9/._-]{3,40}$/.test(receipt)) return fail('Isi No. Struk sesuai yang tertera di struk.');
     if (!/^[A-Za-z0-9._]{1,30}$/.test(instagram)) return fail('Username Instagram tidak valid.');
     btn.disabled = true; msg.textContent = '';
-    const { error } = await sb.from('giveaway_entries').insert({ event_id: eventId, name, phone, instagram });
+    const { error } = await sb.from('giveaway_entries').insert({ event_id: eventId, name, phone, instagram, receipt });
     btn.disabled = false;
     if (error) {
-      if (error.code === '23505') return fail('Nomor ini sudah terdaftar di giveaway ini.');
+      if (error.code === '23505') return fail(/receipt/.test(error.message) ? 'No. Struk ini sudah dipakai.' : 'Nomor telp ini sudah terdaftar di giveaway ini.');
       if (error.code === '42501') return fail('Pendaftaran giveaway sudah ditutup.');
       return fail('Gagal mendaftar, coba lagi.');
     }
