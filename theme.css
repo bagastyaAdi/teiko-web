@@ -462,7 +462,7 @@ html, body { overflow-x: clip !important; }
 /* Mobile: isi event & giveaway rata tengah (tombol Daftar, link detail, periode, dll) */
 @media (max-width: 767px) {
   .ev-ga-row .ga-home__info { text-align: center; }
-  .home-events__head { justify-content: center; text-align: center; }
+
 }
 /* Info "Pendaftaran belum dibuka" (giveaway belum dibuka admin) */
 .ga-home__closed { display: grid; gap: .35rem; background: #fff; border: 1px dashed rgba(0,0,0,.2); border-radius: 12px; padding: 1rem 1.25rem; font-weight: 400; font-size: .9rem; max-width: 460px; }
@@ -477,3 +477,14 @@ html, body { overflow-x: clip !important; }
   .ev-ga-row:not(.is-open) .ga-home__wheel { display: none; }
 }
 .ga-home__info h2 { font-weight: 700; }
+/* HP (mis. iPhone XR 414px): kartu Event Terbaru rata kiri, judul section sejajar kartu */
+@media (max-width: 767px) {
+  .home-events__head { justify-content: space-between; align-items: center; flex-wrap: nowrap; margin-bottom: 1rem; }
+  .home-events__head h2 { font-size: 1.35rem; }
+  .home-events__all { font-size: .85rem; white-space: nowrap; }
+  .home-events__card--wide img { height: auto; }
+  .home-events__card--wide h3 { font-size: 1.4rem; margin-bottom: .75rem; }
+  .home-events__card--wide .home-events__period { font-size: .8rem; padding: .35rem .85rem; margin-bottom: .75rem; }
+  .home-events__card--wide .home-events__desc { font-size: .9rem; margin-bottom: 1rem !important; }
+  .home-events__cta { font-size: .9rem; padding: .5rem 1.25rem; }
+}
