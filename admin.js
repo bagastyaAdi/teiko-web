@@ -1781,15 +1781,25 @@ window.spinGiveaway = () => {
   document.getElementById('ga-winner').innerHTML = '';
 };
 
-async function announceGiveawayWinner(e) {
+// Hasil spin belum tersimpan: admin harus klik "Sahkan pemenang" (spin percobaan tidak bocor ke website).
+function announceGiveawayWinner(e) {
   document.getElementById('ga-winner').innerHTML = `
     <div class="p-3 rounded-3" style="background:#FFF6DD; border:1px solid #CBA258;">
-      <div style="font-size:.8rem; letter-spacing:.08em; text-transform:uppercase; color:#8a6d1f;">Pemenang</div>
+      <div style="font-size:.8rem; letter-spacing:.08em; text-transform:uppercase; color:#8a6d1f;">Hasil spin</div>
       <div style="font-size:1.5rem; font-weight:700;">${escHtml(e.name)}</div>
       <div><span class="ga-full">${escHtml(e.phone)}</span><span class="ga-mask">${escHtml(maskPhone(e.phone))}</span> &middot; @${escHtml(e.instagram)}</div>
+      <div class="d-flex gap-2 justify-content-center mt-3">
+        <button class="btn btn-success btn-sm" onclick="confirmGiveawayWinner('${e.id}')"><i class="bi bi-trophy me-1"></i>Sahkan pemenang</button>
+        <button class="btn btn-light btn-sm" onclick="document.getElementById('ga-winner').innerHTML=''">Batal / spin ulang</button>
+      </div>
     </div>`;
-  await setGiveawayWinner(e.id, true, true);
 }
+
+window.confirmGiveawayWinner = async (id) => {
+  await setGiveawayWinner(id, true, true);
+  const box = document.querySelector('#ga-winner .d-flex');
+  if (box) box.outerHTML = '<div class="mt-2 fw-semibold text-success"><i class="bi bi-check-circle me-1"></i>Pemenang disahkan, tampil di website.</div>';
+};
 
 window.setGiveawayWinner = async (id, on, silent) => {
   try {

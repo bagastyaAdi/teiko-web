@@ -410,3 +410,11 @@ html, body { overflow-x: clip !important; }
 .home-events__card button.home-events__join { border: 0; }
 .home-events__form { margin-top: .85rem; max-width: none; }
 .home-events__card .ga-home__done { margin-top: .85rem; background: #F2F0EB; font-size: .9rem; }
+
+/* Event + giveaway dalam satu baris: kartu event (form di dalam) | roda undian */
+.ev-ga-row { max-width: 1100px; margin: 0 auto 1.5rem; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 2rem; align-items: center; background: var(--sb-warm); border-radius: 16px; padding: 1.5rem; }
+.ev-ga-row .home-events__card { align-self: start; }
+.ev-ga-row .ga-home__canvas { max-width: 380px; }
+.home-events__desc { margin-top: .5rem !important; }
+.home-events__grid { margin-top: 1.5rem; }
+@media (max-width: 767px) { .ev-ga-row { grid-template-columns: 1fr; padding: 1rem; gap: 1.5rem; } }

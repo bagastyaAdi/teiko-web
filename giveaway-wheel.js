@@ -5,7 +5,7 @@ window.GiveawayWheel = function (canvas) {
   const COLORS = ['#006241', '#D4E9E2', '#1E3932', '#FFFFFF', '#00754A', '#CBA258'];
   const DARK_TEXT = ['#D4E9E2', '#FFFFFF', '#CBA258'];
   const ctx = canvas.getContext('2d');
-  let angle = 0, spinning = false, pool = [];
+  let angle = 0, spinning = false, pool = [], total = 0;
 
   function draw() {
     const R = canvas.width / 2;
@@ -14,7 +14,7 @@ window.GiveawayWheel = function (canvas) {
       ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(R, R, R - 4, 0, TAU); ctx.fill();
       ctx.strokeStyle = '#D4E9E2'; ctx.lineWidth = 6; ctx.stroke();
       ctx.fillStyle = '#777'; ctx.font = '600 30px Figtree, sans-serif'; ctx.textAlign = 'center';
-      ctx.fillText('Belum ada peserta', R, R + 10);
+      ctx.fillText(total ? 'Semua peserta sudah menang' : 'Belum ada peserta', R, R + 10);
       return;
     }
     const seg = TAU / pool.length;
@@ -42,7 +42,7 @@ window.GiveawayWheel = function (canvas) {
     get spinning() { return spinning; },
     // entries: [{name, is_winner, ...}]; pemenang tidak ikut roda.
     set(entries, resetAngle) {
-      pool = entries.filter(e => !e.is_winner);
+      pool = entries.filter(e => !e.is_winner); total = entries.length;
       if (resetAngle) angle = 0;
       if (!spinning) draw();
     },

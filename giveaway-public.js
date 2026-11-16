@@ -1,115 +1,108 @@
-// Event Terbaru + Giveaway di homepage (index.html). Form daftar ada di kartu event (tombol Daftar);
-// roda undian berisi nama peserta (dari giveaway_public(), tanpa no. telp) dan daftar pemenang.
-// Spin hanya dari admin.html; di website roda cuma ditonton (update tiap 20 detik).
+// Section "Event & Giveaway" di homepage (index.html), satu section saja:
+// - event dengan giveaway: kartu event (tombol Daftar membuka form di dalam kartu) sejajar dengan roda undian;
+// - event lain: kartu biasa di bawahnya.
+// Roda berisi nama peserta dari giveaway_public() (tanpa no. telp/struk). Spin hanya dari admin.html;
+// di website roda cuma ditonton (update tiap 20 detik, dan langsung setelah seseorang daftar).
 (function () {
   const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const boards = {}; // eventId -> { wheel, entries }
 
+  const formHtml = id => `
+    <button class="home-events__join" type="button" data-open="${id}">Daftar</button>
+    <form class="ga-home__form home-events__form" id="gaform-${id}" novalidate hidden>
+      <p class="ga-home__note">Semua data wajib diisi <span class="ga-home__req">*</span></p>
+      <label class="ga-home__label"><span>Nama lengkap <span class="ga-home__req">*</span></span>
+        <input class="form-control" name="name" placeholder="Nama lengkap" maxlength="80" autocomplete="name" required></label>
+      <label class="ga-home__label"><span>No. telp / WhatsApp <span class="ga-home__req">*</span></span>
+        <input class="form-control" name="phone" type="tel" placeholder="08..." autocomplete="tel" inputmode="tel" required></label>
+      <label class="ga-home__label"><span>No. Struk <span class="ga-home__req">*</span></span>
+        <input class="form-control" name="receipt" placeholder="Nomor di struk belanja Teiko" maxlength="40" autocapitalize="characters" required></label>
+      <label class="ga-home__label"><span>Instagram <span class="ga-home__req">*</span></span>
+        <div class="input-group"><span class="input-group-text">@</span><input class="form-control" name="instagram" placeholder="username" maxlength="31" autocapitalize="off" required></div></label>
+      <button class="ga-home__btn" type="submit">Kirim</button>
+      <div class="ga-home__msg" role="status"></div>
+    </form>`;
+
+  const cardHtml = (ev, withForm) => `
+    <div class="home-events__card">
+      <a href="event"><img src="${esc(ev.image_url)}" alt="${esc(ev.title || 'Event Teiko')}" loading="lazy"></a>
+      <div class="home-events__body">
+        ${withForm || ev.giveaway ? '<span class="home-events__tag"><i class="bi bi-gift me-1"></i>Giveaway</span>' : ''}
+        <h3><a href="event">${esc(ev.title || 'Event Teiko')}</a></h3>
+        ${ev.subtitle ? `<p><i class="bi bi-clock me-1"></i>${esc(ev.subtitle)}</p>` : ''}
+        ${ev.subtitle2 && withForm ? `<p class="home-events__desc">${esc(ev.subtitle2).replace(/\n/g, '<br>')}</p>` : ''}
+        ${withForm ? (ev.giveaway ? formHtml(ev.id) : '<p class="ga-home__closed">Pendaftaran sudah ditutup.</p>') : ''}
+      </div>
+    </div>`;
+
   async function init() {
-    const wrap = document.getElementById('giveaway-section');
-    if (!wrap || typeof sb === 'undefined') return;
+    const box = document.getElementById('home-events');
+    if (!box || typeof sb === 'undefined') return;
     const { data: events, error } = await sb.from('site_content')
       .select('id,title,subtitle,subtitle2,image_url,giveaway,is_active')
       .ilike('id', 'event_%').eq('is_active', true);
-    if (error || !events) return;
+    if (error || !events || !events.length) return;
     events.sort((a, b) => b.id.localeCompare(a.id));
-    renderEvents(events);
+
+    // Event yang punya giveaway (dibuka, atau sudah ada peserta/pemenang) dapat baris kartu + roda.
+    const withGa = [], others = [];
     for (const ev of events) {
       const { data: entries } = await sb.rpc('giveaway_public', { p_event: ev.id });
-      if (!ev.giveaway && !(entries && entries.length)) continue;
-      wrap.insertAdjacentHTML('beforeend', `
-        <div class="ga-home" id="ga-${ev.id}">
-          <div class="ga-home__info">
-            <span class="ga-home__kicker"><i class="bi bi-gift me-1"></i> Giveaway</span>
-            <h2>${esc(ev.title || 'Giveaway Teiko')}</h2>
-            ${ev.subtitle ? `<p class="ga-home__period"><i class="bi bi-calendar-event me-1"></i>${esc(ev.subtitle)}</p>` : ''}
-            ${ev.subtitle2 ? `<p class="ga-home__desc">${esc(ev.subtitle2).replace(/\n/g, '<br>')}</p>` : ''}
-            ${ev.giveaway
-              ? `<button class="ga-home__btn" type="button" data-open="${ev.id}">Daftar Giveaway</button>`
-              : '<p class="ga-home__closed">Pendaftaran sudah ditutup.</p>'}
-          </div>
+      if (ev.giveaway || (entries && entries.length)) withGa.push({ ev, entries: entries || [] });
+      else if (ev.image_url) others.push(ev);
+    }
+    if (!withGa.length && !others.length) return;
+
+    box.innerHTML = `
+      <div class="home-events__head">
+        <h2>${withGa.length ? 'Event &amp; Giveaway' : 'Event Terbaru'}</h2>
+        <a href="event" class="home-events__all">Lihat semua event <i class="bi bi-arrow-right"></i></a>
+      </div>
+      ${withGa.map(({ ev }) => `
+        <div class="ev-ga-row" id="ga-${ev.id}">
+          ${cardHtml(ev, true)}
           <div class="ga-home__wheel">
             <div class="ga-home__canvas"><span class="ga-home__pointer"></span><canvas width="720" height="720"></canvas></div>
             <p class="ga-home__count"></p>
             <div class="ga-home__winners"></div>
             <div class="ga-home__video"></div>
           </div>
-        </div>`);
-      const box = document.getElementById(`ga-${ev.id}`);
-      boards[ev.id] = { wheel: GiveawayWheel(box.querySelector('canvas')), entries: entries || [] };
-      box.querySelector('[data-open]')?.addEventListener('click', () => openForm(ev.id));
+        </div>`).join('')}
+      ${others.length ? `<div class="home-events__grid">${others.slice(0, 3).map(ev => cardHtml(ev, false)).join('')}</div>` : ''}`;
+
+    withGa.forEach(({ ev, entries }) => {
+      boards[ev.id] = { wheel: GiveawayWheel(document.querySelector(`#ga-${ev.id} canvas`)), entries };
       render(ev.id);
-    }
+    });
+    box.querySelectorAll('[data-open]').forEach(btn => btn.addEventListener('click', () => openForm(btn.dataset.open)));
+    box.querySelectorAll('form').forEach(f => f.addEventListener('submit', e => join(e, f.id.slice(7))));
+    box.style.display = '';
+
     const ids = Object.keys(boards);
     if (ids.length) {
       const { data: vids } = await sb.from('site_content').select('id,image_url').in('id', ids.map(id => 'gavideo_' + id));
       (vids || []).forEach(v => {
-        const box = document.querySelector(`#ga-${v.id.slice(8)} .ga-home__video`);
-        if (box && v.image_url) box.innerHTML = `<p class="ga-home__vlabel"><i class="bi bi-camera-video me-1"></i> Video hasil undian</p><video src="${esc(v.image_url)}" controls playsinline preload="metadata"></video>`;
+        const slot = document.querySelector(`#ga-${v.id.slice(8)} .ga-home__video`);
+        if (slot && v.image_url) slot.innerHTML = `<p class="ga-home__vlabel"><i class="bi bi-camera-video me-1"></i> Video hasil undian</p><video src="${esc(v.image_url)}" controls playsinline preload="metadata"></video>`;
       });
-    }
-    if (ids.length) {
-      wrap.style.display = '';
       setInterval(refresh, 20000);
     }
   }
 
-  // Ringkasan "Event Terbaru" di homepage: maksimal 3 kartu, klik menuju halaman Event.
-  function renderEvents(events) {
-    const box = document.getElementById('home-events');
-    // Event giveaway yang masih buka didahulukan supaya kartunya (dan form daftarnya) selalu tampil.
-    const list = events.filter(ev => ev.image_url).sort((a, b) => (b.giveaway ? 1 : 0) - (a.giveaway ? 1 : 0)).slice(0, 3);
-    if (!box || !list.length) return;
-    box.innerHTML = `
-      <div class="home-events__head">
-        <h2>Event Terbaru</h2>
-        <a href="event" class="home-events__all">Lihat semua event <i class="bi bi-arrow-right"></i></a>
-      </div>
-      <div class="home-events__grid">
-        ${list.map(ev => `
-          <div class="home-events__card">
-            <a href="event"><img src="${esc(ev.image_url)}" alt="${esc(ev.title || 'Event Teiko')}" loading="lazy"></a>
-            <div class="home-events__body">
-              ${ev.giveaway ? '<span class="home-events__tag"><i class="bi bi-gift me-1"></i>Giveaway</span>' : ''}
-              <h3><a href="event">${esc(ev.title || 'Event Teiko')}</a></h3>
-              ${ev.subtitle ? `<p><i class="bi bi-clock me-1"></i>${esc(ev.subtitle)}</p>` : ''}
-              ${ev.giveaway ? `<button class="home-events__join" type="button" data-open="${ev.id}">Daftar</button>
-              <form class="ga-home__form home-events__form" id="gaform-${ev.id}" novalidate hidden>
-                <p class="ga-home__note">Semua data wajib diisi <span class="ga-home__req">*</span></p>
-                <label class="ga-home__label"><span>Nama lengkap <span class="ga-home__req">*</span></span>
-                  <input class="form-control" name="name" placeholder="Nama lengkap" maxlength="80" autocomplete="name" required></label>
-                <label class="ga-home__label"><span>No. telp / WhatsApp <span class="ga-home__req">*</span></span>
-                  <input class="form-control" name="phone" type="tel" placeholder="08..." autocomplete="tel" inputmode="tel" required></label>
-                <label class="ga-home__label"><span>No. Struk <span class="ga-home__req">*</span></span>
-                  <input class="form-control" name="receipt" placeholder="Nomor di struk belanja Teiko" maxlength="40" autocapitalize="characters" required></label>
-                <label class="ga-home__label"><span>Instagram <span class="ga-home__req">*</span></span>
-                  <div class="input-group"><span class="input-group-text">@</span><input class="form-control" name="instagram" placeholder="username" maxlength="31" autocapitalize="off" required></div></label>
-                <button class="ga-home__btn" type="submit">Kirim</button>
-                <div class="ga-home__msg" role="status"></div>
-              </form>` : ''}
-            </div>
-          </div>`).join('')}
-      </div>`;
-    box.querySelectorAll('[data-open]').forEach(btn => btn.addEventListener('click', () => openForm(btn.dataset.open)));
-    box.querySelectorAll('form').forEach(f => f.addEventListener('submit', e => join(e, f.id.slice(7))));
-    box.style.display = '';
-  }
-
-  // Buka form daftar di dalam kartu event (tombol "Daftar" di kartu atau di bagian giveaway).
+  // Tombol "Daftar" membuka form di dalam kartu.
   function openForm(id) {
     const f = document.getElementById('gaform-' + id);
     if (!f) return;
     f.hidden = false;
-    f.previousElementSibling?.matches('.home-events__join') && (f.previousElementSibling.hidden = true);
-    f.closest('.home-events__card').scrollIntoView({ behavior: 'smooth', block: 'center' });
-    f.elements.namedItem('name').focus({ preventScroll: true });
+    f.previousElementSibling.hidden = true;
+    f.elements.namedItem('name').focus();
   }
 
   function render(id) {
-    const g = boards[id], box = document.getElementById(`ga-${id}`);
+    const g = boards[id], row = document.getElementById(`ga-${id}`);
     const winners = g.entries.filter(e => e.is_winner);
-    box.querySelector('.ga-home__count').textContent = `${g.entries.length} peserta`;
-    box.querySelector('.ga-home__winners').innerHTML = winners.length ? `
+    row.querySelector('.ga-home__count').textContent = `${g.entries.length} peserta`;
+    row.querySelector('.ga-home__winners').innerHTML = winners.length ? `
       <div class="ga-home__winbox">
         <div class="ga-home__winlabel"><i class="bi bi-trophy me-1"></i> Pemenang</div>
         ${winners.map(w => `<div class="ga-home__winner">${esc(w.name)} <span>@${esc(w.instagram)}</span></div>`).join('')}
@@ -149,9 +142,7 @@
       return fail('Gagal mendaftar, coba lagi.');
     }
     f.outerHTML = `<div class="ga-home__done"><i class="bi bi-check-circle me-1"></i> ${esc(name)}, kamu sudah terdaftar! Namamu sudah masuk roda undian.</div>`;
-    document.querySelector(`#ga-${eventId} [data-open]`)?.remove();
     await refresh();
-    document.getElementById(`ga-${eventId}`)?.scrollIntoView({ behavior: 'smooth', block: 'center' });
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init); else init();
