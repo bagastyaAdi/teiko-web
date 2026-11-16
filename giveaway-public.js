@@ -52,7 +52,7 @@
             <a class="ga-home__more" href="event">Lihat detail &amp; syarat ketentuan <i class="bi bi-arrow-right"></i></a>
             <div class="ga-home__action">${ev.giveaway
               ? `<button class="ga-home__btn" type="button" data-open="${ev.id}">Daftar Giveaway</button>`
-              : '<p class="ga-home__closed">Pendaftaran sudah ditutup.</p>'}</div>
+              : '<p class="ga-home__closed">Pendaftaran belum dibuka.</p>'}</div>
           </div>
           <div class="ga-home__wheel">
             <div class="ga-home__canvas"><span class="ga-home__pointer"></span><canvas width="720" height="720"></canvas></div>
@@ -159,7 +159,7 @@
     btn.disabled = false;
     if (error) {
       if (error.code === '23505') return fail(/receipt/.test(error.message) ? 'No. Struk ini sudah dipakai.' : 'Nomor telp ini sudah terdaftar di giveaway ini.');
-      if (error.code === '42501') return fail('Pendaftaran giveaway sudah ditutup.');
+      if (error.code === '42501') return fail('Pendaftaran giveaway belum dibuka.');
       return fail('Gagal mendaftar, coba lagi.');
     }
     dialog.close();

@@ -1603,7 +1603,7 @@ window.toggleEventGiveaway = async (id, on) => {
   try {
     const { error } = await sb.from('site_content').update({ giveaway: on }).eq('id', id);
     if (error) throw error;
-    showToast(on ? 'Pendaftaran giveaway dibuka.' : 'Pendaftaran giveaway ditutup.');
+    showToast(on ? 'Pendaftaran giveaway dibuka.' : 'Pendaftaran giveaway belum dibuka.');
     await loadContent();
     renderGiveawayView();
   } catch (err) {
@@ -1632,7 +1632,7 @@ window.renderGiveawayView = () => {
     <tbody>${eventsAdminData.map(ev => `<tr>
       <td><strong>${escHtml(ev.title || 'Event tanpa judul')}</strong><div class="text-muted" style="font-size:.8rem;">${escHtml(ev.subtitle || '')}</div></td>
       <td><span class="section-card-v2-badge ${ev.is_active !== false ? 'is-active' : 'is-off'}">${ev.is_active !== false ? 'Aktif' : 'Off'}</span></td>
-      <td><button class="btn btn-sm ${ev.giveaway ? 'btn-success' : 'btn-outline-secondary'}" onclick="toggleEventGiveaway('${ev.id}', ${!ev.giveaway})"><i class="bi ${ev.giveaway ? 'bi-gift-fill' : 'bi-gift'} me-1"></i>${ev.giveaway ? 'Dibuka (klik untuk tutup)' : 'Ditutup (klik untuk buka)'}</button></td>
+      <td><button class="btn btn-sm ${ev.giveaway ? 'btn-success' : 'btn-outline-secondary'}" onclick="toggleEventGiveaway('${ev.id}', ${!ev.giveaway})"><i class="bi ${ev.giveaway ? 'bi-gift-fill' : 'bi-gift'} me-1"></i>${ev.giveaway ? 'Dibuka (klik untuk tutup)' : 'Belum dibuka (klik untuk buka)'}</button></td>
       <td class="text-end"><button class="btn btn-dark btn-sm" onclick="openGiveaway('${ev.id}')"><i class="bi bi-people me-1"></i>Peserta &amp; Spin</button></td>
     </tr>`).join('')}</tbody></table></div>`;
 };
@@ -1647,7 +1647,7 @@ window.openGiveaway = async (id) => {
       <div class="d-flex justify-content-between align-items-start mb-3 gap-3">
         <div>
           <h4 class="mb-1">Giveaway: ${escHtml(ev.title || 'Event')}</h4>
-          <p class="text-muted mb-0" style="font-size:.85rem;">Pendaftaran ${ev.giveaway ? '<strong class="text-success">dibuka</strong>' : '<strong>ditutup</strong> (klik ikon kado di kartu event untuk membuka)'}. Pemenang tidak ikut putaran berikutnya. Cek No. Struk sebelum spin; hapus peserta yang struknya tidak valid.</p>
+          <p class="text-muted mb-0" style="font-size:.85rem;">Pendaftaran ${ev.giveaway ? '<strong class="text-success">dibuka</strong>' : '<strong>belum dibuka</strong> (buka di daftar event di atas)'}. Pemenang tidak ikut putaran berikutnya. Cek No. Struk sebelum spin; hapus peserta yang struknya tidak valid.</p>
         </div>
         <div class="d-flex gap-2 ga-hide-rec">
           <button class="btn btn-dark" onclick="toggleRecordMode(true)" title="Sembunyikan sidebar & samarkan no. telp untuk rekam layar"><i class="bi bi-record-circle me-1"></i>Mode Rekam</button>
