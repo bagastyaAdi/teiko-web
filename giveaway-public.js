@@ -1,4 +1,4 @@
-// Giveaway di homepage (index.html): form daftar selama pendaftaran dibuka,
+// Event Terbaru + Giveaway di homepage (index.html). Giveaway: form daftar selama pendaftaran dibuka,
 // roda undian berisi nama peserta (dari giveaway_public(), tanpa no. telp) dan daftar pemenang.
 // Tombol Spin cuma muncul kalau admin sedang login di browser yang sama.
 (function () {
@@ -12,8 +12,9 @@
       .select('id,title,subtitle,subtitle2,image_url,giveaway,is_active')
       .ilike('id', 'event_%').eq('is_active', true);
     if (error || !events) return;
-    const { data: { session } } = await sb.auth.getSession();
     events.sort((a, b) => b.id.localeCompare(a.id));
+    renderEvents(events);
+    const { data: { session } } = await sb.auth.getSession();
     for (const ev of events) {
       const { data: entries } = await sb.rpc('giveaway_public', { p_event: ev.id });
       if (!ev.giveaway && !(entries && entries.length)) continue;
@@ -50,6 +51,30 @@
       wrap.style.display = '';
       setInterval(refresh, 20000);
     }
+  }
+
+  // Ringkasan "Event Terbaru" di homepage: maksimal 3 kartu, klik menuju halaman Event.
+  function renderEvents(events) {
+    const box = document.getElementById('home-events');
+    const list = events.filter(ev => ev.image_url).slice(0, 3);
+    if (!box || !list.length) return;
+    box.innerHTML = `
+      <div class="home-events__head">
+        <h2>Event Terbaru</h2>
+        <a href="event" class="home-events__all">Lihat semua event <i class="bi bi-arrow-right"></i></a>
+      </div>
+      <div class="home-events__grid">
+        ${list.map(ev => `
+          <a class="home-events__card" href="event">
+            <img src="${esc(ev.image_url)}" alt="${esc(ev.title || 'Event Teiko')}" loading="lazy">
+            <div class="home-events__body">
+              ${ev.giveaway ? '<span class="home-events__tag"><i class="bi bi-gift me-1"></i>Giveaway</span>' : ''}
+              <h3>${esc(ev.title || 'Event Teiko')}</h3>
+              ${ev.subtitle ? `<p><i class="bi bi-calendar-event me-1"></i>${esc(ev.subtitle)}</p>` : ''}
+            </div>
+          </a>`).join('')}
+      </div>`;
+    box.style.display = '';
   }
 
   function render(id) {

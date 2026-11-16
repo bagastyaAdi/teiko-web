@@ -381,3 +381,17 @@ html, body { overflow-x: clip !important; }
   .ga-home { grid-template-columns: 1fr; gap: 2rem; }
   .ga-home__form, .ga-home__done { max-width: none; }
 }
+
+/* ===== EVENT TERBARU di homepage (giveaway-public.js) ===== */
+.home-events-section { padding: 3.5rem 16px 1rem; }
+.home-events__head { max-width: 1100px; margin: 0 auto 1.5rem; display: flex; justify-content: space-between; align-items: baseline; gap: 1rem; flex-wrap: wrap; }
+.home-events__head h2 { font-size: clamp(1.5rem, 2.5vw, 2rem); font-weight: 600; margin: 0; }
+.home-events__all { color: var(--sb-green-accent); font-weight: 600; text-decoration: none; }
+.home-events__grid { max-width: 1100px; margin: 0 auto; display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 1.25rem; }
+.home-events__card { display: block; background: #fff; border-radius: 12px; overflow: hidden; color: inherit; text-decoration: none; box-shadow: var(--sb-shadow); transition: transform .2s; }
+.home-events__card:hover { transform: translateY(-4px); }
+.home-events__card img { width: 100%; aspect-ratio: 16 / 9; object-fit: cover; display: block; }
+.home-events__body { padding: 1rem 1.25rem 1.25rem; }
+.home-events__body h3 { font-size: 1.1rem; font-weight: 700; margin: 0 0 .35rem; }
+.home-events__body p { color: rgba(0,0,0,.6); font-size: .9rem; margin: 0; }
+.home-events__tag { display: inline-block; background: var(--sb-green-accent); color: #fff; font-size: .75rem; font-weight: 600; border-radius: 50px; padding: .2rem .7rem; margin-bottom: .5rem; }
