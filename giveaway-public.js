@@ -1,6 +1,6 @@
 // Event Terbaru + Giveaway di homepage (index.html). Giveaway: form daftar selama pendaftaran dibuka,
 // roda undian berisi nama peserta (dari giveaway_public(), tanpa no. telp) dan daftar pemenang.
-// Tombol Spin cuma muncul kalau admin sedang login di browser yang sama.
+// Spin hanya dari admin.html; di website roda cuma ditonton (update tiap 20 detik).
 (function () {
   const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
   const boards = {}; // eventId -> { wheel, entries }
@@ -14,7 +14,6 @@
     if (error || !events) return;
     events.sort((a, b) => b.id.localeCompare(a.id));
     renderEvents(events);
-    const { data: { session } } = await sb.auth.getSession();
     for (const ev of events) {
       const { data: entries } = await sb.rpc('giveaway_public', { p_event: ev.id });
       if (!ev.giveaway && !(entries && entries.length)) continue;
@@ -41,17 +40,24 @@
           <div class="ga-home__wheel">
             <div class="ga-home__canvas"><span class="ga-home__pointer"></span><canvas width="720" height="720"></canvas></div>
             <p class="ga-home__count"></p>
-            ${session ? '<button class="ga-home__btn ga-home__spin" type="button"><i class="bi bi-arrow-repeat me-1"></i> Spin</button>' : ''}
             <div class="ga-home__winners"></div>
+            <div class="ga-home__video"></div>
           </div>
         </div>`);
       const box = document.getElementById(`ga-${ev.id}`);
       boards[ev.id] = { wheel: GiveawayWheel(box.querySelector('canvas')), entries: entries || [] };
       box.querySelector('form')?.addEventListener('submit', e => join(e, ev.id));
-      box.querySelector('.ga-home__spin')?.addEventListener('click', () => spin(ev.id));
       render(ev.id);
     }
-    if (Object.keys(boards).length) {
+    const ids = Object.keys(boards);
+    if (ids.length) {
+      const { data: vids } = await sb.from('site_content').select('id,image_url').in('id', ids.map(id => 'gavideo_' + id));
+      (vids || []).forEach(v => {
+        const box = document.querySelector(`#ga-${v.id.slice(8)} .ga-home__video`);
+        if (box && v.image_url) box.innerHTML = `<p class="ga-home__vlabel"><i class="bi bi-camera-video me-1"></i> Video hasil undian</p><video src="${esc(v.image_url)}" controls playsinline preload="metadata"></video>`;
+      });
+    }
+    if (ids.length) {
       wrap.style.display = '';
       setInterval(refresh, 20000);
     }
@@ -102,22 +108,6 @@
       boards[id].entries = data;
       render(id);
     }
-  }
-
-  function spin(id) {
-    const g = boards[id], btn = document.querySelector(`#ga-${id} .ga-home__spin`);
-    btn.disabled = true;
-    const started = g.wheel.spin(async winner => {
-      const { error } = await sb.from('giveaway_entries').update({ is_winner: true }).eq('id', winner.id);
-      btn.disabled = false;
-      if (error) {
-        btn.insertAdjacentHTML('afterend', `<p class="ga-home__msg is-error">Gagal simpan pemenang: ${esc(error.message)}</p>`);
-        return;
-      }
-      winner.is_winner = true;
-      render(id);
-    });
-    if (!started) btn.disabled = false;
   }
 
   async function join(e, eventId) {

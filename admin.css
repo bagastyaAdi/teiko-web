@@ -971,3 +971,16 @@ body { font-family: 'Figtree', 'Helvetica Neue', Arial, sans-serif; }
 
 /* Kelola Konten & Event: kartu sedikit lebih kecil */
 #sections-grid, #events-grid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 1rem; }
+
+/* ===== Sidebar bisa disembunyikan + Mode Rekam giveaway ===== */
+.sidebar-toggle { position: fixed; top: 14px; left: calc(var(--sidebar-w) + 14px); z-index: 101; width: 38px; height: 38px; border-radius: 10px; border: 1px solid var(--border); background: #fff; color: #1E3932; display: grid; place-items: center; font-size: 1.1rem; box-shadow: 0 2px 6px rgba(0,0,0,.08); }
+body.sidebar-hidden .sidebar { display: none; }
+body.sidebar-hidden .main-content { margin-left: 0; }
+body.sidebar-hidden .sidebar-toggle { left: 14px; }
+.main-content { padding-top: 3.75rem; }
+.ga-mask, .ga-show-rec { display: none; }
+body.ga-recording .ga-full, body.ga-recording .ga-hide-rec { display: none !important; }
+body.ga-recording .ga-mask { display: inline; }
+body.ga-recording .ga-show-rec { display: inline-block; }
+body.ga-recording .sidebar-toggle, body.ga-recording #giveaway-view > .page-header, body.ga-recording #giveaway-events { display: none; }
+body.ga-recording #giveaway-panel { margin-top: 0 !important; }

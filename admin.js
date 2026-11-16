@@ -601,6 +601,14 @@ const faqView      = document.getElementById('faq-view');
 const allNavs  = [contentNav, slidesNav, drinksNav, outletsNav, eventsNav, giveawayNav, newsNav, feedbackNav, faqNav];
 const allViews = [contentView, slidesView, drinksView, outletsView, eventsView, giveawayView, newsView, feedbackView, faqView];
 
+// Sidebar bisa disembunyikan (tombol di kiri atas). Diingat per browser.
+function setSidebarHidden(hidden) {
+  document.body.classList.toggle('sidebar-hidden', hidden);
+  try { localStorage.setItem('teikoAdminSidebarHidden', hidden ? '1' : ''); } catch (e) {}
+}
+window.toggleSidebar = () => setSidebarHidden(!document.body.classList.contains('sidebar-hidden'));
+try { if (localStorage.getItem('teikoAdminSidebarHidden')) document.body.classList.add('sidebar-hidden'); } catch (e) {}
+
 // Pindah tab sidebar: aktifin nav+view yang dipilih, sembunyiin sisanya,
 // terus jalanin loaderCallback (fetch data) kalau ada.
 function activateView(navId, viewId, loaderCallback) {
@@ -1641,7 +1649,11 @@ window.openGiveaway = async (id) => {
           <h4 class="mb-1">Giveaway: ${escHtml(ev.title || 'Event')}</h4>
           <p class="text-muted mb-0" style="font-size:.85rem;">Pendaftaran ${ev.giveaway ? '<strong class="text-success">dibuka</strong>' : '<strong>ditutup</strong> (klik ikon kado di kartu event untuk membuka)'}. Pemenang tidak ikut putaran berikutnya.</p>
         </div>
-        <button class="btn btn-light" onclick="document.getElementById('giveaway-panel').remove()">Tutup</button>
+        <div class="d-flex gap-2 ga-hide-rec">
+          <button class="btn btn-dark" onclick="toggleRecordMode(true)" title="Sembunyikan sidebar & samarkan no. telp untuk rekam layar"><i class="bi bi-record-circle me-1"></i>Mode Rekam</button>
+          <button class="btn btn-light" onclick="document.getElementById('giveaway-panel').remove()">Tutup</button>
+        </div>
+        <button class="btn btn-light ga-show-rec" onclick="toggleRecordMode(false)"><i class="bi bi-x-lg me-1"></i>Keluar Mode Rekam</button>
       </div>
       <div class="row g-4">
         <div class="col-lg-5 text-center">
@@ -1655,7 +1667,7 @@ window.openGiveaway = async (id) => {
         <div class="col-lg-7">
           <div class="d-flex justify-content-between align-items-center mb-2">
             <strong id="ga-count">Memuat peserta...</strong>
-            <button class="btn btn-light btn-sm" onclick="loadGiveawayEntries()"><i class="bi bi-arrow-clockwise"></i> Refresh</button>
+            <button class="btn btn-light btn-sm ga-hide-rec" onclick="loadGiveawayEntries()"><i class="bi bi-arrow-clockwise"></i> Refresh</button>
           </div>
           <div class="admin-table-wrap" style="max-height:420px; overflow:auto;"><table class="admin-table">
             <thead><tr><th>#</th><th>Nama</th><th>No. Telp</th><th>Instagram</th><th>Daftar</th><th></th></tr></thead>
@@ -1663,8 +1675,15 @@ window.openGiveaway = async (id) => {
           </table></div>
         </div>
       </div>
+      <div class="ga-hide-rec mt-4 pt-3" style="border-top:1px solid var(--border);">
+        <h5 class="mb-1">Video hasil undian</h5>
+        <p class="text-muted mb-2" style="font-size:.85rem;">Upload rekaman layar spin (MP4/WebM, maks 50 MB). Video tampil di bagian Giveaway homepage.</p>
+        <div id="ga-video"></div>
+        <input type="file" id="ga-video-input" accept="video/mp4,video/webm,video/quicktime" class="form-control mt-2" style="max-width:420px;" onchange="uploadGiveawayVideo(this)">
+      </div>
     </div>`));
   gaWheel = GiveawayWheel(document.getElementById('ga-wheel'));
+  renderGiveawayVideo();
   document.getElementById('giveaway-panel').scrollIntoView({ behavior: 'smooth' });
   await loadGiveawayEntries();
 };
@@ -1684,15 +1703,73 @@ window.loadGiveawayEntries = async () => {
     <tr${e.is_winner ? ' style="background:#FFF6DD;"' : ''}>
       <td>${i + 1}</td>
       <td>${escHtml(e.name)}${e.is_winner ? ' <span class="badge bg-warning text-dark">Pemenang</span>' : ''}</td>
-      <td><a href="https://wa.me/${escHtml(e.phone.replace(/^\+/, '').replace(/^0/, '62'))}" target="_blank" rel="noopener">${escHtml(e.phone)}</a></td>
+      <td><a class="ga-full" href="https://wa.me/${escHtml(e.phone.replace(/^\+/, '').replace(/^0/, '62'))}" target="_blank" rel="noopener">${escHtml(e.phone)}</a><span class="ga-mask">${escHtml(maskPhone(e.phone))}</span></td>
       <td><a href="https://instagram.com/${escHtml(e.instagram)}" target="_blank" rel="noopener">@${escHtml(e.instagram)}</a></td>
       <td style="white-space:nowrap; font-size:.8rem;">${new Date(e.created_at).toLocaleString('id-ID', { dateStyle: 'short', timeStyle: 'short' })}</td>
-      <td style="white-space:nowrap;">
+      <td style="white-space:nowrap;" class="ga-hide-rec">
         ${e.is_winner ? `<button class="btn-icon" onclick="setGiveawayWinner('${e.id}', false)" title="Batalkan pemenang"><i class="bi bi-arrow-counterclockwise"></i></button>` : ''}
         <button class="btn-icon btn-icon-danger" onclick="deleteGiveawayEntry('${e.id}')" title="Hapus peserta"><i class="bi bi-trash"></i></button>
       </td>
     </tr>`).join('') || '<tr><td colspan="6" class="text-center text-muted py-4">Belum ada peserta.</td></tr>';
   gaWheel.set(gaEntries, true);
+};
+
+// 081234567890 -> 0812****7890 (dipakai saat Mode Rekam)
+const maskPhone = p => p.length > 8 ? p.slice(0, 4) + '****' + p.slice(-4) : p.replace(/\d(?=\d{2})/g, '*');
+
+// Mode Rekam: sidebar disembunyikan, no. telp disamarkan, tombol hapus/refresh/upload disembunyikan.
+window.toggleRecordMode = (on) => {
+  document.body.classList.toggle('ga-recording', on);
+  setSidebarHidden(on);
+  if (on) document.getElementById('giveaway-panel')?.scrollIntoView({ behavior: 'smooth' });
+};
+
+// Video hasil undian disimpan sebagai baris site_content id "gavideo_<eventId>" (image_url = URL video).
+function renderGiveawayVideo() {
+  const box = document.getElementById('ga-video');
+  if (!box) return;
+  const row = contentData['gavideo_' + gaEventId];
+  box.innerHTML = row && row.image_url ? `
+    <video src="${escHtml(row.image_url)}" controls playsinline style="width:100%; max-width:420px; border-radius:10px; display:block;"></video>
+    <button class="btn btn-sm btn-outline-danger mt-2" onclick="deleteGiveawayVideo()"><i class="bi bi-trash me-1"></i>Hapus video</button>` : '<p class="text-muted mb-0" style="font-size:.85rem;">Belum ada video.</p>';
+}
+
+window.uploadGiveawayVideo = async (input) => {
+  const file = input.files[0];
+  if (!file) return;
+  if (file.size > 50 * 1024 * 1024) { showToast('Video maksimal 50 MB. Kompres dulu atau potong durasinya.', 'error'); input.value = ''; return; }
+  const ext = (file.name.split('.').pop() || 'mp4').toLowerCase().replace(/[^a-z0-9]/g, '');
+  const filename = `giveaway_${gaEventId}_${Date.now()}.${ext}`;
+  input.disabled = true;
+  showToast('Mengupload video...', 'info');
+  try {
+    const { error: upErr } = await sb.storage.from('site-images').upload(filename, file, { contentType: file.type || 'video/mp4' });
+    if (upErr) throw upErr;
+    const url = sb.storage.from('site-images').getPublicUrl(filename).data.publicUrl;
+    const row = { id: 'gavideo_' + gaEventId, image_url: url, title: 'Video undian giveaway', is_active: true, updated_at: new Date().toISOString() };
+    const { error } = await sb.from('site_content').upsert(row);
+    if (error) throw error;
+    contentData[row.id] = row;
+    renderGiveawayVideo();
+    showToast('Video terupload dan tampil di homepage.');
+  } catch (err) {
+    showToast('Upload video gagal: ' + err.message, 'error');
+  } finally {
+    input.disabled = false; input.value = '';
+  }
+};
+
+window.deleteGiveawayVideo = async () => {
+  if (!confirm('Hapus video hasil undian dari website?')) return;
+  try {
+    const { error } = await sb.from('site_content').delete().eq('id', 'gavideo_' + gaEventId);
+    if (error) throw error;
+    delete contentData['gavideo_' + gaEventId];
+    renderGiveawayVideo();
+    showToast('Video dihapus dari website.');
+  } catch (err) {
+    showToast('Gagal: ' + err.message, 'error');
+  }
 };
 
 window.spinGiveaway = () => {
@@ -1708,7 +1785,7 @@ async function announceGiveawayWinner(e) {
     <div class="p-3 rounded-3" style="background:#FFF6DD; border:1px solid #CBA258;">
       <div style="font-size:.8rem; letter-spacing:.08em; text-transform:uppercase; color:#8a6d1f;">Pemenang</div>
       <div style="font-size:1.5rem; font-weight:700;">${escHtml(e.name)}</div>
-      <div>${escHtml(e.phone)} &middot; @${escHtml(e.instagram)}</div>
+      <div><span class="ga-full">${escHtml(e.phone)}</span><span class="ga-mask">${escHtml(maskPhone(e.phone))}</span> &middot; @${escHtml(e.instagram)}</div>
     </div>`;
   await setGiveawayWinner(e.id, true, true);
 }
