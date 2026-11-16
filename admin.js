@@ -1536,7 +1536,7 @@ function renderEventsAdmin() {
       <div class="drink-admin-body">
         <div class="section-card-v2-name">${ev.title || 'Event Banner'}</div>
         <div class="section-card-v2-row">
-          <span class="section-card-v2-badge ${ev.is_active !== false ? 'is-active' : 'is-off'}">${ev.is_active !== false ? 'Aktif' : 'Off'}</span>
+          <span class="section-card-v2-badge ${ev.is_active !== false ? 'is-active' : 'is-off'}">${ev.is_active !== false ? 'Aktif' : 'Belum dibuka'}</span>
           <button class="btn-icon" onclick="editEvent('${ev.id}')" title="Edit"><i class="bi bi-pencil"></i></button>
           <button class="btn-icon ${ev.button_text === 'PRIMARY' ? 'text-warning' : ''}" onclick="toggleEventPrimary('${ev.id}', ${ev.button_text !== 'PRIMARY'})" title="${ev.button_text === 'PRIMARY' ? 'Jadikan Biasa' : 'Jadikan Landscape (Primary)'}"><i class="bi ${ev.button_text === 'PRIMARY' ? 'bi-star-fill' : 'bi-star'}"></i></button>
           <button class="btn-icon ${ev.giveaway ? 'text-success' : ''}" onclick="toggleEventGiveaway('${ev.id}', ${!ev.giveaway})" title="${ev.giveaway ? 'Tutup pendaftaran giveaway' : 'Buka pendaftaran giveaway'}"><i class="bi ${ev.giveaway ? 'bi-gift-fill' : 'bi-gift'}"></i></button>
@@ -1631,7 +1631,7 @@ window.renderGiveawayView = () => {
     <thead><tr><th>Event</th><th>Status event</th><th>Pendaftaran giveaway</th><th></th></tr></thead>
     <tbody>${eventsAdminData.map(ev => `<tr>
       <td><strong>${escHtml(ev.title || 'Event tanpa judul')}</strong><div class="text-muted" style="font-size:.8rem;">${escHtml(ev.subtitle || '')}</div></td>
-      <td><span class="section-card-v2-badge ${ev.is_active !== false ? 'is-active' : 'is-off'}">${ev.is_active !== false ? 'Aktif' : 'Off'}</span></td>
+      <td><span class="section-card-v2-badge ${ev.is_active !== false ? 'is-active' : 'is-off'}">${ev.is_active !== false ? 'Aktif' : 'Belum dibuka'}</span></td>
       <td><button class="btn btn-sm ${ev.giveaway ? 'btn-success' : 'btn-outline-secondary'}" onclick="toggleEventGiveaway('${ev.id}', ${!ev.giveaway})"><i class="bi ${ev.giveaway ? 'bi-gift-fill' : 'bi-gift'} me-1"></i>${ev.giveaway ? 'Dibuka (klik untuk tutup)' : 'Belum dibuka (klik untuk buka)'}</button></td>
       <td class="text-end"><button class="btn btn-dark btn-sm" onclick="openGiveaway('${ev.id}')"><i class="bi bi-people me-1"></i>Peserta &amp; Spin</button></td>
     </tr>`).join('')}</tbody></table></div>`;
