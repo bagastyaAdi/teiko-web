@@ -461,7 +461,7 @@ html, body { overflow-x: clip !important; }
 .ev-anchor { scroll-margin-top: 130px; }
 /* Mobile: isi event & giveaway rata tengah (tombol Daftar, link detail, periode, dll) */
 @media (max-width: 767px) {
-  .ev-ga-row .ga-home__info, .home-events__card--wide .home-events__body { text-align: center; }
+  .ev-ga-row .ga-home__info { text-align: center; }
   .home-events__head { justify-content: center; text-align: center; }
 }
 /* Info "Pendaftaran belum dibuka" (giveaway belum dibuka admin) */
