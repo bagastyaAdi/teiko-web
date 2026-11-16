@@ -418,3 +418,15 @@ html, body { overflow-x: clip !important; }
 .home-events__desc { margin-top: .5rem !important; }
 .home-events__grid { margin-top: 1.5rem; }
 @media (max-width: 767px) { .ev-ga-row { grid-template-columns: 1fr; padding: 1rem; gap: 1.5rem; } }
+.ev-ga-row .ga-home__info .ga-home__form { margin-top: 1rem; }
+.ga-home__more { display: inline-block; color: var(--sb-green-accent); font-weight: 600; text-decoration: none; margin-bottom: 1.25rem; }
+.ev-ga-row .home-events__join { display: block; width: fit-content; padding: .7rem 1.75rem; font-size: 1rem; }
+.ev-ga-row { padding: 2.5rem; }
+
+/* Popup daftar giveaway (native <dialog>) */
+.ga-dialog { border: 0; border-radius: 20px; padding: 0; width: min(440px, calc(100vw - 32px)); box-shadow: 0 24px 60px rgba(0,0,0,.25); }
+.ga-dialog::backdrop { background: rgba(30,57,50,.55); backdrop-filter: blur(2px); }
+.ga-dialog form { padding: 1.75rem; max-width: none; position: relative; }
+.ga-dialog h3 { font-size: 1.5rem; font-weight: 600; margin: 0 0 .25rem; }
+.ga-dialog__close { position: absolute; top: .75rem; right: .9rem; border: 0; background: none; font-size: 1.75rem; line-height: 1; color: rgba(0,0,0,.45); }
+.ga-home__action { margin-top: .25rem; }
